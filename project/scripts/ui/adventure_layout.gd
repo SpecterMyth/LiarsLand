@@ -53,12 +53,13 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 	progress_label.visible = false
 	hud.add_child(progress_label)
 
-	var upper_box := _make_exact_texture("dialogue_upper_red_full.png", Rect2(382, 545, 935, 170))
+	var upper_box := _make_exact_texture("dialogue_red_blank.png", Rect2(395, 584, 953, 127))
+	upper_box.visible = false
 	hud.add_child(upper_box)
 
-	var current_speaker_label := _make_plain_name_label("绯尾侯爵")
-	_place_relative(current_speaker_label, Rect2(0.845, 0.21, 0.14, 0.29))
-	upper_box.add_child(current_speaker_label)
+	var previous_speaker_label := _make_plain_name_label("上一句")
+	_place_relative(previous_speaker_label, Rect2(0.07, -0.28, 0.18, 0.40))
+	upper_box.add_child(previous_speaker_label)
 
 	var dialogue_title := Label.new()
 	dialogue_title.visible = false
@@ -77,27 +78,30 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 	result_banner.add_theme_color_override("font_color", Color(1.0, 0.87, 0.42, 1.0))
 	hud.add_child(result_banner)
 
-	var dialogue_view := _make_log(19, Color(1.0, 0.89, 0.76, 1.0))
-	dialogue_view.name = "CurrentDialogue"
-	_place_relative(dialogue_view, Rect2(0.075, 0.40, 0.73, 0.38))
-	upper_box.add_child(dialogue_view)
+	var recent_view := _make_log(17, Color(0.08, 0.04, 0.03, 1.0))
+	recent_view.name = "PreviousDialogue"
+	_place_relative(recent_view, Rect2(0.08, 0.24, 0.76, 0.48))
+	upper_box.add_child(recent_view)
 
-	var lower_box := _make_exact_texture("dialogue_lower_gold_full.png", Rect2(204, 692, 1224, 226))
+	var lower_box := _make_exact_texture("dialogue_gold_blank.png", Rect2(176, 728, 1339, 194))
 	hud.add_child(lower_box)
 
+	var current_speaker_label := _make_plain_name_label("玩家角色")
+	_place_relative(current_speaker_label, Rect2(0.095, -0.17, 0.13, 0.26))
+	lower_box.add_child(current_speaker_label)
+
 	var player_label := _make_plain_name_label("玩家角色")
-	_place_relative(player_label, Rect2(0.095, 0.06, 0.13, 0.22))
-	lower_box.add_child(player_label)
+	player_label.visible = false
+	hud.add_child(player_label)
 
 	var npc_label := _make_plain_name_label("绯尾侯爵")
 	npc_label.visible = false
-	_place_relative(npc_label, Rect2(0.77, 0.06, 0.16, 0.22))
-	lower_box.add_child(npc_label)
+	hud.add_child(npc_label)
 
-	var recent_view := _make_log(18, Color(0.13, 0.07, 0.03, 1.0))
-	recent_view.name = "RecentDialogue"
-	_place_relative(recent_view, Rect2(0.09, 0.36, 0.82, 0.46))
-	lower_box.add_child(recent_view)
+	var dialogue_view := _make_log(19, Color(0.08, 0.04, 0.03, 1.0))
+	dialogue_view.name = "CurrentDialogue"
+	_place_relative(dialogue_view, Rect2(0.09, 0.30, 0.82, 0.52))
+	lower_box.add_child(dialogue_view)
 
 	var side_strip := _make_exact_texture("right_button_strip.png", Rect2(1558, 86, 104, 726))
 	hud.add_child(side_strip)
@@ -227,11 +231,14 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 
 	return {
 		"background_texture": background_texture,
+		"upper_box": upper_box,
+		"lower_box": lower_box,
 		"status_label": status_label,
 		"progress_label": progress_label,
 		"npc_label": npc_label,
 		"player_label": player_label,
 		"current_speaker_label": current_speaker_label,
+		"previous_speaker_label": previous_speaker_label,
 		"recent_view": recent_view,
 		"npc_public_label": npc_public_label,
 		"stats_label": stats_label,

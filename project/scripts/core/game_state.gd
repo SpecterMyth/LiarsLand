@@ -23,6 +23,7 @@ var current_npc_index := -1
 var chapter_index := 0
 var max_chapters := 3
 var chapter_dominion_completed := false
+var player_declared_dominion := false
 var turn := 0
 var max_dialogue_turns := 3
 var chapter_round := 0
@@ -61,6 +62,7 @@ func load_chapter(data: Dictionary) -> void:
 	current_npc_index = -1
 	chapter_index = 0
 	chapter_dominion_completed = false
+	player_declared_dominion = false
 	turn = 0
 	chapter_round = 0
 	max_rounds = int(data.get("max_rounds", 10))
@@ -111,6 +113,7 @@ func advance_chapter() -> bool:
 	turn = 0
 	chapter_round = 0
 	chapter_dominion_completed = false
+	player_declared_dominion = false
 	max_rounds = int(chapter_template.get("max_rounds", 10))
 	active = true
 	ended = false
