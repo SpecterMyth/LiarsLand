@@ -1,0 +1,434 @@
+{
+  "id": "chapter_01",
+  "title": "骗子大陆：赤金夜市",
+  "summary": "玩家潜入赤金夜市，追查本局世界的六条隐藏设定，判断人们究竟相信什么。",
+  "max_rounds": 10,
+  "artifacts": [
+    {
+      "id": "moon_lantern",
+      "name": "月骨灯",
+      "story": "用月兽肋骨磨成的灯，能照见谎言留下的白影。",
+      "price": 180
+    },
+    {
+      "id": "ink_feather_jar",
+      "name": "墨羽瓮",
+      "story": "乌羽书吏封存旧誓的瓮，揭开时会听见被擦掉的名字。",
+      "price": 190
+    },
+    {
+      "id": "cracked_gold_seal",
+      "name": "裂纹金印",
+      "story": "赤金夜市旧王族的押印，裂纹中藏着三代债契。",
+      "price": 210
+    },
+    {
+      "id": "snake_marrow_vial",
+      "name": "蛇髓瓶",
+      "story": "青鳞药师秘藏的药瓶，据说能让敌意短暂沉睡。",
+      "price": 170
+    },
+    {
+      "id": "deer_bell",
+      "name": "白枝铃",
+      "story": "使节花园的停战铃，响起时连刀锋都会慢半拍。",
+      "price": 200
+    },
+    {
+      "id": "wolf_oath_blade",
+      "name": "铁颈誓刃",
+      "story": "边门军官以血磨亮的短刃，只承认守约者的手。",
+      "price": 230
+    },
+    {
+      "id": "debt_silk",
+      "name": "债丝绶",
+      "story": "贵族掮客互赠的丝绶，缠住它的人会记起欠下的礼。",
+      "price": 160
+    },
+    {
+      "id": "ash_map",
+      "name": "灰烬地图",
+      "story": "旧档案馆烧剩的地图，只有在谎话旁边才显出路。",
+      "price": 195
+    },
+    {
+      "id": "silent_coin",
+      "name": "默契铜钱",
+      "story": "夜市密谈者用来压住舌头的铜钱，翻面即是背叛。",
+      "price": 185
+    },
+    {
+      "id": "red_market_mask",
+      "name": "赤市假面",
+      "story": "戴上它的人会被认作另一场阴谋的旧相识。",
+      "price": 220
+    }
+  ],
+  "player": {
+    "public_identity": "来自边境的灰狐抄写员，替商队整理族谱与债契。",
+    "true_goal": "找出赤金夜市里即将出卖同盟名单的内鬼。",
+    "max_output_chars": 900,
+    "stats": {
+      "hp": 12,
+      "frontal_defense": 3,
+      "frontal_attack": 4,
+      "assassination_defense": 3,
+      "assassination_attack": 5,
+      "charm": 5
+    },
+    "identity_cards": [
+      {
+        "id": "blood_oath",
+        "title": "旧血誓约",
+        "description": "玩家曾向鸦塔密探宣誓，不能公开真正效忠对象。"
+      },
+      {
+        "id": "silver_needle",
+        "title": "银针袖扣",
+        "description": "袖扣里藏着能验证密信火漆的银针。"
+      },
+      {
+        "id": "lost_name",
+        "title": "失落本名",
+        "description": "玩家真实姓氏与一支被驱逐的狐族有关。"
+      },
+      {
+        "id": "market_debt",
+        "title": "夜市旧债",
+        "description": "玩家欠赤金夜市一笔不能写进账本的债。"
+      },
+      {
+        "id": "hidden_map",
+        "title": "皮下地图",
+        "description": "玩家记住了通往档案馆密室的完整路线。"
+      }
+    ]
+  },
+  "world_intel_questions": [
+    {
+      "id": "lie_origin",
+      "title": "谎言从哪里来",
+      "options": [
+        {
+          "id": "moon",
+          "title": "谎言来自月亮",
+          "description": "人们会频繁谈论月光、影子、夜晚、白色痕迹、月兽传说。",
+          "talk_topics": ["月光", "影子", "夜晚", "白色痕迹", "月兽"],
+          "image": "card_art_clue_token.png"
+        },
+        {
+          "id": "name",
+          "title": "谎言来自名字",
+          "description": "人们会频繁谈论真名、旧名、族谱、档案、称呼禁忌、被改写的身份。",
+          "talk_topics": ["真名", "旧名", "族谱", "档案", "称呼禁忌", "身份"],
+          "image": "card_art_lost_name.png"
+        },
+        {
+          "id": "debt",
+          "title": "谎言来自债务",
+          "description": "人们会频繁谈论欠账、礼物、人情、契约、未还清的承诺。",
+          "talk_topics": ["欠账", "礼物", "人情", "契约", "承诺"],
+          "image": "card_art_market_debt.png"
+        }
+      ]
+    },
+    {
+      "id": "old_dynasty_fate",
+      "title": "旧王朝为什么消失",
+      "options": [
+        {
+          "id": "betrayed",
+          "title": "被最亲近的人出卖",
+          "description": "人们会频繁谈论盟友、誓言、背刺、亲信、宴会上的暗杀。",
+          "talk_topics": ["盟友", "誓言", "背刺", "亲信", "宴会暗杀"],
+          "image": "card_art_blood_oath.png"
+        },
+        {
+          "id": "devoured_by_artifacts",
+          "title": "被自己的法器吞掉",
+          "description": "人们会频繁谈论收藏、禁器、贪婪、王库、宝物的代价。",
+          "talk_topics": ["收藏", "禁器", "贪婪", "王库", "代价"],
+          "image": "card_art_hidden_map.png"
+        },
+        {
+          "id": "hidden_royals",
+          "title": "旧王族仍然藏着",
+          "description": "人们会频繁谈论暗号、假面、旧礼节、地下通道、失踪的继承人。",
+          "talk_topics": ["暗号", "假面", "旧礼节", "地下通道", "继承人"],
+          "image": "card_art_identity_info.png"
+        }
+      ]
+    },
+    {
+      "id": "common_taboo",
+      "title": "动物族群共同相信的禁忌",
+      "options": [
+        {
+          "id": "first_gift",
+          "title": "第一份礼物不能随便拒绝",
+          "description": "人们会频繁谈论赠礼、回礼、礼物里的陷阱、第一次见面的规矩。",
+          "talk_topics": ["赠礼", "回礼", "礼物陷阱", "初见规矩"],
+          "image": "card_art_market_debt.png"
+        },
+        {
+          "id": "threshold_truth",
+          "title": "门槛上不能说真话",
+          "description": "人们会频繁谈论门、桥、边界、入口、出城口、半句话。",
+          "talk_topics": ["门", "桥", "边界", "入口", "出城口", "半句话"],
+          "image": "card_art_hidden_map.png"
+        },
+        {
+          "id": "dead_relic",
+          "title": "死者遗物不能直视",
+          "description": "人们会频繁谈论遗物、骨头、旧衣、烧剩的东西、替代称呼。",
+          "talk_topics": ["遗物", "骨头", "旧衣", "烧剩的东西", "替代称呼"],
+          "image": "card_art_silver_needle.png"
+        }
+      ]
+    },
+    {
+      "id": "market_respect",
+      "title": "赤金夜市真正尊重什么",
+      "options": [
+        {
+          "id": "fair_trade",
+          "title": "尊重公平交易",
+          "description": "人们会频繁谈论价码、等价、账本、买卖、清算。",
+          "talk_topics": ["价码", "等价", "账本", "买卖", "清算"],
+          "image": "card_art_market_debt.png"
+        },
+        {
+          "id": "beautiful_lies",
+          "title": "尊重漂亮谎言",
+          "description": "人们会频繁谈论修辞、演技、假面、体面、故事讲得好不好。",
+          "talk_topics": ["修辞", "演技", "假面", "体面", "故事"],
+          "image": "card_art_clue_betrayer.png"
+        },
+        {
+          "id": "kept_secrets",
+          "title": "尊重守住秘密",
+          "description": "人们会频繁谈论沉默、暗示、留白、闭嘴的分寸、知道但不说的人。",
+          "talk_topics": ["沉默", "暗示", "留白", "闭嘴", "秘密"],
+          "image": "card_art_identity_info.png"
+        }
+      ]
+    },
+    {
+      "id": "artifact_nature",
+      "title": "法器到底是什么",
+      "options": [
+        {
+          "id": "memory_vessel",
+          "title": "法器是记忆的容器",
+          "description": "人们会频繁谈论旧主人、遗言、过往案件、物品见过什么。",
+          "talk_topics": ["旧主人", "遗言", "旧案", "记忆", "见证"],
+          "image": "card_art_identity_info.png"
+        },
+        {
+          "id": "living_creditor",
+          "title": "法器是活着的债主",
+          "description": "人们会频繁谈论代价、偿还、反噬、欠法器的债、持有太久的风险。",
+          "talk_topics": ["代价", "偿还", "反噬", "债", "风险"],
+          "image": "card_art_market_debt.png"
+        },
+        {
+          "id": "identity_disguise",
+          "title": "法器是身份的伪装",
+          "description": "人们会频繁谈论物件代表的身份、误认、替身、凭物认人。",
+          "talk_topics": ["物件", "身份", "误认", "替身", "凭物认人"],
+          "image": "card_art_lost_name.png"
+        }
+      ]
+    },
+    {
+      "id": "betrayal_shape",
+      "title": "本章背叛究竟像什么",
+      "options": [
+        {
+          "id": "purge",
+          "title": "像一场政治清洗",
+          "description": "人们会频繁谈论名单、派系、新旧势力、被牺牲的人、清算。",
+          "talk_topics": ["名单", "派系", "新旧势力", "牺牲", "清算"],
+          "image": "card_art_clue_betrayer.png"
+        },
+        {
+          "id": "ritual",
+          "title": "像一场古老祭仪",
+          "description": "人们会频繁谈论月相、血誓、祭品、缺席者、必须完成的步骤。",
+          "talk_topics": ["月相", "血誓", "祭品", "缺席者", "步骤"],
+          "image": "card_art_blood_oath.png"
+        },
+        {
+          "id": "mistaken_identity",
+          "title": "像一次身份误认",
+          "description": "人们会频繁谈论替身、假名、面具、错认、失踪者、被交换的人生。",
+          "talk_topics": ["替身", "假名", "面具", "错认", "失踪者"],
+          "image": "card_art_lost_name.png"
+        }
+      ]
+    }
+  ],
+  "npcs": [
+    {
+      "id": "npc_fox",
+      "public_name": "绯尾侯爵",
+      "animal_species": "狐狸",
+      "public_identity": "夜市的贵族掮客，喜欢把秘密包装成礼物。",
+      "true_stance": "neutral",
+      "affinity": 2,
+      "friend_judgement": "unknown",
+      "territory": "月灯夜市",
+      "liked_topics": ["礼节", "债契", "夜市"],
+      "portrait": "npc_fox_portrait.png",
+      "background": "bg_moon_market.png",
+      "join_threshold": 9,
+      "ally_bonus_chars": 80,
+      "stats": {
+        "hp": 9,
+        "frontal_defense": 2,
+        "frontal_attack": 3,
+        "assassination_defense": 4,
+        "assassination_attack": 3,
+        "charm": 7
+      },
+      "identity_info": ["绯尾侯爵曾替鸦塔转运过一只黑羽墨瓶。"],
+      "intel": [
+        {
+          "question_id": "lie_origin",
+          "affinity_required": 4,
+          "wrong_option_id": "debt"
+        }
+      ],
+      "passive": "队伍中每名掮客增加 80 输出字符。"
+    },
+    {
+      "id": "npc_crow",
+      "public_name": "墨羽书记官",
+      "animal_species": "乌鸦",
+      "public_identity": "旧档案馆书记官，擅长记住别人以为已经烧掉的字。",
+      "true_stance": "enemy",
+      "affinity": 1,
+      "friend_judgement": "unknown",
+      "territory": "旧档案馆",
+      "liked_topics": ["档案", "墨水", "规矩"],
+      "portrait": "npc_crow_portrait.png",
+      "background": "bg_archive_hall.png",
+      "join_threshold": 99,
+      "ally_bonus_chars": 0,
+      "stats": {
+        "hp": 8,
+        "frontal_defense": 2,
+        "frontal_attack": 5,
+        "assassination_defense": 2,
+        "assassination_attack": 5,
+        "charm": 4
+      },
+      "identity_info": ["墨羽书记官掌握同盟名单的抄本。"],
+      "intel": [
+        {
+          "question_id": "old_dynasty_fate",
+          "affinity_required": 3,
+          "wrong_option_id": "devoured_by_artifacts"
+        }
+      ],
+      "passive": "无。"
+    },
+    {
+      "id": "npc_deer",
+      "public_name": "白枝使节",
+      "animal_species": "鹿",
+      "public_identity": "温和的外交官，所有句子都像祝福，也都像警告。",
+      "true_stance": "friend",
+      "affinity": 3,
+      "friend_judgement": "unknown",
+      "territory": "使馆花园",
+      "liked_topics": ["礼节", "和平", "花园"],
+      "portrait": "npc_deer_portrait.png",
+      "background": "bg_embassy_garden.png",
+      "join_threshold": 8,
+      "ally_bonus_chars": 120,
+      "stats": {
+        "hp": 11,
+        "frontal_defense": 4,
+        "frontal_attack": 2,
+        "assassination_defense": 5,
+        "assassination_attack": 1,
+        "charm": 6
+      },
+      "identity_info": ["白枝使节知道接头人不属于军方。"],
+      "intel": [
+        {
+          "question_id": "common_taboo",
+          "affinity_required": 4,
+          "wrong_option_id": "dead_relic"
+        }
+      ],
+      "passive": "邀请成功后增加 120 输出字符。"
+    },
+    {
+      "id": "npc_snake",
+      "public_name": "青鳞药师",
+      "animal_species": "蛇",
+      "public_identity": "贩卖药剂和解药的中立线人。",
+      "true_stance": "neutral",
+      "affinity": 2,
+      "friend_judgement": "unknown",
+      "territory": "暗巷药铺",
+      "liked_topics": ["药价", "毒理", "交换"],
+      "portrait": "npc_snake_portrait.png",
+      "background": "bg_duel_alley.png",
+      "join_threshold": 8,
+      "ally_bonus_chars": 70,
+      "stats": {
+        "hp": 7,
+        "frontal_defense": 2,
+        "frontal_attack": 3,
+        "assassination_defense": 5,
+        "assassination_attack": 4,
+        "charm": 5
+      },
+      "identity_info": ["青鳞药师替墨羽书记官配过消字药。"],
+      "intel": [
+        {
+          "question_id": "market_respect",
+          "affinity_required": 5,
+          "wrong_option_id": "fair_trade"
+        }
+      ],
+      "passive": "降低一次身份暴露风险。"
+    },
+    {
+      "id": "npc_wolf",
+      "public_name": "铁颌军官",
+      "animal_species": "狼",
+      "public_identity": "负责夜市边门的军官，习惯把怀疑说成命令。",
+      "true_stance": "friend",
+      "affinity": 1,
+      "friend_judgement": "unknown",
+      "territory": "边境关门",
+      "liked_topics": ["军纪", "边门", "名单"],
+      "portrait": "npc_wolf_portrait.png",
+      "background": "bg_border_gate.png",
+      "join_threshold": 7,
+      "ally_bonus_chars": 90,
+      "stats": {
+        "hp": 14,
+        "frontal_defense": 5,
+        "frontal_attack": 5,
+        "assassination_defense": 4,
+        "assassination_attack": 2,
+        "charm": 3
+      },
+      "identity_info": ["铁颌军官确认真正交易不会发生在边门。"],
+      "intel": [
+        {
+          "question_id": "artifact_nature",
+          "affinity_required": 3,
+          "wrong_option_id": "identity_disguise"
+        }
+      ],
+      "passive": "队伍中有军官时正面防御力提高。"
+    }
+  ]
+}

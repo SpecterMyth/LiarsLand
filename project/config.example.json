@@ -1,0 +1,23 @@
+{
+  "player_llm": {
+    "base_url": "https://api.example.com/v1",
+    "api_key": "YOUR_PLAYER_API_KEY",
+    "model": "gpt-4.1-mini"
+  },
+  "opponent_llm": {
+    "base_url": "https://api.example.com/v1",
+    "api_key": "YOUR_OPPONENT_API_KEY",
+    "model": "gpt-4.1-mini"
+  },
+  "npc_llm": {
+    "base_url": "https://api.example.com/v1",
+    "api_key": "YOUR_NPC_API_KEY",
+    "model": "gpt-4.1-mini"
+  },
+  "game": {
+    "use_mock_llm": false,
+    "debug_keyword_mode": false,
+    "max_turns": 10,
+    "max_player_chars": 1000
+  }
+}

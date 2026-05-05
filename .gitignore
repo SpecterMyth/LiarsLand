@@ -1,0 +1,12 @@
+# Local credentials
+project/config.local.json
+.codex/
+
+# Godot generated data
+project/.godot/
+project/export.cfg
+
+# Runtime/import noise
+tmp/
+*.tmp
+*.log
