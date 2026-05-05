@@ -1,0 +1,157 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#101514"/>
+      <stop offset="0.48" stop-color="#132326"/>
+      <stop offset="1" stop-color="#241512"/>
+    </linearGradient>
+    <linearGradient id="stage" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#1e1513"/>
+      <stop offset="0.45" stop-color="#0d2528"/>
+      <stop offset="1" stop-color="#211615"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f5c36a"/>
+      <stop offset="1" stop-color="#9f5b24"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#000" flood-opacity="0.38"/>
+    </filter>
+    <style>
+      .title { font: 700 28px "Noto Sans SC", "Microsoft YaHei", sans-serif; fill: #ffe0a0; }
+      .h1 { font: 700 22px "Noto Sans SC", "Microsoft YaHei", sans-serif; fill: #ffd37b; }
+      .h2 { font: 700 17px "Noto Sans SC", "Microsoft YaHei", sans-serif; fill: #f6c46d; }
+      .body { font: 400 15px "Noto Sans SC", "Microsoft YaHei", sans-serif; fill: #efe7d2; }
+      .small { font: 400 13px "Noto Sans SC", "Microsoft YaHei", sans-serif; fill: #bfc9bd; }
+      .tiny { font: 400 11px "Noto Sans SC", "Microsoft YaHei", sans-serif; fill: #9da99d; }
+      .chip { font: 700 13px "Noto Sans SC", "Microsoft YaHei", sans-serif; fill: #12211e; }
+      .note { font: 500 14px "Noto Sans SC", "Microsoft YaHei", sans-serif; fill: #ffe0a0; }
+      .panel { fill: rgba(17, 16, 15, 0.88); stroke: #c98539; stroke-width: 1.4; rx: 8; }
+      .panel-soft { fill: rgba(20, 25, 24, 0.78); stroke: #71563b; stroke-width: 1; rx: 8; }
+      .line { stroke: #c98539; stroke-width: 1; opacity: 0.65; }
+      .muted-line { stroke: #6a5b45; stroke-width: 1; opacity: 0.7; }
+      .accent { fill: #efb556; }
+      .green { fill: #8fe0b3; }
+      .red { fill: #ee766d; }
+      .blue { fill: #8bc5f7; }
+      .purple { fill: #c4a4ff; }
+    </style>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <rect x="0" y="0" width="1600" height="900" fill="#000" opacity="0.12"/>
+
+  <text x="34" y="48" class="title">《骗子大陆》对话进行中 UI 布局概念 v1</text>
+  <text x="34" y="74" class="small">目标：舞台感保留给角色与场景，右侧常驻情报用于判断风险，底部承载正在发生的对话与系统结算。</text>
+
+  <rect x="24" y="92" width="1552" height="62" class="panel" filter="url(#shadow)"/>
+  <text x="48" y="130" class="h1">赤金夜市：月灯桥下</text>
+  <rect x="360" y="108" width="118" height="30" rx="15" fill="#efb556"/>
+  <text x="382" y="128" class="chip">回合 3 / 10</text>
+  <rect x="496" y="108" width="154" height="30" rx="15" fill="#8fe0b3"/>
+  <text x="520" y="128" class="chip">字数 412 / 900</text>
+  <rect x="668" y="108" width="132" height="30" rx="15" fill="#8bc5f7"/>
+  <text x="692" y="128" class="chip">能量 128</text>
+  <rect x="818" y="108" width="162" height="30" rx="15" fill="#c4a4ff"/>
+  <text x="842" y="128" class="chip">LLM 正在回应</text>
+  <rect x="1190" y="107" width="92" height="32" rx="6" fill="#1d211e" stroke="#806544"/>
+  <text x="1212" y="129" class="body">暂停</text>
+  <rect x="1296" y="107" width="112" height="32" rx="6" fill="#1d211e" stroke="#806544"/>
+  <text x="1316" y="129" class="body">历史记录</text>
+  <rect x="1422" y="107" width="124" height="32" rx="6" fill="#1d211e" stroke="#806544"/>
+  <text x="1442" y="129" class="body">行为文件</text>
+
+  <rect x="24" y="174" width="1070" height="500" class="panel" filter="url(#shadow)"/>
+  <rect x="42" y="192" width="1034" height="464" rx="8" fill="url(#stage)"/>
+  <path d="M60 634 C210 520 345 482 502 470 C640 460 760 484 902 438 C985 412 1035 400 1060 392 L1060 656 L60 656 Z" fill="#050908" opacity="0.42"/>
+  <circle cx="260" cy="402" r="128" fill="#432018" opacity="0.84"/>
+  <circle cx="260" cy="402" r="104" fill="#a04420" opacity="0.7"/>
+  <rect x="144" y="270" width="232" height="350" rx="116" fill="#e8682e" opacity="0.62"/>
+  <path d="M175 308 L215 170 L252 296 Z" fill="#e8682e" opacity="0.72"/>
+  <path d="M295 296 L345 176 L358 330 Z" fill="#e8682e" opacity="0.72"/>
+  <text x="174" y="642" class="h1">玩家角色</text>
+  <text x="162" y="664" class="small">当前发言方高亮</text>
+
+  <circle cx="858" cy="402" r="128" fill="#161719" opacity="0.88"/>
+  <circle cx="858" cy="402" r="104" fill="#3d4146" opacity="0.68"/>
+  <rect x="742" y="270" width="232" height="350" rx="116" fill="#60656a" opacity="0.62"/>
+  <path d="M770 308 L816 170 L848 296 Z" fill="#60656a" opacity="0.72"/>
+  <path d="M892 296 L948 176 L960 330 Z" fill="#60656a" opacity="0.72"/>
+  <text x="808" y="642" class="h1">绯尾侯爵</text>
+  <text x="788" y="664" class="small">公开身份 / 领地 / 偏好</text>
+
+  <rect x="418" y="206" width="280" height="88" class="panel-soft"/>
+  <text x="442" y="235" class="h2">关系温度</text>
+  <text x="442" y="260" class="small">亲近度 6 / 10</text>
+  <rect x="540" y="250" width="118" height="10" rx="5" fill="#2b352e"/>
+  <rect x="540" y="250" width="72" height="10" rx="5" fill="#8fe0b3"/>
+  <text x="442" y="282" class="small">敌友判断：不明，偏谨慎</text>
+
+  <rect x="412" y="318" width="300" height="118" class="panel-soft"/>
+  <text x="434" y="348" class="h2">对话状态浮层</text>
+  <text x="434" y="374" class="body">NPC 正在提到“礼物与代价”</text>
+  <text x="434" y="398" class="small">思考流可折叠，只在调试/观察时展开</text>
+  <text x="434" y="420" class="small">发现赠礼或交易时在此弹出确认</text>
+
+  <rect x="24" y="694" width="1070" height="182" class="panel" filter="url(#shadow)"/>
+  <text x="48" y="726" class="h1">对话流</text>
+  <rect x="48" y="746" width="100" height="28" rx="14" fill="#8bc5f7"/>
+  <text x="70" y="765" class="chip">你方发言</text>
+  <rect x="158" y="746" width="96" height="28" rx="14" fill="#272420" stroke="#806544"/>
+  <text x="180" y="765" class="small">NPC</text>
+  <rect x="264" y="746" width="110" height="28" rx="14" fill="#272420" stroke="#806544"/>
+  <text x="288" y="765" class="small">系统结算</text>
+  <line x1="48" y1="788" x2="1068" y2="788" class="line"/>
+  <text x="48" y="818" class="body">你方：听说月灯桥下的法器换手很快。若我们各有所需，也许能谈一笔交换。</text>
+  <text x="48" y="846" class="body">NPC：你问得很巧。礼物和代价，常常是一回事。</text>
+  <text x="48" y="868" class="small">底部只展示最近 2-4 条，完整上下文进入历史记录；系统发现用金色行插入。</text>
+
+  <rect x="1116" y="174" width="460" height="702" class="panel" filter="url(#shadow)"/>
+  <text x="1140" y="210" class="h1">常驻情报栏</text>
+  <text x="1140" y="235" class="small">对话进行中不要藏关键判断；抽屉只用于长文本和历史。</text>
+
+  <rect x="1140" y="258" width="412" height="126" class="panel-soft"/>
+  <text x="1162" y="290" class="h2">当前 NPC</text>
+  <text x="1162" y="316" class="body">公开身份：夜市贵族掮客</text>
+  <text x="1162" y="340" class="body">偏好：礼节、债契、夜市</text>
+  <text x="1162" y="364" class="small">背包与真实需求不可见，风险由对话逐步推断</text>
+
+  <rect x="1140" y="400" width="412" height="126" class="panel-soft"/>
+  <text x="1162" y="432" class="h2">风险与行动倾向</text>
+  <rect x="1162" y="450" width="82" height="28" rx="14" fill="#2d302a" stroke="#8fe0b3"/>
+  <text x="1184" y="469" class="small">邀请 ?</text>
+  <rect x="1256" y="450" width="82" height="28" rx="14" fill="#2d302a" stroke="#ee766d"/>
+  <text x="1276" y="469" class="small">暗杀 !</text>
+  <rect x="1350" y="450" width="82" height="28" rx="14" fill="#2d302a" stroke="#efb556"/>
+  <text x="1372" y="469" class="small">决斗</text>
+  <rect x="1444" y="450" width="82" height="28" rx="14" fill="#2d302a" stroke="#8bc5f7"/>
+  <text x="1466" y="469" class="small">撤离</text>
+  <text x="1162" y="506" class="small">显示 AI 倾向，不让玩家手动选择对白后行动。</text>
+
+  <rect x="1140" y="542" width="412" height="146" class="panel-soft"/>
+  <text x="1162" y="574" class="h2">线索卡进度</text>
+  <rect x="1162" y="592" width="366" height="24" rx="5" fill="#201d1a" stroke="#69523a"/>
+  <rect x="1162" y="592" width="190" height="24" rx="5" fill="#8fe0b3" opacity="0.82"/>
+  <text x="1174" y="610" class="tiny">内鬼身份：书记官？ 来源：绯尾侯爵</text>
+  <rect x="1162" y="624" width="366" height="24" rx="5" fill="#201d1a" stroke="#69523a"/>
+  <text x="1174" y="642" class="tiny">交易地点：未知</text>
+  <rect x="1162" y="656" width="366" height="24" rx="5" fill="#201d1a" stroke="#69523a"/>
+  <text x="1174" y="674" class="tiny">接头信物：黑羽墨瓶？</text>
+
+  <rect x="1140" y="704" width="412" height="146" class="panel-soft"/>
+  <text x="1162" y="736" class="h2">法器 / 背包 / 统治需求</text>
+  <rect x="1162" y="756" width="78" height="62" rx="6" fill="#2b211b" stroke="#c98539"/>
+  <text x="1175" y="791" class="tiny">月骨灯</text>
+  <rect x="1252" y="756" width="78" height="62" rx="6" fill="#2b211b" stroke="#c98539"/>
+  <text x="1264" y="791" class="tiny">债丝绸</text>
+  <rect x="1342" y="756" width="78" height="62" rx="6" fill="#1a1d1d" stroke="#5d6b66"/>
+  <text x="1352" y="791" class="tiny">未获得</text>
+  <text x="1442" y="778" class="small">商店阶段再展开购买，</text>
+  <text x="1442" y="800" class="small">对话中只留目标感。</text>
+
+  <line x1="1094" y1="436" x2="1116" y2="436" class="line"/>
+  <line x1="558" y1="674" x2="558" y2="694" class="line"/>
+  <text x="990" y="420" class="note">舞台不堆 UI</text>
+  <text x="428" y="686" class="note">底部承接“正在说什么”</text>
+  <text x="1124" y="166" class="note">右侧承接“这话意味着什么”</text>
+</svg>

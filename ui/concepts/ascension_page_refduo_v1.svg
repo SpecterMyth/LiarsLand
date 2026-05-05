@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#050405"/><stop offset=".48" stop-color="#07373a"/><stop offset="1" stop-color="#190612"/></linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe08a"/><stop offset="1" stop-color="#9b581c"/></linearGradient>
+    <linearGradient id="red" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ef1741"/><stop offset="1" stop-color="#6f0926"/></linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000" flood-opacity=".65"/></filter>
+    <style>.title{font:700 36px "Noto Sans SC","Microsoft YaHei",sans-serif;fill:#ffe4a0}.body{font:500 18px "Noto Sans SC","Microsoft YaHei",sans-serif;fill:#f5ead1}.small{font:500 14px "Noto Sans SC","Microsoft YaHei",sans-serif;fill:#cdbb8b}.num{font:800 72px "Noto Sans SC","Microsoft YaHei",sans-serif;fill:#120807}.label{font:700 22px "Noto Sans SC","Microsoft YaHei",sans-serif;fill:#120807}</style>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <g opacity=".35"><circle cx="800" cy="130" r="90" fill="#49d7ad"/><path d="M340 720 L480 190 L610 720 M990 720 L1125 190 L1260 720" stroke="#250926" stroke-width="42"/><path d="M470 405 Q800 60 1130 405" fill="none" stroke="#bd7b2c" stroke-width="24"/><path d="M500 405 Q800 112 1100 405" fill="none" stroke="#050405" stroke-width="16"/></g>
+  <g transform="translate(48 38)"><path d="M0 0 L1460 0 L1496 34 L1460 80 L0 80 Z" fill="#090708" stroke="url(#gold)" stroke-width="3"/><text x="30" y="52" class="title">升华：献出法器，抬高等级</text><text x="1040" y="52" class="body">消耗需求法器后获得 3 点属性</text></g>
+  <g filter="url(#shadow)">
+    <g transform="translate(112 166)">
+      <path d="M0 0 L360 0 L394 40 L360 650 L0 650 L-34 40 Z" fill="#090708" stroke="#c28a35" stroke-width="4"/>
+      <path d="M96 124 L142 0 L184 136 Z M194 130 L294 22 L270 172 Z" fill="#e81942" stroke="#050405" stroke-width="9"/>
+      <path d="M72 172 C122 64 286 70 336 182 C380 280 306 386 178 392 C54 380 20 270 72 172 Z" fill="url(#red)" stroke="#050405" stroke-width="11"/>
+      <path d="M118 232 L250 194 L330 232 L238 280 L122 272 Z" fill="#f3cb82" stroke="#050405" stroke-width="7"/>
+      <path d="M42 460 L320 460 L346 492 L320 620 L42 620 L16 492 Z" fill="#e1a13f" stroke="#050405" stroke-width="5"/>
+      <text x="84" y="512" class="label">赤狐当前等级</text><text x="132" y="590" class="num">4</text>
+    </g>
+    <g transform="translate(555 165)">
+      <path d="M0 0 L490 0 L536 46 L490 650 L0 650 L-46 46 Z" fill="#090708" stroke="url(#gold)" stroke-width="4"/>
+      <text x="54" y="62" class="title">升华需求</text>
+      <g transform="translate(70 112)">
+        <path d="M0 0 L350 0 L390 42 L350 150 L0 150 L-40 42 Z" fill="#16090e" stroke="#c28a35" stroke-width="4"/>
+        <path d="M42 36 L104 12 L164 38 L140 104 L66 104 Z" fill="#d71b40" stroke="#050405" stroke-width="5"/>
+        <text x="194" y="64" class="body">血契棱镜</text><text x="194" y="102" class="small">已拥有 1 / 1</text>
+      </g>
+      <g transform="translate(70 292)">
+        <path d="M0 0 L350 0 L390 42 L350 150 L0 150 L-40 42 Z" fill="#16090e" stroke="#c28a35" stroke-width="4"/>
+        <path d="M42 34 L150 18 L174 104 L62 118 Z" fill="#50d5ae" stroke="#050405" stroke-width="5"/>
+        <text x="194" y="64" class="body">月厅密钥</text><text x="194" y="102" class="small">已拥有 1 / 1</text>
+      </g>
+      <path d="M74 512 L414 512 L454 552 L414 606 L74 606 L34 552 Z" fill="#e1a13f" stroke="#050405" stroke-width="6"/>
+      <text x="176" y="566" class="label">确认升华</text>
+    </g>
+    <g transform="translate(1132 165)">
+      <path d="M0 0 L320 0 L354 40 L320 650 L0 650 L-34 40 Z" fill="#090708" stroke="#c28a35" stroke-width="4"/>
+      <text x="42" y="62" class="title">属性分配</text>
+      <g transform="translate(44 112)"><path d="M0 0 L236 0 L264 30 L236 78 L0 78 L-28 30 Z" fill="#e1a13f" stroke="#050405" stroke-width="4"/><text x="42" y="50" class="label">生命 +1</text></g>
+      <g transform="translate(44 214)"><path d="M0 0 L236 0 L264 30 L236 78 L0 78 L-28 30 Z" fill="#151317" stroke="#c28a35" stroke-width="4"/><text x="42" y="50" class="body">正攻 +1</text></g>
+      <g transform="translate(44 316)"><path d="M0 0 L236 0 L264 30 L236 78 L0 78 L-28 30 Z" fill="#151317" stroke="#c28a35" stroke-width="4"/><text x="42" y="50" class="body">暗杀 +1</text></g>
+      <path d="M44 456 L252 456 L286 492 L252 590 L44 590 L10 492 Z" fill="#14080b" stroke="#c28a35" stroke-width="3"/>
+      <text x="70" y="502" class="body">剩余点数</text><text x="136" y="570" class="num">3</text>
+    </g>
+  </g>
+</svg>

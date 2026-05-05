@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#050405"/><stop offset=".48" stop-color="#07373a"/><stop offset="1" stop-color="#190612"/></linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe08a"/><stop offset="1" stop-color="#9b581c"/></linearGradient>
+    <linearGradient id="red" x1="0" y1="0" x2="1"><stop offset="0" stop-color="#ef1741"/><stop offset="1" stop-color="#6f0926"/></linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000" flood-opacity=".65"/></filter>
+    <style>
+      .title{font:700 34px "Noto Sans SC","Microsoft YaHei",sans-serif;fill:#ffe4a0}
+      .body{font:500 18px "Noto Sans SC","Microsoft YaHei",sans-serif;fill:#f5ead1}
+      .small{font:500 14px "Noto Sans SC","Microsoft YaHei",sans-serif;fill:#cdbb8b}
+      .num{font:800 56px "Noto Sans SC","Microsoft YaHei",sans-serif;fill:#120807}
+      .label{font:700 22px "Noto Sans SC","Microsoft YaHei",sans-serif;fill:#120807}
+      .op{font:800 26px "Noto Sans SC","Microsoft YaHei",sans-serif;fill:#ffe4a0}
+    </style>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <g opacity=".35">
+    <circle cx="800" cy="130" r="90" fill="#49d7ad"/>
+    <path d="M340 720 L480 190 L610 720 M990 720 L1125 190 L1260 720" stroke="#250926" stroke-width="42"/>
+    <path d="M470 405 Q800 60 1130 405" fill="none" stroke="#bd7b2c" stroke-width="24"/>
+    <path d="M500 405 Q800 112 1100 405" fill="none" stroke="#050405" stroke-width="16"/>
+  </g>
+
+  <g transform="translate(48 38)">
+    <path d="M0 0 L1460 0 L1496 34 L1460 80 L0 80 Z" fill="#090708" stroke="url(#gold)" stroke-width="3"/>
+    <text x="30" y="52" class="title">升华与统治</text>
+    <text x="1040" y="52" class="body">剩余属性点 3　统治需求 3 / 3</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <g transform="translate(76 160)">
+      <path d="M0 0 L320 0 L354 40 L320 666 L0 666 L-34 40 Z" fill="#090708" stroke="#c28a35" stroke-width="4"/>
+      <path d="M78 122 L124 0 L168 134 Z M174 128 L272 20 L250 170 Z" fill="#e81942" stroke="#050405" stroke-width="9"/>
+      <path d="M58 170 C108 64 266 70 318 180 C364 280 292 386 164 392 C50 380 14 270 58 170 Z" fill="url(#red)" stroke="#050405" stroke-width="11"/>
+      <path d="M104 230 L232 194 L312 232 L220 278 L108 272 Z" fill="#f3cb82" stroke="#050405" stroke-width="7"/>
+      <path d="M34 462 L288 462 L316 494 L288 632 L34 632 L6 494 Z" fill="#e1a13f" stroke="#050405" stroke-width="5"/>
+      <text x="74" y="512" class="label">赤狐等级</text>
+      <text x="134" y="585" class="num">4</text>
+    </g>
+
+    <g transform="translate(440 160)">
+      <path d="M0 0 L480 0 L522 44 L480 666 L0 666 L-42 44 Z" fill="#090708" stroke="url(#gold)" stroke-width="4"/>
+      <text x="46" y="58" class="title">全部属性</text>
+      <g transform="translate(52 96)">
+        <g><rect x="0" y="0" width="52" height="52" rx="6" fill="#10100f" stroke="#ca8437" stroke-width="3"/><text x="17" y="36" class="op">−</text><path d="M72 0 L322 0 L352 28 L322 52 L72 52 L44 28 Z" fill="#151317" stroke="#c28a35" stroke-width="3"/><text x="96" y="35" class="body">生命　18 → 19</text><rect x="370" y="0" width="52" height="52" rx="6" fill="#10100f" stroke="#ca8437" stroke-width="3"/><text x="386" y="36" class="op">+</text></g>
+        <g transform="translate(0 74)"><rect x="0" y="0" width="52" height="52" rx="6" fill="#10100f" stroke="#ca8437" stroke-width="3"/><text x="17" y="36" class="op">−</text><path d="M72 0 L322 0 L352 28 L322 52 L72 52 L44 28 Z" fill="#151317" stroke="#c28a35" stroke-width="3"/><text x="96" y="35" class="body">正面攻击　6</text><rect x="370" y="0" width="52" height="52" rx="6" fill="#10100f" stroke="#ca8437" stroke-width="3"/><text x="386" y="36" class="op">+</text></g>
+        <g transform="translate(0 148)"><rect x="0" y="0" width="52" height="52" rx="6" fill="#10100f" stroke="#ca8437" stroke-width="3"/><text x="17" y="36" class="op">−</text><path d="M72 0 L322 0 L352 28 L322 52 L72 52 L44 28 Z" fill="#151317" stroke="#c28a35" stroke-width="3"/><text x="96" y="35" class="body">正面防御　5</text><rect x="370" y="0" width="52" height="52" rx="6" fill="#10100f" stroke="#ca8437" stroke-width="3"/><text x="386" y="36" class="op">+</text></g>
+        <g transform="translate(0 222)"><rect x="0" y="0" width="52" height="52" rx="6" fill="#10100f" stroke="#ca8437" stroke-width="3"/><text x="17" y="36" class="op">−</text><path d="M72 0 L322 0 L352 28 L322 52 L72 52 L44 28 Z" fill="#151317" stroke="#c28a35" stroke-width="3"/><text x="96" y="35" class="body">暗杀攻击　7</text><rect x="370" y="0" width="52" height="52" rx="6" fill="#10100f" stroke="#ca8437" stroke-width="3"/><text x="386" y="36" class="op">+</text></g>
+        <g transform="translate(0 296)"><rect x="0" y="0" width="52" height="52" rx="6" fill="#10100f" stroke="#ca8437" stroke-width="3"/><text x="17" y="36" class="op">−</text><path d="M72 0 L322 0 L352 28 L322 52 L72 52 L44 28 Z" fill="#151317" stroke="#c28a35" stroke-width="3"/><text x="96" y="35" class="body">暗杀防御　4</text><rect x="370" y="0" width="52" height="52" rx="6" fill="#10100f" stroke="#ca8437" stroke-width="3"/><text x="386" y="36" class="op">+</text></g>
+        <g transform="translate(0 370)"><rect x="0" y="0" width="52" height="52" rx="6" fill="#10100f" stroke="#ca8437" stroke-width="3"/><text x="17" y="36" class="op">−</text><path d="M72 0 L322 0 L352 28 L322 52 L72 52 L44 28 Z" fill="#151317" stroke="#c28a35" stroke-width="3"/><text x="96" y="35" class="body">邀请魅力　8</text><rect x="370" y="0" width="52" height="52" rx="6" fill="#10100f" stroke="#ca8437" stroke-width="3"/><text x="386" y="36" class="op">+</text></g>
+      </g>
+      <path d="M82 552 L396 552 L434 590 L396 630 L82 630 L44 590 Z" fill="#e1a13f" stroke="#050405" stroke-width="5"/>
+      <text x="180" y="602" class="label">确认升华</text>
+    </g>
+
+    <g transform="translate(1000 160)">
+      <path d="M0 0 L462 0 L504 44 L462 666 L0 666 L-42 44 Z" fill="#090708" stroke="url(#gold)" stroke-width="4"/>
+      <text x="42" y="58" class="title">升华需求</text>
+      <g transform="translate(48 92)"><path d="M0 0 L360 0 L394 36 L360 96 L0 96 L-34 36 Z" fill="#e1a13f" stroke="#050405" stroke-width="5"/><text x="42" y="60" class="label">血契棱镜　已满足</text></g>
+      <g transform="translate(48 210)"><path d="M0 0 L360 0 L394 36 L360 96 L0 96 L-34 36 Z" fill="#e1a13f" stroke="#050405" stroke-width="5"/><text x="42" y="60" class="label">月厅密钥　已满足</text></g>
+      <text x="42" y="372" class="title">统治需求</text>
+      <g transform="translate(48 410)"><path d="M0 0 L108 0 L132 28 L108 86 L0 86 L-24 28 Z" fill="#e1a13f" stroke="#050405" stroke-width="4"/><text x="24" y="54" class="small" fill="#3b1b09">血契</text></g>
+      <g transform="translate(182 410)"><path d="M0 0 L108 0 L132 28 L108 86 L0 86 L-24 28 Z" fill="#e1a13f" stroke="#050405" stroke-width="4"/><text x="24" y="54" class="small" fill="#3b1b09">密钥</text></g>
+      <g transform="translate(316 410)"><path d="M0 0 L108 0 L132 28 L108 86 L0 86 L-24 28 Z" fill="#e1a13f" stroke="#050405" stroke-width="4"/><text x="24" y="54" class="small" fill="#3b1b09">冠印</text></g>
+      <path d="M62 542 L370 542 L410 586 L370 632 L62 632 L22 586 Z" fill="#e1a13f" stroke="#050405" stroke-width="6"/>
+      <text x="154" y="600" class="label">选择统治</text>
+      <text x="60" y="656" class="small">集齐 3 件命定法器后，可随时决定是否统治。</text>
+    </g>
+  </g>
+</svg>

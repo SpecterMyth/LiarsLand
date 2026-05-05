@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="night" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#150d10"/>
+      <stop offset="0.46" stop-color="#123034"/>
+      <stop offset="1" stop-color="#2a1210"/>
+    </linearGradient>
+    <linearGradient id="lantern" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffb85a" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#d84a2a" stop-opacity="0.1"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#201714"/>
+      <stop offset="1" stop-color="#080707"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffe0a0"/>
+      <stop offset="0.5" stop-color="#c77a2e"/>
+      <stop offset="1" stop-color="#6e351a"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000" flood-opacity="0.55"/>
+    </filter>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <style>
+      .title { font: 700 24px "Noto Sans SC", "Microsoft YaHei", sans-serif; fill: #ffe5a8; }
+      .body { font: 400 18px "Noto Sans SC", "Microsoft YaHei", sans-serif; fill: #f6eedc; }
+      .small { font: 400 14px "Noto Sans SC", "Microsoft YaHei", sans-serif; fill: #c7c1b4; }
+      .icon { font: 700 22px "Noto Sans SC", "Microsoft YaHei", sans-serif; fill: #ffe0a0; }
+      .iconLabel { font: 700 13px "Noto Sans SC", "Microsoft YaHei", sans-serif; fill: #f8d98c; }
+      .name { font: 700 19px "Noto Sans SC", "Microsoft YaHei", sans-serif; fill: #120b08; }
+      .hint { font: 500 15px "Noto Sans SC", "Microsoft YaHei", sans-serif; fill: #f2c678; }
+      .frame { fill: url(#panel); stroke: url(#gold); stroke-width: 2; }
+      .nameplate { fill: #e5a24b; stroke: #ffe0a0; stroke-width: 1.5; }
+      .thin { stroke: #efb765; stroke-width: 1; opacity: 0.62; }
+    </style>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#night)"/>
+  <rect width="1600" height="900" fill="#000" opacity="0.12"/>
+
+  <g opacity="0.35">
+    <path d="M0 590 C210 455 330 440 510 482 C686 522 760 440 958 408 C1180 372 1330 430 1600 315 L1600 900 L0 900 Z" fill="#050707"/>
+    <path d="M120 120 L160 640 M270 82 L300 650 M505 130 L530 642 M1115 92 L1085 660 M1348 88 L1298 650" stroke="#321819" stroke-width="18"/>
+    <path d="M0 305 C210 210 390 260 576 246 C786 230 986 130 1210 182 C1372 220 1472 196 1600 145" fill="none" stroke="#472317" stroke-width="22" opacity="0.5"/>
+  </g>
+
+  <g filter="url(#glow)" opacity="0.8">
+    <rect x="652" y="72" width="64" height="120" rx="20" fill="url(#lantern)"/>
+    <rect x="1290" y="58" width="82" height="160" rx="24" fill="url(#lantern)"/>
+    <rect x="950" y="152" width="54" height="96" rx="18" fill="url(#lantern)"/>
+  </g>
+
+  <rect x="30" y="22" width="1540" height="54" rx="8" fill="#080807" opacity="0.78" stroke="#b56b2c"/>
+  <text x="54" y="56" class="title">赤金夜市：绯尾侯爵正在回应</text>
+  <text x="1280" y="55" class="small">顶部仅保留一个关键状态</text>
+
+  <g id="characters">
+    <g>
+      <path d="M165 680 C138 535 134 382 195 275 C258 165 375 130 492 190 C600 246 640 410 610 690 Z" fill="#2c1413" opacity="0.82"/>
+      <path d="M205 318 L270 78 L322 300 Z" fill="#c44920"/>
+      <path d="M384 288 L500 92 L474 345 Z" fill="#d75a24"/>
+      <ellipse cx="350" cy="375" rx="185" ry="220" fill="#df6428"/>
+      <ellipse cx="378" cy="385" rx="120" ry="148" fill="#f1b06a" opacity="0.75"/>
+      <path d="M250 405 C330 360 410 360 512 408 C450 458 338 458 250 405 Z" fill="#120b0a" opacity="0.72"/>
+      <path d="M212 650 C260 570 435 540 575 672 Z" fill="#130e0f" opacity="0.85"/>
+    </g>
+
+    <g transform="translate(-92, 0)">
+      <path d="M930 690 C895 520 950 332 1050 230 C1154 126 1314 134 1398 248 C1478 356 1478 520 1402 690 Z" fill="#111115" opacity="0.86"/>
+      <path d="M1014 315 L1080 88 L1148 305 Z" fill="#3d4146"/>
+      <path d="M1238 292 L1370 96 L1358 345 Z" fill="#45484d"/>
+      <ellipse cx="1198" cy="382" rx="186" ry="225" fill="#45494f"/>
+      <ellipse cx="1152" cy="388" rx="118" ry="145" fill="#6d7379" opacity="0.68"/>
+      <path d="M1018 410 C1118 362 1206 362 1320 412 C1240 462 1112 458 1018 410 Z" fill="#0d0c0e" opacity="0.72"/>
+      <path d="M962 674 C1060 552 1262 548 1408 686 Z" fill="#0d0d10" opacity="0.88"/>
+    </g>
+  </g>
+
+  <g filter="url(#softShadow)">
+    <rect x="1482" y="96" width="60" height="60" rx="8" fill="#10100f" stroke="#ca8437"/>
+    <text x="1500" y="125" class="icon">?</text>
+    <text x="1499" y="146" class="iconLabel">情报</text>
+    <rect x="1482" y="168" width="60" height="60" rx="8" fill="#10100f" stroke="#ca8437"/>
+    <text x="1499" y="197" class="icon">◇</text>
+    <text x="1499" y="218" class="iconLabel">背包</text>
+    <rect x="1482" y="240" width="60" height="60" rx="8" fill="#10100f" stroke="#ca8437"/>
+    <text x="1499" y="269" class="icon">≡</text>
+    <text x="1499" y="290" class="iconLabel">历史</text>
+    <rect x="1482" y="312" width="60" height="60" rx="8" fill="#10100f" stroke="#ca8437"/>
+    <text x="1499" y="341" class="icon">✦</text>
+    <text x="1499" y="362" class="iconLabel">规则</text>
+    <rect x="1482" y="384" width="60" height="60" rx="8" fill="#10100f" stroke="#ca8437"/>
+    <text x="1499" y="413" class="icon">＋</text>
+    <text x="1499" y="434" class="iconLabel">状态</text>
+    <rect x="1482" y="456" width="60" height="60" rx="8" fill="#10100f" stroke="#ca8437"/>
+    <text x="1499" y="485" class="icon">⚙</text>
+    <text x="1499" y="506" class="iconLabel">设置</text>
+  </g>
+
+  <g filter="url(#softShadow)">
+    <path d="M476 520 L1018 520 L1058 558 L1024 612 L478 612 L438 558 Z" class="frame"/>
+    <path d="M496 536 L1000 536 L1024 558 L1004 596 L498 596 L472 558 Z" fill="#0b0909" stroke="#6e4422"/>
+    <path d="M866 500 L1008 500 L1026 520 L1008 542 L866 542 Z" class="nameplate"/>
+    <text x="894" y="528" class="name">绯尾侯爵</text>
+    <text x="514" y="568" class="body">礼物和代价，常常是一回事。你想换什么？</text>
+    <text x="514" y="592" class="small">当前发言姓名牌贴在对白框上沿，靠近说话角色的一侧。</text>
+  </g>
+
+  <g filter="url(#softShadow)">
+    <path d="M190 690 L1364 690 L1408 736 L1358 858 L194 858 L146 736 Z" class="frame"/>
+    <path d="M218 714 L1336 714 L1370 744 L1336 832 L222 832 L186 744 Z" fill="#090807" stroke="#6e4422"/>
+    <path d="M218 670 L350 670 L368 690 L350 712 L218 712 Z" class="nameplate"/>
+    <text x="250" y="698" class="name">你方</text>
+    <path d="M1190 670 L1336 670 L1354 690 L1336 712 L1190 712 Z" class="nameplate"/>
+    <text x="1212" y="698" class="name">绯尾侯爵</text>
+    <text x="240" y="758" class="body">你方：听说月灯桥下的法器换手很快。若我们各有所需，也许能谈一笔交换。</text>
+    <text x="240" y="798" class="body">NPC：你问得很巧。礼物和代价，常常是一回事。</text>
+    <text x="240" y="828" class="small">下层框可用左右姓名牌标记最近发言来源；右侧按钮带始终留白。</text>
+  </g>
+
+  <g opacity="0.95">
+    <line x1="1482" y1="126" x2="1400" y2="126" class="thin"/>
+    <text x="1098" y="128" class="hint">所有按钮集中在右侧；方形图标 + 两字标签。</text>
+    <line x1="1410" y1="584" x2="1306" y2="584" class="thin"/>
+    <text x="1070" y="586" class="hint">右侧角色略左移，避免压到按钮区。</text>
+  </g>
+</svg>

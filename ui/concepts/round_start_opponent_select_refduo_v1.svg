@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#050406"/>
+      <stop offset="0.48" stop-color="#07373a"/>
+      <stop offset="1" stop-color="#170712"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffd36a"/>
+      <stop offset="1" stop-color="#9b5a1c"/>
+    </linearGradient>
+    <linearGradient id="red" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ef1741"/>
+      <stop offset="1" stop-color="#6f0926"/>
+    </linearGradient>
+    <linearGradient id="wolf" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#777b82"/>
+      <stop offset="1" stop-color="#25262b"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000" flood-opacity="0.65"/>
+    </filter>
+    <style>
+      .cn-title{font:700 34px "Noto Sans SC","Microsoft YaHei",sans-serif;fill:#ffe4a0}
+      .cn-sub{font:500 18px "Noto Sans SC","Microsoft YaHei",sans-serif;fill:#d8d1c3}
+      .cn-card{font:700 24px "Noto Sans SC","Microsoft YaHei",sans-serif;fill:#120807}
+      .cn-body{font:500 17px "Noto Sans SC","Microsoft YaHei",sans-serif;fill:#f5ead1}
+      .cn-small{font:500 14px "Noto Sans SC","Microsoft YaHei",sans-serif;fill:#cdbb8b}
+      .frame{fill:#080708;stroke:url(#gold);stroke-width:4}
+      .thin{fill:none;stroke:#f1b957;stroke-width:2;opacity:.7}
+    </style>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <g opacity=".34">
+    <circle cx="895" cy="140" r="82" fill="#49d7ad"/>
+    <path d="M0 720 C230 570 450 622 652 520 C840 425 1015 470 1190 360 C1344 263 1468 232 1600 184 L1600 900 L0 900 Z" fill="#020304"/>
+    <path d="M180 95 L248 95 L248 730 L180 730 Z M510 35 L574 35 L574 720 L510 720 Z M1120 40 L1188 40 L1188 730 L1120 730 Z M1390 82 L1455 82 L1455 730 L1390 730 Z" fill="#230a27"/>
+    <path d="M640 388 Q800 170 960 388" fill="none" stroke="#bb7a2b" stroke-width="22"/>
+    <path d="M635 388 Q800 205 965 388" fill="none" stroke="#050406" stroke-width="14"/>
+  </g>
+  <g transform="translate(42 42)">
+    <path d="M0 0 L1160 0 L1192 32 L1166 76 L0 76 Z" fill="#090708" stroke="url(#gold)" stroke-width="3"/>
+    <text x="30" y="48" class="cn-title">回合开始：选择今晚的对手</text>
+    <text x="1030" y="48" class="cn-sub">第 4 / 10 回合</text>
+  </g>
+  <g transform="translate(1240 42)">
+    <path d="M0 0 L278 0 L302 28 L278 76 L0 76 Z" fill="#090708" stroke="#c2193d" stroke-width="3"/>
+    <text x="24" y="32" class="cn-small">能量</text><text x="94" y="37" class="cn-title">128</text>
+    <text x="24" y="62" class="cn-small">统治法器 1 / 3</text>
+  </g>
+  <g filter="url(#shadow)">
+    <g transform="translate(62 182)">
+      <path d="M0 436 L260 436 L292 468 L260 646 L0 646 Z" fill="#090708" stroke="#c28a35" stroke-width="4"/>
+      <path d="M42 148 L92 0 L146 154 Z" fill="#ed1743" stroke="#050405" stroke-width="8"/>
+      <path d="M142 150 L232 18 L214 190 Z" fill="#f39b24" stroke="#050405" stroke-width="8"/>
+      <path d="M44 176 C82 80 206 84 252 182 C296 278 244 386 135 396 C25 384 4 264 44 176 Z" fill="url(#red)" stroke="#050405" stroke-width="10"/>
+      <path d="M86 230 L196 194 L260 226 L184 268 L92 266 Z" fill="#f7d28a" stroke="#050405" stroke-width="7"/>
+      <path d="M106 226 L178 216 L208 232 L158 248 Z" fill="#050405"/>
+      <path d="M34 512 L258 512 L238 604 L24 604 Z" fill="#211018" stroke="#c28a35" stroke-width="3"/>
+      <text x="42" y="552" class="cn-body">赤狐特使</text>
+      <text x="42" y="582" class="cn-small">玩家代理 / 行为文件生效</text>
+    </g>
+    <g transform="translate(392 202)">
+      <path d="M18 0 L302 0 L340 42 L316 520 L0 520 L-22 42 Z" class="frame"/>
+      <path d="M40 28 L280 28 L310 58 L294 358 L24 358 L8 58 Z" fill="#14080c" stroke="#d8a04a" stroke-width="3"/>
+      <path d="M78 110 L118 18 L154 120 Z M184 110 L270 26 L248 146 Z" fill="#6e7178" stroke="#050405" stroke-width="8"/>
+      <path d="M64 150 C112 58 248 68 286 168 C320 264 244 336 145 330 C52 316 20 230 64 150 Z" fill="url(#wolf)" stroke="#050405" stroke-width="10"/>
+      <path d="M108 196 L220 170 L288 205 L210 238 L112 236 Z" fill="#141317" stroke="#050405" stroke-width="6"/>
+      <path d="M28 378 L302 378 L326 408 L302 500 L28 500 L4 408 Z" fill="#e1a13f" stroke="#070505" stroke-width="5"/>
+      <text x="66" y="420" class="cn-card">灰狼摄政</text>
+      <text x="54" y="452" class="cn-small" fill="#3b1b09">能量高 / 法器未知 / 风险中</text>
+      <path d="M74 470 L256 470 L276 492 L54 492 Z" fill="#080708"/>
+      <text x="112" y="487" class="cn-small">选择对话</text>
+    </g>
+    <g transform="translate(760 236)">
+      <path d="M0 0 L304 0 L338 36 L316 484 L18 484 L-20 36 Z" class="frame"/>
+      <path d="M42 86 L92 0 L138 94 Z M150 86 L242 0 L222 120 Z" fill="#2b2b31" stroke="#050405" stroke-width="7"/>
+      <path d="M48 126 C90 50 232 48 278 142 C326 238 246 326 142 318 C52 304 8 214 48 126 Z" fill="#3a3d43" stroke="#050405" stroke-width="10" opacity=".72"/>
+      <path d="M32 342 L288 342 L312 374 L288 462 L32 462 L8 374 Z" fill="#101013" stroke="#745225" stroke-width="4"/>
+      <text x="66" y="384" class="cn-body">灰狼密谈者</text>
+      <text x="56" y="416" class="cn-small">低亲近 / 可能掌握商店线索</text>
+      <text x="96" y="446" class="cn-small">情报优先</text>
+    </g>
+    <g transform="translate(1112 202)">
+      <path d="M0 0 L302 0 L340 42 L316 520 L18 520 L-22 42 Z" class="frame"/>
+      <path d="M78 112 L116 18 L154 124 Z M160 116 L264 26 L246 154 Z" fill="#e61a42" stroke="#050405" stroke-width="8"/>
+      <path d="M58 152 C96 66 224 62 278 150 C330 238 268 330 152 332 C52 318 16 238 58 152 Z" fill="url(#red)" stroke="#050405" stroke-width="10"/>
+      <path d="M106 196 L206 172 L278 204 L202 242 L110 236 Z" fill="#f0c57c" stroke="#050405" stroke-width="6"/>
+      <path d="M30 378 L302 378 L326 408 L302 500 L30 500 L4 408 Z" fill="#101013" stroke="#745225" stroke-width="4"/>
+      <text x="64" y="420" class="cn-body">赤狐宫廷客</text>
+      <text x="54" y="452" class="cn-small">同族 / 话术收益高 / 价格线索</text>
+      <text x="96" y="482" class="cn-small">谨慎试探</text>
+    </g>
+  </g>
+  <g transform="translate(132 812)">
+    <path d="M0 0 L1328 0 L1370 34 L1328 66 L0 66 L-42 34 Z" fill="#090708" stroke="url(#gold)" stroke-width="3"/>
+    <text x="32" y="42" class="cn-body">布局意图：让玩家在尖拱舞台里比较三个目标，红狐与灰狼轮流成为卡面焦点；当前推荐目标用金色大名牌压住视线。</text>
+  </g>
+</svg>

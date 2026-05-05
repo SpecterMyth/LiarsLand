@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#050405"/><stop offset=".44" stop-color="#06383b"/><stop offset="1" stop-color="#1b0614"/></linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe08a"/><stop offset="1" stop-color="#9b581c"/></linearGradient>
+    <linearGradient id="red" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ef1741"/><stop offset="1" stop-color="#6f0926"/></linearGradient>
+    <linearGradient id="wolf" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#777b82"/><stop offset="1" stop-color="#25262b"/></linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000" flood-opacity=".65"/></filter>
+    <style>.title{font:700 36px "Noto Sans SC","Microsoft YaHei",sans-serif;fill:#ffe4a0}.body{font:500 18px "Noto Sans SC","Microsoft YaHei",sans-serif;fill:#f5ead1}.small{font:500 14px "Noto Sans SC","Microsoft YaHei",sans-serif;fill:#cdbb8b}.name{font:700 26px "Noto Sans SC","Microsoft YaHei",sans-serif;fill:#120807}.big{font:800 64px "Noto Sans SC","Microsoft YaHei",sans-serif;fill:#ffe4a0}</style>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <g opacity=".36"><circle cx="800" cy="128" r="92" fill="#49d7ad"/><path d="M0 715 C260 580 460 620 655 500 C845 382 1040 442 1246 318 C1400 224 1515 188 1600 155 L1600 900 L0 900 Z" fill="#020304"/><path d="M370 420 Q800 52 1230 420" fill="none" stroke="#bd7b2c" stroke-width="24"/><path d="M400 420 Q800 108 1200 420" fill="none" stroke="#050405" stroke-width="16"/></g>
+  <g transform="translate(48 38)"><path d="M0 0 L1460 0 L1496 34 L1460 80 L0 80 Z" fill="#090708" stroke="url(#gold)" stroke-width="3"/><text x="30" y="52" class="title">统治：集齐三件命定法器</text><text x="1020" y="52" class="body">满足后本回合结束胜利</text></g>
+  <g filter="url(#shadow)">
+    <g transform="translate(58 168)">
+      <path d="M0 0 L330 0 L364 40 L330 646 L0 646 L-34 40 Z" fill="#090708" stroke="#c28a35" stroke-width="4"/>
+      <path d="M82 120 L126 0 L170 132 Z M176 126 L274 22 L254 168 Z" fill="#e81942" stroke="#050405" stroke-width="9"/>
+      <path d="M62 168 C110 64 266 68 318 176 C364 272 292 382 168 388 C50 374 16 270 62 168 Z" fill="url(#red)" stroke="#050405" stroke-width="11"/>
+      <path d="M106 226 L232 194 L310 230 L220 276 L110 270 Z" fill="#f3cb82" stroke="#050405" stroke-width="7"/>
+      <path d="M40 460 L294 460 L322 492 L294 616 L40 616 L12 492 Z" fill="#e1a13f" stroke="#050405" stroke-width="5"/>
+      <text x="84" y="512" class="name">赤狐进度</text><text x="96" y="576" class="big">2 / 3</text>
+    </g>
+    <g transform="translate(444 166)">
+      <path d="M0 0 L710 0 L756 48 L710 650 L0 650 L-46 48 Z" fill="#090708" stroke="url(#gold)" stroke-width="4"/>
+      <text x="54" y="64" class="title">命定法器槽</text>
+      <g transform="translate(62 126)">
+        <path d="M0 0 L170 0 L206 38 L170 260 L0 260 L-36 38 Z" fill="#e1a13f" stroke="#050405" stroke-width="5"/>
+        <path d="M38 48 L90 18 L144 48 L124 124 L56 124 Z" fill="#d71b40" stroke="#050405" stroke-width="5"/>
+        <text x="35" y="178" class="name">血契棱镜</text><text x="58" y="224" class="small" fill="#3b1b09">已获得</text>
+      </g>
+      <g transform="translate(270 126)">
+        <path d="M0 0 L170 0 L206 38 L170 260 L0 260 L-36 38 Z" fill="#e1a13f" stroke="#050405" stroke-width="5"/>
+        <path d="M40 42 L140 22 L158 118 L58 132 Z" fill="#50d5ae" stroke="#050405" stroke-width="5"/>
+        <text x="36" y="178" class="name">月厅密钥</text><text x="58" y="224" class="small" fill="#3b1b09">已获得</text>
+      </g>
+      <g transform="translate(478 126)">
+        <path d="M0 0 L170 0 L206 38 L170 260 L0 260 L-36 38 Z" fill="#121114" stroke="#c28a35" stroke-width="5"/>
+        <path d="M84 30 L148 82 L122 154 L50 154 L24 82 Z" fill="#31343a" stroke="#050405" stroke-width="5"/>
+        <text x="40" y="178" class="body">未知冠印</text><text x="54" y="224" class="small">尚未获得</text>
+      </g>
+      <path d="M72 456 L626 456 L666 498 L626 590 L72 590 L32 498 Z" fill="#14080b" stroke="#c28a35" stroke-width="3"/>
+      <text x="102" y="500" class="body">统治页更像“祭坛结算”：已获得槽用金底，缺失槽保持黑底，玩家一眼看到最后目标。</text>
+      <text x="102" y="542" class="small">右侧同时显示灰狼进度，制造赛跑压力。</text>
+    </g>
+    <g transform="translate(1216 168)">
+      <path d="M0 0 L330 0 L364 40 L330 646 L0 646 L-34 40 Z" fill="#090708" stroke="#c28a35" stroke-width="4"/>
+      <path d="M82 120 L126 0 L170 132 Z M176 126 L274 22 L254 168 Z" fill="#6d7178" stroke="#050405" stroke-width="9"/>
+      <path d="M62 168 C110 64 266 68 318 176 C364 272 292 382 168 388 C50 374 16 270 62 168 Z" fill="url(#wolf)" stroke="#050405" stroke-width="11"/>
+      <path d="M106 226 L232 194 L310 230 L220 276 L110 270 Z" fill="#121317" stroke="#050405" stroke-width="7"/>
+      <path d="M40 460 L294 460 L322 492 L294 616 L40 616 L12 492 Z" fill="#151317" stroke="#c28a35" stroke-width="5"/>
+      <text x="84" y="512" class="body">灰狼进度</text><text x="96" y="576" class="big">1 / 3</text>
+    </g>
+  </g>
+</svg>
