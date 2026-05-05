@@ -229,6 +229,20 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 	npc_portrait.visible = false
 	hud.add_child(npc_portrait)
 
+	var modal_backdrop := Button.new()
+	modal_backdrop.name = "ModalBlankClose"
+	modal_backdrop.visible = false
+	modal_backdrop.flat = true
+	modal_backdrop.set_anchors_preset(Control.PRESET_FULL_RECT)
+	modal_backdrop.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
+	modal_backdrop.add_theme_stylebox_override("hover", StyleBoxEmpty.new())
+	modal_backdrop.add_theme_stylebox_override("pressed", StyleBoxEmpty.new())
+	owner.add_child(modal_backdrop)
+	drawer.move_to_front()
+	rules_panel.move_to_front()
+	settings_panel.move_to_front()
+	upgrade_panel.move_to_front()
+
 	return {
 		"background_texture": background_texture,
 		"upper_box": upper_box,
@@ -261,6 +275,7 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 		"drawer": drawer,
 		"rules_panel": rules_panel,
 		"settings_panel": settings_panel,
+		"modal_backdrop": modal_backdrop,
 		"history_dialog": history_dialog,
 		"history_view": history_view,
 		"upgrade_panel": upgrade_panel,
