@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffe9a8"/>
+      <stop offset="0.42" stop-color="#d89a3b"/>
+      <stop offset="1" stop-color="#7a3d18"/>
+    </linearGradient>
+    <linearGradient id="startFill" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffef71"/>
+      <stop offset="0.34" stop-color="#ffb326"/>
+      <stop offset="1" stop-color="#f12047"/>
+    </linearGradient>
+    <linearGradient id="smallFill" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1b1110"/>
+      <stop offset="1" stop-color="#050405"/>
+    </linearGradient>
+    <linearGradient id="logoFill" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff4c6"/>
+      <stop offset="0.38" stop-color="#ffd46c"/>
+      <stop offset="0.72" stop-color="#d88a35"/>
+      <stop offset="1" stop-color="#f12047"/>
+    </linearGradient>
+    <linearGradient id="logoStroke" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a080c"/>
+      <stop offset="1" stop-color="#050405"/>
+    </linearGradient>
+    <radialGradient id="moonGlow" cx="50%" cy="40%" r="52%">
+      <stop offset="0" stop-color="#ffe9a8" stop-opacity="0.86"/>
+      <stop offset="0.36" stop-color="#f12047" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#050405" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="softShadow" x="-20%" y="-25%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="14" stdDeviation="12" flood-color="#000000" flood-opacity="0.72"/>
+    </filter>
+    <filter id="buttonGlow" x="-25%" y="-35%" width="150%" height="170%">
+      <feDropShadow dx="0" dy="0" stdDeviation="16" flood-color="#ffb326" flood-opacity="0.52"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#f12047" flood-opacity="0.34"/>
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000000" flood-opacity="0.7"/>
+    </filter>
+    <filter id="logoShadow" x="-18%" y="-35%" width="136%" height="170%">
+      <feDropShadow dx="0" dy="5" stdDeviation="2.5" flood-color="#050405" flood-opacity="0.95"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="10" flood-color="#ffd46c" flood-opacity="0.22"/>
+    </filter>
+    <style>
+      .gameTitle { font: 800 106px "Algerian", "Cinzel Decorative", "Cinzel", "Georgia", serif; fill: url(#logoFill); letter-spacing: 6px; }
+      .gameSub { font: 500 23px "Noto Sans SC", "Microsoft YaHei", sans-serif; fill: #dfc28a; letter-spacing: 0; }
+      .startText { font: 800 44px "Noto Sans SC", "Microsoft YaHei", sans-serif; fill: #210705; letter-spacing: 0; }
+      .smallText { font: 700 24px "Noto Sans SC", "Microsoft YaHei", sans-serif; fill: #f4d68c; letter-spacing: 0; }
+      .hint { font: 500 17px "Noto Sans SC", "Microsoft YaHei", sans-serif; fill: #c3aa79; letter-spacing: 0; }
+    </style>
+  </defs>
+
+  <rect width="1600" height="900" fill="#050405"/>
+  <image href="../../arts/final_references/bg_moon_market_concept_v1.png" x="0" y="0" width="1600" height="900" preserveAspectRatio="xMidYMid slice" opacity="0.86"/>
+  <rect width="1600" height="900" fill="#050405" opacity="0.38"/>
+  <rect width="1600" height="900" fill="url(#moonGlow)" opacity="0.55"/>
+  <path d="M0 0 H1600 V900 H0 Z" fill="none" stroke="#080405" stroke-width="34"/>
+  <path d="M44 44 H1556 V856 H44 Z" fill="none" stroke="#c98a36" stroke-width="2" opacity="0.46"/>
+
+  <g opacity="0.72">
+    <path d="M728 97 C758 54 820 54 850 97 C802 87 774 116 786 159 C748 148 716 129 728 97 Z" fill="#ffe9a8"/>
+    <path d="M570 156 H1030" stroke="url(#gold)" stroke-width="3"/>
+    <path d="M612 176 H988" stroke="#7a3d18" stroke-width="2" opacity="0.76"/>
+  </g>
+
+  <g text-anchor="middle" filter="url(#logoShadow)">
+    <text x="800" y="292" class="gameTitle" stroke="url(#logoStroke)" stroke-width="7" paint-order="stroke fill">Liars Land</text>
+    <path d="M493 309 C584 333 684 337 800 323 C916 337 1016 333 1107 309" fill="none" stroke="#f0c56f" stroke-width="3" opacity="0.82"/>
+    <path d="M518 199 C605 181 694 190 800 208 C906 190 995 181 1082 199" fill="none" stroke="#f12047" stroke-width="2.5" opacity="0.58"/>
+    <path d="M458 257 L492 242 L480 278 Z M1142 257 L1108 242 L1120 278 Z" fill="#ffd46c" stroke="#140607" stroke-width="3"/>
+    <text x="800" y="328" class="gameSub">在月市的灯下，选择第一句真话</text>
+  </g>
+
+  <g transform="translate(0 0)" filter="url(#buttonGlow)">
+    <rect x="510" y="488" width="580" height="122" rx="8" fill="url(#startFill)" stroke="url(#gold)" stroke-width="4"/>
+    <rect x="526" y="504" width="548" height="90" rx="6" fill="none" stroke="#fff6c8" stroke-width="1.8" opacity="0.72"/>
+    <path d="M552 488 H1048" stroke="#fff4b1" stroke-width="4" opacity="0.92"/>
+    <path d="M552 610 H1048" stroke="#6a1118" stroke-width="4" opacity="0.42"/>
+    <text x="800" y="565" class="startText" text-anchor="middle">开始游戏</text>
+  </g>
+
+  <g filter="url(#softShadow)">
+    <g transform="translate(523 674)">
+      <rect x="0" y="0" width="254" height="78" rx="8" fill="url(#smallFill)" stroke="#c98a36" stroke-width="3"/>
+      <rect x="12" y="12" width="230" height="54" rx="5" fill="none" stroke="#8c5a24" stroke-width="1.5" opacity="0.75"/>
+      <text x="127" y="50" class="smallText" text-anchor="middle">行为准则</text>
+    </g>
+    <g transform="translate(823 674)">
+      <rect x="0" y="0" width="254" height="78" rx="8" fill="url(#smallFill)" stroke="#c98a36" stroke-width="3"/>
+      <rect x="12" y="12" width="230" height="54" rx="5" fill="none" stroke="#8c5a24" stroke-width="1.5" opacity="0.75"/>
+      <text x="127" y="50" class="smallText" text-anchor="middle">系统设置</text>
+    </g>
+  </g>
+
+  <g opacity="0.82">
+    <path d="M643 794 H957" stroke="#c98a36" stroke-width="2"/>
+    <text x="800" y="828" class="hint" text-anchor="middle">主菜单概念 v1：最大按钮进入游戏，小按钮承载规则与设置</text>
+  </g>
+</svg>

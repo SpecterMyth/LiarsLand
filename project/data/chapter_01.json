@@ -114,22 +114,41 @@
           "id": "moon",
           "title": "谎言来自月亮",
           "description": "人们会频繁谈论月光、影子、夜晚、白色痕迹、月兽传说。",
-          "talk_topics": ["月光", "影子", "夜晚", "白色痕迹", "月兽"],
-          "image": "card_art_clue_token.png"
+          "talk_topics": [
+            "月光",
+            "影子",
+            "夜晚",
+            "白色痕迹",
+            "月兽"
+          ],
+          "image": "ui/intel/q01_01_lie_origin_moon.png"
         },
         {
           "id": "name",
           "title": "谎言来自名字",
           "description": "人们会频繁谈论真名、旧名、族谱、档案、称呼禁忌、被改写的身份。",
-          "talk_topics": ["真名", "旧名", "族谱", "档案", "称呼禁忌", "身份"],
-          "image": "card_art_lost_name.png"
+          "talk_topics": [
+            "真名",
+            "旧名",
+            "族谱",
+            "档案",
+            "称呼禁忌",
+            "身份"
+          ],
+          "image": "ui/intel/q01_02_lie_origin_name.png"
         },
         {
           "id": "debt",
           "title": "谎言来自债务",
           "description": "人们会频繁谈论欠账、礼物、人情、契约、未还清的承诺。",
-          "talk_topics": ["欠账", "礼物", "人情", "契约", "承诺"],
-          "image": "card_art_market_debt.png"
+          "talk_topics": [
+            "欠账",
+            "礼物",
+            "人情",
+            "契约",
+            "承诺"
+          ],
+          "image": "ui/intel/q01_03_lie_origin_debt.png"
         }
       ]
     },
@@ -141,22 +160,40 @@
           "id": "betrayed",
           "title": "被最亲近的人出卖",
           "description": "人们会频繁谈论盟友、誓言、背刺、亲信、宴会上的暗杀。",
-          "talk_topics": ["盟友", "誓言", "背刺", "亲信", "宴会暗杀"],
-          "image": "card_art_blood_oath.png"
+          "talk_topics": [
+            "盟友",
+            "誓言",
+            "背刺",
+            "亲信",
+            "宴会暗杀"
+          ],
+          "image": "ui/intel/q02_01_old_dynasty_betrayed.png"
         },
         {
           "id": "devoured_by_artifacts",
           "title": "被自己的法器吞掉",
           "description": "人们会频繁谈论收藏、禁器、贪婪、王库、宝物的代价。",
-          "talk_topics": ["收藏", "禁器", "贪婪", "王库", "代价"],
-          "image": "card_art_hidden_map.png"
+          "talk_topics": [
+            "收藏",
+            "禁器",
+            "贪婪",
+            "王库",
+            "代价"
+          ],
+          "image": "ui/intel/q02_02_old_dynasty_devoured_by_artifacts.png"
         },
         {
           "id": "hidden_royals",
           "title": "旧王族仍然藏着",
           "description": "人们会频繁谈论暗号、假面、旧礼节、地下通道、失踪的继承人。",
-          "talk_topics": ["暗号", "假面", "旧礼节", "地下通道", "继承人"],
-          "image": "card_art_identity_info.png"
+          "talk_topics": [
+            "暗号",
+            "假面",
+            "旧礼节",
+            "地下通道",
+            "继承人"
+          ],
+          "image": "ui/intel/q02_03_old_dynasty_hidden_royals.png"
         }
       ]
     },
@@ -168,22 +205,40 @@
           "id": "first_gift",
           "title": "第一份礼物不能随便拒绝",
           "description": "人们会频繁谈论赠礼、回礼、礼物里的陷阱、第一次见面的规矩。",
-          "talk_topics": ["赠礼", "回礼", "礼物陷阱", "初见规矩"],
-          "image": "card_art_market_debt.png"
+          "talk_topics": [
+            "赠礼",
+            "回礼",
+            "礼物陷阱",
+            "初见规矩"
+          ],
+          "image": "ui/intel/q03_01_common_taboo_first_gift.png"
         },
         {
           "id": "threshold_truth",
           "title": "门槛上不能说真话",
           "description": "人们会频繁谈论门、桥、边界、入口、出城口、半句话。",
-          "talk_topics": ["门", "桥", "边界", "入口", "出城口", "半句话"],
-          "image": "card_art_hidden_map.png"
+          "talk_topics": [
+            "门",
+            "桥",
+            "边界",
+            "入口",
+            "出城口",
+            "半句话"
+          ],
+          "image": "ui/intel/q03_02_common_taboo_threshold_truth.png"
         },
         {
           "id": "dead_relic",
           "title": "死者遗物不能直视",
           "description": "人们会频繁谈论遗物、骨头、旧衣、烧剩的东西、替代称呼。",
-          "talk_topics": ["遗物", "骨头", "旧衣", "烧剩的东西", "替代称呼"],
-          "image": "card_art_silver_needle.png"
+          "talk_topics": [
+            "遗物",
+            "骨头",
+            "旧衣",
+            "烧剩的东西",
+            "替代称呼"
+          ],
+          "image": "ui/intel/q03_03_common_taboo_dead_relic.png"
         }
       ]
     },
@@ -195,22 +250,40 @@
           "id": "fair_trade",
           "title": "尊重公平交易",
           "description": "人们会频繁谈论价码、等价、账本、买卖、清算。",
-          "talk_topics": ["价码", "等价", "账本", "买卖", "清算"],
-          "image": "card_art_market_debt.png"
+          "talk_topics": [
+            "价码",
+            "等价",
+            "账本",
+            "买卖",
+            "清算"
+          ],
+          "image": "ui/intel/q04_01_market_respect_fair_trade.png"
         },
         {
           "id": "beautiful_lies",
           "title": "尊重漂亮谎言",
           "description": "人们会频繁谈论修辞、演技、假面、体面、故事讲得好不好。",
-          "talk_topics": ["修辞", "演技", "假面", "体面", "故事"],
-          "image": "card_art_clue_betrayer.png"
+          "talk_topics": [
+            "修辞",
+            "演技",
+            "假面",
+            "体面",
+            "故事"
+          ],
+          "image": "ui/intel/q04_02_market_respect_beautiful_lies.png"
         },
         {
           "id": "kept_secrets",
           "title": "尊重守住秘密",
           "description": "人们会频繁谈论沉默、暗示、留白、闭嘴的分寸、知道但不说的人。",
-          "talk_topics": ["沉默", "暗示", "留白", "闭嘴", "秘密"],
-          "image": "card_art_identity_info.png"
+          "talk_topics": [
+            "沉默",
+            "暗示",
+            "留白",
+            "闭嘴",
+            "秘密"
+          ],
+          "image": "ui/intel/q04_03_market_respect_kept_secrets.png"
         }
       ]
     },
@@ -222,22 +295,40 @@
           "id": "memory_vessel",
           "title": "法器是记忆的容器",
           "description": "人们会频繁谈论旧主人、遗言、过往案件、物品见过什么。",
-          "talk_topics": ["旧主人", "遗言", "旧案", "记忆", "见证"],
-          "image": "card_art_identity_info.png"
+          "talk_topics": [
+            "旧主人",
+            "遗言",
+            "旧案",
+            "记忆",
+            "见证"
+          ],
+          "image": "ui/intel/q05_01_artifact_nature_memory_vessel.png"
         },
         {
           "id": "living_creditor",
           "title": "法器是活着的债主",
           "description": "人们会频繁谈论代价、偿还、反噬、欠法器的债、持有太久的风险。",
-          "talk_topics": ["代价", "偿还", "反噬", "债", "风险"],
-          "image": "card_art_market_debt.png"
+          "talk_topics": [
+            "代价",
+            "偿还",
+            "反噬",
+            "债",
+            "风险"
+          ],
+          "image": "ui/intel/q05_02_artifact_nature_living_creditor.png"
         },
         {
           "id": "identity_disguise",
           "title": "法器是身份的伪装",
           "description": "人们会频繁谈论物件代表的身份、误认、替身、凭物认人。",
-          "talk_topics": ["物件", "身份", "误认", "替身", "凭物认人"],
-          "image": "card_art_lost_name.png"
+          "talk_topics": [
+            "物件",
+            "身份",
+            "误认",
+            "替身",
+            "凭物认人"
+          ],
+          "image": "ui/intel/q05_03_artifact_nature_identity_disguise.png"
         }
       ]
     },
@@ -249,22 +340,40 @@
           "id": "purge",
           "title": "像一场政治清洗",
           "description": "人们会频繁谈论名单、派系、新旧势力、被牺牲的人、清算。",
-          "talk_topics": ["名单", "派系", "新旧势力", "牺牲", "清算"],
-          "image": "card_art_clue_betrayer.png"
+          "talk_topics": [
+            "名单",
+            "派系",
+            "新旧势力",
+            "牺牲",
+            "清算"
+          ],
+          "image": "ui/intel/q06_01_betrayal_shape_purge.png"
         },
         {
           "id": "ritual",
           "title": "像一场古老祭仪",
           "description": "人们会频繁谈论月相、血誓、祭品、缺席者、必须完成的步骤。",
-          "talk_topics": ["月相", "血誓", "祭品", "缺席者", "步骤"],
-          "image": "card_art_blood_oath.png"
+          "talk_topics": [
+            "月相",
+            "血誓",
+            "祭品",
+            "缺席者",
+            "步骤"
+          ],
+          "image": "ui/intel/q06_02_betrayal_shape_ritual.png"
         },
         {
           "id": "mistaken_identity",
           "title": "像一次身份误认",
           "description": "人们会频繁谈论替身、假名、面具、错认、失踪者、被交换的人生。",
-          "talk_topics": ["替身", "假名", "面具", "错认", "失踪者"],
-          "image": "card_art_lost_name.png"
+          "talk_topics": [
+            "替身",
+            "假名",
+            "面具",
+            "错认",
+            "失踪者"
+          ],
+          "image": "ui/intel/q06_03_betrayal_shape_mistaken_identity.png"
         }
       ]
     }
@@ -279,7 +388,11 @@
       "affinity": 2,
       "friend_judgement": "unknown",
       "territory": "月灯夜市",
-      "liked_topics": ["礼节", "债契", "夜市"],
+      "liked_topics": [
+        "礼节",
+        "债契",
+        "夜市"
+      ],
       "portrait": "npc_fox_portrait.png",
       "background": "bg_moon_market.png",
       "join_threshold": 9,
@@ -292,7 +405,9 @@
         "assassination_attack": 3,
         "charm": 7
       },
-      "identity_info": ["绯尾侯爵曾替鸦塔转运过一只黑羽墨瓶。"],
+      "identity_info": [
+        "绯尾侯爵曾替鸦塔转运过一只黑羽墨瓶。"
+      ],
       "intel": [
         {
           "question_id": "lie_origin",
@@ -311,7 +426,11 @@
       "affinity": 1,
       "friend_judgement": "unknown",
       "territory": "旧档案馆",
-      "liked_topics": ["档案", "墨水", "规矩"],
+      "liked_topics": [
+        "档案",
+        "墨水",
+        "规矩"
+      ],
       "portrait": "npc_crow_portrait.png",
       "background": "bg_archive_hall.png",
       "join_threshold": 99,
@@ -324,7 +443,9 @@
         "assassination_attack": 5,
         "charm": 4
       },
-      "identity_info": ["墨羽书记官掌握同盟名单的抄本。"],
+      "identity_info": [
+        "墨羽书记官掌握同盟名单的抄本。"
+      ],
       "intel": [
         {
           "question_id": "old_dynasty_fate",
@@ -343,7 +464,11 @@
       "affinity": 3,
       "friend_judgement": "unknown",
       "territory": "使馆花园",
-      "liked_topics": ["礼节", "和平", "花园"],
+      "liked_topics": [
+        "礼节",
+        "和平",
+        "花园"
+      ],
       "portrait": "npc_deer_portrait.png",
       "background": "bg_embassy_garden.png",
       "join_threshold": 8,
@@ -356,7 +481,9 @@
         "assassination_attack": 1,
         "charm": 6
       },
-      "identity_info": ["白枝使节知道接头人不属于军方。"],
+      "identity_info": [
+        "白枝使节知道接头人不属于军方。"
+      ],
       "intel": [
         {
           "question_id": "common_taboo",
@@ -375,7 +502,11 @@
       "affinity": 2,
       "friend_judgement": "unknown",
       "territory": "暗巷药铺",
-      "liked_topics": ["药价", "毒理", "交换"],
+      "liked_topics": [
+        "药价",
+        "毒理",
+        "交换"
+      ],
       "portrait": "npc_snake_portrait.png",
       "background": "bg_duel_alley.png",
       "join_threshold": 8,
@@ -388,7 +519,9 @@
         "assassination_attack": 4,
         "charm": 5
       },
-      "identity_info": ["青鳞药师替墨羽书记官配过消字药。"],
+      "identity_info": [
+        "青鳞药师替墨羽书记官配过消字药。"
+      ],
       "intel": [
         {
           "question_id": "market_respect",
@@ -407,7 +540,11 @@
       "affinity": 1,
       "friend_judgement": "unknown",
       "territory": "边境关门",
-      "liked_topics": ["军纪", "边门", "名单"],
+      "liked_topics": [
+        "军纪",
+        "边门",
+        "名单"
+      ],
       "portrait": "npc_wolf_portrait.png",
       "background": "bg_border_gate.png",
       "join_threshold": 7,
@@ -420,7 +557,9 @@
         "assassination_attack": 2,
         "charm": 3
       },
-      "identity_info": ["铁颌军官确认真正交易不会发生在边门。"],
+      "identity_info": [
+        "铁颌军官确认真正交易不会发生在边门。"
+      ],
       "intel": [
         {
           "question_id": "artifact_nature",

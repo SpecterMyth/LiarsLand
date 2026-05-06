@@ -1,7 +1,9 @@
 extends RefCounted
 class_name AdventureLayout
 
+const CardUiKitScript := preload("res://scripts/ui/card_ui_kit.gd")
 const UI_ROOT := "res://assets/generated/ui/dialogue/"
+const DIALOGUE_FONT_PATH := "res://assets/fonts/NotoSansSC-VF.ttf"
 const BASE_SIZE := Vector2(1672, 941)
 const NINE_MARGIN := 34
 
@@ -11,6 +13,7 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 
 	var background_texture := TextureRect.new()
 	background_texture.name = "DialogueBase"
+	background_texture.z_index = 0
 	background_texture.set_anchors_preset(Control.PRESET_FULL_RECT)
 	background_texture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	background_texture.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
@@ -18,6 +21,7 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 	owner.add_child(background_texture)
 
 	var pulse_overlay := ColorRect.new()
+	pulse_overlay.z_index = 70
 	pulse_overlay.color = Color(1.0, 0.0, 0.0, 0.0)
 	pulse_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	pulse_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -25,16 +29,19 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 
 	var ambience := Control.new()
 	ambience.name = "Ambience"
+	ambience.z_index = 1
 	ambience.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	ambience.set_anchors_preset(Control.PRESET_FULL_RECT)
 	owner.add_child(ambience)
 
 	var hud := Control.new()
 	hud.name = "FlatClashHud"
+	hud.z_index = 10
 	hud.set_anchors_preset(Control.PRESET_FULL_RECT)
 	owner.add_child(hud)
 
 	var status_panel := _make_exact_texture("top_status_full.png", Rect2(6, 6, 1660, 52))
+	status_panel.z_index = 40
 	hud.add_child(status_panel)
 
 	var status_label := Label.new()
@@ -54,11 +61,17 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 	hud.add_child(progress_label)
 
 	var upper_box := _make_exact_texture("dialogue_red_blank.png", Rect2(395, 584, 953, 127))
+	upper_box.z_index = 24
 	upper_box.visible = false
 	hud.add_child(upper_box)
 
+	var previous_nameplate := _make_nameplate_texture("nameplate_right_exact.png")
+	_place_relative(previous_nameplate, Rect2(0.76, -0.29, 0.22, 0.42))
+	upper_box.add_child(previous_nameplate)
+
 	var previous_speaker_label := _make_plain_name_label("上一句")
-	_place_relative(previous_speaker_label, Rect2(0.07, -0.28, 0.18, 0.40))
+	previous_speaker_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_place_relative(previous_speaker_label, Rect2(0.76, -0.29, 0.22, 0.42))
 	upper_box.add_child(previous_speaker_label)
 
 	var dialogue_title := Label.new()
@@ -78,16 +91,23 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 	result_banner.add_theme_color_override("font_color", Color(1.0, 0.87, 0.42, 1.0))
 	hud.add_child(result_banner)
 
-	var recent_view := _make_log(17, Color(0.08, 0.04, 0.03, 1.0))
+	var recent_view := _make_log(18, Color(0.08, 0.04, 0.03, 1.0))
 	recent_view.name = "PreviousDialogue"
-	_place_relative(recent_view, Rect2(0.08, 0.24, 0.76, 0.48))
+	_place_relative(recent_view, Rect2(0.08, 0.13, 0.78, 0.68))
 	upper_box.add_child(recent_view)
 
 	var lower_box := _make_exact_texture("dialogue_gold_blank.png", Rect2(176, 728, 1339, 194))
+	lower_box.z_index = 25
+	lower_box.visible = false
 	hud.add_child(lower_box)
 
+	var current_nameplate := _make_nameplate_texture("nameplate_left_exact.png")
+	_place_relative(current_nameplate, Rect2(0.035, -0.21, 0.18, 0.31))
+	lower_box.add_child(current_nameplate)
+
 	var current_speaker_label := _make_plain_name_label("玩家角色")
-	_place_relative(current_speaker_label, Rect2(0.095, -0.17, 0.13, 0.26))
+	current_speaker_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_place_relative(current_speaker_label, Rect2(0.035, -0.21, 0.18, 0.31))
 	lower_box.add_child(current_speaker_label)
 
 	var player_label := _make_plain_name_label("玩家角色")
@@ -98,15 +118,17 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 	npc_label.visible = false
 	hud.add_child(npc_label)
 
-	var dialogue_view := _make_log(19, Color(0.08, 0.04, 0.03, 1.0))
+	var dialogue_view := _make_log(24, Color(0.08, 0.04, 0.03, 1.0))
 	dialogue_view.name = "CurrentDialogue"
-	_place_relative(dialogue_view, Rect2(0.09, 0.30, 0.82, 0.52))
+	_place_relative(dialogue_view, Rect2(0.09, 0.17, 0.80, 0.60))
 	lower_box.add_child(dialogue_view)
 
 	var side_strip := _make_exact_texture("right_button_strip.png", Rect2(1558, 86, 104, 726))
+	side_strip.z_index = 45
 	hud.add_child(side_strip)
 
 	var side_buttons := Control.new()
+	side_buttons.z_index = 46
 	side_buttons.set_anchors_preset(Control.PRESET_FULL_RECT)
 	hud.add_child(side_buttons)
 
@@ -156,6 +178,56 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 	card_grid.add_theme_constant_override("v_separation", 10)
 	card_scroll.add_child(card_grid)
 
+	var card_kit = CardUiKitScript.new()
+	var intel_panel := card_kit.make_page("世界设定档案", "")
+	intel_panel.name = "IntelPanel"
+	intel_panel.visible = false
+	owner.add_child(intel_panel)
+
+	var intel_progress_label := Label.new()
+	intel_progress_label.anchor_left = 0.70
+	intel_progress_label.anchor_top = 0.045
+	intel_progress_label.anchor_right = 0.91
+	intel_progress_label.anchor_bottom = 0.13
+	intel_progress_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	intel_progress_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	intel_progress_label.add_theme_font_size_override("font_size", 26)
+	intel_progress_label.add_theme_constant_override("outline_size", 4)
+	intel_progress_label.add_theme_color_override("font_outline_color", Color(0.015, 0.018, 0.025, 1.0))
+	intel_progress_label.add_theme_color_override("font_color", Color(0.96, 0.94, 0.90, 1.0))
+	intel_panel.add_child(intel_progress_label)
+
+	var intel_scroll := ScrollContainer.new()
+	intel_scroll.anchor_left = 0.045
+	intel_scroll.anchor_top = 0.18
+	intel_scroll.anchor_right = 0.955
+	intel_scroll.anchor_bottom = 0.88
+	intel_scroll.offset_left = 0
+	intel_scroll.offset_top = 0
+	intel_scroll.offset_right = 0
+	intel_scroll.offset_bottom = 0
+	intel_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	intel_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	intel_panel.add_child(intel_scroll)
+
+	var intel_content_root := VBoxContainer.new()
+	intel_content_root.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	intel_content_root.add_theme_constant_override("separation", 18)
+	intel_scroll.add_child(intel_content_root)
+
+	var intel_footer := HBoxContainer.new()
+	intel_footer.anchor_left = 0.045
+	intel_footer.anchor_top = 0.895
+	intel_footer.anchor_right = 0.955
+	intel_footer.anchor_bottom = 0.975
+	intel_footer.offset_left = 0
+	intel_footer.offset_top = 0
+	intel_footer.offset_right = 0
+	intel_footer.offset_bottom = 0
+	intel_footer.alignment = BoxContainer.ALIGNMENT_END
+	intel_footer.add_theme_constant_override("separation", 12)
+	intel_panel.add_child(intel_footer)
+
 	var rules_panel := _make_modal_panel(Vector2(560, 650), "行为文件")
 	rules_panel.visible = false
 	owner.add_child(rules_panel)
@@ -183,14 +255,13 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 	settings_box.add_child(close_settings_button)
 	close_settings_button.pressed.connect(func(): settings_panel.visible = false)
 
-	var history_dialog := AcceptDialog.new()
-	history_dialog.title = "历史对话"
-	history_dialog.size = Vector2i(880, 620)
-	history_dialog.add_theme_stylebox_override("panel", _make_stylebox("modal_frame_9.png", 34, Color.TRANSPARENT))
+	var history_dialog := _make_modal_panel(Vector2(880, 620), "历史对话")
+	history_dialog.visible = false
 	owner.add_child(history_dialog)
+	var history_box: VBoxContainer = history_dialog.get_meta("body")
 	var history_view := _make_log(17, Color(1.0, 0.91, 0.72, 1.0))
-	history_view.custom_minimum_size = Vector2(820, 520)
-	history_dialog.add_child(history_view)
+	history_view.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	history_box.add_child(history_view)
 
 	var upgrade_panel := _make_modal_panel(Vector2(600, 330), "升华")
 	upgrade_panel.visible = false
@@ -221,16 +292,57 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 	npc_public_label.visible = false
 	hud.add_child(npc_public_label)
 
+	var side_shadow_left := _make_side_shadow(false)
+	side_shadow_left.z_index = 6
+	side_shadow_left.visible = false
+	_place_by_source_rect(side_shadow_left, Rect2(0, 0, 640, 941))
+	hud.add_child(side_shadow_left)
+
+	var side_shadow_right := _make_side_shadow(true)
+	side_shadow_right.z_index = 6
+	side_shadow_right.visible = false
+	_place_by_source_rect(side_shadow_right, Rect2(1032, 0, 640, 941))
+	hud.add_child(side_shadow_right)
+
 	var player_portrait := TextureRect.new()
+	player_portrait.name = "PlayerPortrait"
+	player_portrait.z_index = 8
 	player_portrait.visible = false
+	player_portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	player_portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	player_portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	player_portrait.flip_h = true
+	player_portrait.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
+	player_portrait.offset_left = 10
+	player_portrait.offset_top = -620
+	player_portrait.offset_right = 540
+	player_portrait.offset_bottom = 8
 	hud.add_child(player_portrait)
 
 	var npc_portrait := TextureRect.new()
+	npc_portrait.name = "NpcPortrait"
+	npc_portrait.z_index = 8
 	npc_portrait.visible = false
+	npc_portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	npc_portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	npc_portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	npc_portrait.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	npc_portrait.offset_left = -540
+	npc_portrait.offset_top = -620
+	npc_portrait.offset_right = -10
+	npc_portrait.offset_bottom = 8
 	hud.add_child(npc_portrait)
+	player_portrait.move_to_front()
+	npc_portrait.move_to_front()
+	upper_box.move_to_front()
+	lower_box.move_to_front()
+	status_panel.move_to_front()
+	side_strip.move_to_front()
+	side_buttons.move_to_front()
 
 	var modal_backdrop := Button.new()
 	modal_backdrop.name = "ModalBlankClose"
+	modal_backdrop.z_index = 80
 	modal_backdrop.visible = false
 	modal_backdrop.flat = true
 	modal_backdrop.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -238,9 +350,11 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 	modal_backdrop.add_theme_stylebox_override("hover", StyleBoxEmpty.new())
 	modal_backdrop.add_theme_stylebox_override("pressed", StyleBoxEmpty.new())
 	owner.add_child(modal_backdrop)
+	intel_panel.move_to_front()
 	drawer.move_to_front()
 	rules_panel.move_to_front()
 	settings_panel.move_to_front()
+	history_dialog.move_to_front()
 	upgrade_panel.move_to_front()
 
 	return {
@@ -252,7 +366,9 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 		"npc_label": npc_label,
 		"player_label": player_label,
 		"current_speaker_label": current_speaker_label,
+		"current_nameplate": current_nameplate,
 		"previous_speaker_label": previous_speaker_label,
+		"previous_nameplate": previous_nameplate,
 		"recent_view": recent_view,
 		"npc_public_label": npc_public_label,
 		"stats_label": stats_label,
@@ -262,6 +378,10 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 		"dialogue_view": dialogue_view,
 		"state_view": state_view,
 		"card_grid": card_grid,
+		"intel_panel": intel_panel,
+		"intel_progress_label": intel_progress_label,
+		"intel_content_root": intel_content_root,
+		"intel_footer": intel_footer,
 		"pulse_overlay": pulse_overlay,
 		"ambience": ambience,
 		"start_button": start_button,
@@ -283,6 +403,8 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 		"upgrade_hint": upgrade_hint,
 		"upgrade_buttons": upgrade_buttons,
 		"continue_button": continue_button,
+		"side_shadow_left": side_shadow_left,
+		"side_shadow_right": side_shadow_right,
 		"player_portrait": player_portrait,
 		"npc_portrait": npc_portrait
 	}
@@ -297,8 +419,39 @@ func _make_exact_texture(texture_name: String, source_rect: Rect2) -> TextureRec
 	rect.texture = _load_texture(texture_name)
 	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	rect.stretch_mode = TextureRect.STRETCH_SCALE
+	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_place_by_source_rect(rect, source_rect)
 	return rect
+
+
+func _make_nameplate_texture(texture_name: String) -> TextureRect:
+	var rect := TextureRect.new()
+	rect.texture = _load_texture(texture_name)
+	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	rect.stretch_mode = TextureRect.STRETCH_SCALE
+	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return rect
+
+
+func _make_side_shadow(reverse: bool) -> Control:
+	var root := Control.new()
+	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	for i in range(10):
+		var strip := ColorRect.new()
+		strip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var t := float(i) / 9.0
+		var edge_strength := 1.0 - t if not reverse else t
+		strip.color = Color(0, 0, 0, 0.04 + 0.42 * pow(edge_strength, 1.8))
+		strip.anchor_left = float(i) / 10.0
+		strip.anchor_right = float(i + 1) / 10.0
+		strip.anchor_top = 0.0
+		strip.anchor_bottom = 1.0
+		strip.offset_left = 0
+		strip.offset_right = 0
+		strip.offset_top = 0
+		strip.offset_bottom = 0
+		root.add_child(strip)
+	return root
 
 
 func _place_by_source_rect(node: Control, source_rect: Rect2) -> void:
@@ -355,6 +508,9 @@ func _make_plain_name_label(text: String) -> Label:
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	label.add_theme_font_size_override("font_size", 24)
+	var font := _load_dialogue_font()
+	if font != null:
+		label.add_theme_font_override("font", font)
 	label.add_theme_color_override("font_color", Color(1.0, 0.72, 0.18, 1.0))
 	label.add_theme_constant_override("outline_size", 4)
 	label.add_theme_color_override("font_outline_color", Color(0.02, 0.01, 0.01, 1.0))
@@ -365,13 +521,29 @@ func _make_plain_name_label(text: String) -> Label:
 func _make_log(size: int, color: Color) -> RichTextLabel:
 	var view := RichTextLabel.new()
 	view.bbcode_enabled = true
+	view.scroll_active = false
 	view.scroll_following = true
 	view.fit_content = false
+	view.selection_enabled = false
 	view.add_theme_font_size_override("normal_font_size", size)
+	view.add_theme_font_size_override("bold_font_size", size)
+	view.add_theme_font_size_override("italics_font_size", size)
+	var font := _load_dialogue_font()
+	if font != null:
+		view.add_theme_font_override("normal_font", font)
+		view.add_theme_font_override("bold_font", font)
+		view.add_theme_font_override("italics_font", font)
+		view.add_theme_font_override("bold_italics_font", font)
 	view.add_theme_color_override("default_color", color)
 	view.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	view.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	return view
+
+
+func _load_dialogue_font() -> Font:
+	if ResourceLoader.exists(DIALOGUE_FONT_PATH):
+		return load(DIALOGUE_FONT_PATH)
+	return null
 
 
 func _make_icon_button(label: String, icon_name: String) -> Button:

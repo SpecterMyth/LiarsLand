@@ -115,7 +115,7 @@ static func finish_round(state) -> Array[String]:
 	var events: Array[String] = []
 	if state.ended:
 		return events
-	if state.dominion_met(state.player) and not state.chapter_dominion_completed:
+	if bool(state.player_declared_dominion) and state.dominion_met(state.player) and not state.chapter_dominion_completed:
 		_resolve_player_dominion(state, events)
 		return events
 	_auto_npc_shop(state, events)
@@ -134,7 +134,7 @@ static func finish_round(state) -> Array[String]:
 
 
 static func check_chapter_resolution(state) -> void:
-	if state.dominion_met(state.player) and not state.chapter_dominion_completed:
+	if bool(state.player_declared_dominion) and state.dominion_met(state.player) and not state.chapter_dominion_completed:
 		var events: Array[String] = []
 		_resolve_player_dominion(state, events)
 

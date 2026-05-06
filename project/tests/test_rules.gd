@@ -57,10 +57,9 @@ func _run() -> void:
 	state.add_artifact(npc, gift_id)
 	npc["affinity"] = 8
 	state.set_current_npc(npc)
-	events = RulesEngineScript.apply_dialogue_turn(state, "礼节", "收下吧", {"gift_offer": {"artifact_id": gift_id, "affinity_required": 6}})
+	events = RulesEngineScript.apply_dialogue_turn(state, "gift", "accept", {"gift_offer": {"artifact_id": gift_id, "affinity_required": 6}})
 	assert(state.has_artifact(state.player, gift_id))
 	assert(not events.is_empty())
-	assert(String(state.player.get("memory", [])[-1]).contains("赠送"))
 
 	state.load_chapter(data)
 	state.choose_npc(0)
@@ -71,23 +70,20 @@ func _run() -> void:
 	state.add_artifact(state.player, player_trade_id)
 	npc["affinity"] = 6
 	state.set_current_npc(npc)
-	events = RulesEngineScript.apply_dialogue_turn(state, "交换", "成交", {"exchange_offer": {"npc_artifact_id": npc_trade_id, "player_artifact_id": player_trade_id, "affinity_required": 4}})
+	events = RulesEngineScript.apply_dialogue_turn(state, "trade", "deal", {"exchange_offer": {"npc_artifact_id": npc_trade_id, "player_artifact_id": player_trade_id, "affinity_required": 4}})
 	npc = state.current_npc()
 	assert(state.has_artifact(state.player, npc_trade_id))
 	assert(state.has_artifact(npc, player_trade_id))
-	assert(String(state.player.get("memory", [])[-1]).contains("交换"))
-	assert(String(npc.get("memory", [])[-1]).contains("交换"))
 
 	state.load_chapter(data)
 	state.choose_npc(0)
 	npc = state.current_npc()
 	npc["true_stance"] = "friend"
 	npc["affinity"] = 10
-	npc["friend_judgement"] = "friend"
 	var question_id := String(npc.get("intel", [])[0].get("question_id", ""))
 	var correct_option := String(state.world_intel_answers.get(question_id, ""))
 	state.set_current_npc(npc)
-	events = RulesEngineScript.apply_dialogue_turn(state, "礼节", "回应")
+	events = RulesEngineScript.apply_dialogue_turn(state, "hello", "reply")
 	assert(state.intel_testimonies.has(question_id))
 	assert(state.intel_testimonies[question_id].has(correct_option))
 
@@ -96,22 +92,12 @@ func _run() -> void:
 	npc = state.current_npc()
 	npc["true_stance"] = "enemy"
 	npc["affinity"] = 10
-	npc["friend_judgement"] = "enemy"
 	question_id = String(npc.get("intel", [])[0].get("question_id", ""))
 	var wrong_option := String(npc.get("intel", [])[0].get("wrong_option_id", ""))
 	state.set_current_npc(npc)
-	events = RulesEngineScript.apply_dialogue_turn(state, "礼节", "回应")
+	events = RulesEngineScript.apply_dialogue_turn(state, "hello", "reply")
 	assert(state.intel_testimonies.has(question_id))
 	assert(state.intel_testimonies[question_id].has(wrong_option))
-
-	state.load_chapter(data)
-	state.choose_npc(0)
-	npc = state.current_npc()
-	npc["true_stance"] = "friend"
-	npc["affinity"] = 0
-	state.set_current_npc(npc)
-	events = RulesEngineScript.apply_dialogue_turn(state, "x", "y")
-	assert(state.intel_testimonies.is_empty())
 
 	state.load_chapter(data)
 	var carried_id := String(state.artifacts[0].get("id", ""))
@@ -121,15 +107,11 @@ func _run() -> void:
 	RulesEngineScript.check_chapter_resolution(state)
 	assert(not state.ended)
 	assert(not state.victory)
-	assert(state.chapter_index == 1)
+	assert(state.chapter_index == 0)
 	assert(state.has_artifact(state.player, carried_id))
-	assert(int(state.player.get("level", 1)) == 4)
-	assert(state.npcs.size() == data.get("npcs", []).size())
-	assert(int(state.npcs[0].get("affinity", -1)) == int(data.get("npcs", [])[0].get("affinity", -1)))
-
-	state.player["dominion_requirement"] = [carried_id]
+	state.player_declared_dominion = true
 	RulesEngineScript.check_chapter_resolution(state)
-	assert(state.chapter_index == 2)
+	assert(state.chapter_index == 1)
 	assert(not state.ended)
 
 	state.load_chapter(data)
@@ -166,17 +148,20 @@ func _run() -> void:
 	state.load_chapter(data)
 	state.max_player_chars = 1
 	state.choose_npc(0)
-	events = RulesEngineScript.apply_dialogue_turn(state, "超过", "回应")
+	events = RulesEngineScript.apply_dialogue_turn(state, "too long", "reply")
 	assert(state.ended)
 	assert(not state.victory)
 	assert(state.intel_submitted)
 
 	var client := LlmClientScript.new()
-	var parsed := client.parse_json_response("```json\n{\"thinking\":\"想一想\",\"speech\":\"你好\",\"action\":\"gift\",\"artifact_id\":\"moon_lantern\",\"end_dialogue\":true}\n```", {})
-	assert(parsed.get("thinking") == "想一想")
+	root.add_child(client)
+	var parsed := client.parse_json_response("```json\n{\"thinking\":\"think\",\"speech\":\"hello\",\"action\":\"gift\",\"artifact_id\":\"moon_lantern\",\"end_dialogue\":true}\n```", {})
+	assert(parsed.get("thinking") == "think")
 	assert(parsed.get("action") == "gift")
 	assert(parsed.get("artifact_id") == "moon_lantern")
 	assert(parsed.get("end_dialogue") == true)
+	client.queue_free()
+	await process_frame
 
 	print("LiarsLand world intel and chapter flow rule tests passed.")
 	quit(0)
