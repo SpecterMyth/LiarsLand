@@ -415,7 +415,7 @@ func _run_current_dialogue() -> void:
 		if npc_response.has("error"):
 			_show_error(npc_response.get("error", ""))
 			return
-		var npc_speech := String(npc_response.get("speech", "浣犵殑璇濊鎴戞湁浜涘叴瓒ｃ€?)).strip_edges()
+		var npc_speech := String(npc_response.get("speech", "NPC response.")).strip_edges()
 		state.add_dialogue("npc", npc_speech)
 		await _finish_speech_stream("NPC", npc_speech, Color(1.0, 0.61, 0.48, 1.0))
 		var accepted_response := await _confirm_npc_offer(npc_response)

@@ -11,6 +11,7 @@ const BG_PATH := "res://assets/generated/bg_moon_market.png"
 var start_button: Button
 var rules_button: Button
 var settings_button: Button
+var button_row: HBoxContainer
 
 
 func _ready() -> void:
@@ -18,8 +19,6 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	z_index = 60
 	_build()
-	resized.connect(_fit_layout)
-	_fit_layout()
 
 
 func show_menu() -> void:
@@ -59,62 +58,85 @@ func _build() -> void:
 	vignette.texture = _texture("menu_panel_vignette.png")
 	add_child(vignette)
 
+	var content := VBoxContainer.new()
+	content.name = "StartMenuContent"
+	content.anchor_left = 0.10
+	content.anchor_top = 0.07
+	content.anchor_right = 0.90
+	content.anchor_bottom = 0.93
+	content.add_theme_constant_override("separation", 18)
+	add_child(content)
+
+	var top_spacer := Control.new()
+	top_spacer.custom_minimum_size = Vector2(0, 18)
+	content.add_child(top_spacer)
+
 	var logo := TextureRect.new()
 	logo.name = "LogoLiarsLand"
 	logo.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	logo.anchor_left = 0.18
-	logo.anchor_top = 0.12
-	logo.anchor_right = 0.82
-	logo.anchor_bottom = 0.36
+	logo.custom_minimum_size = Vector2(0, 230)
 	logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	logo.texture = _texture("logo_liars_land.png")
-	add_child(logo)
+	content.add_child(logo)
 
 	var subtitle := Label.new()
 	subtitle.name = "StartMenuSubtitle"
-	subtitle.text = "在月市的灯下，选择第一句真话"
+	subtitle.text = _utf8([229, 156, 168, 230, 156, 136, 229, 184, 130, 231, 154, 132, 231, 129, 175, 228, 184, 139, 239, 188, 140, 233, 128, 137, 230, 139, 169, 231, 172, 172, 228, 184, 128, 229, 143, 165, 231, 156, 159, 232, 175, 157])
 	subtitle.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	subtitle.anchor_left = 0.24
-	subtitle.anchor_top = 0.335
-	subtitle.anchor_right = 0.76
-	subtitle.anchor_bottom = 0.395
 	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	subtitle.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	subtitle.add_theme_font_size_override("font_size", 23)
 	subtitle.add_theme_constant_override("outline_size", 4)
 	subtitle.add_theme_color_override("font_color", Color(0.88, 0.76, 0.54, 1.0))
 	subtitle.add_theme_color_override("font_outline_color", Color(0.04, 0.015, 0.015, 1.0))
-	add_child(subtitle)
+	content.add_child(subtitle)
 
-	start_button = _make_button("开始游戏", true)
+	var middle_spacer := Control.new()
+	middle_spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	content.add_child(middle_spacer)
+
+	var start_wrap := CenterContainer.new()
+	start_wrap.custom_minimum_size = Vector2(0, 144)
+	content.add_child(start_wrap)
+
+	start_button = _make_button(_utf8([229, 188, 128, 229, 167, 139, 230, 184, 184, 230, 136, 143]), true)
 	start_button.name = "StartGameButton"
+	start_button.custom_minimum_size = Vector2(620, 144)
 	start_button.pressed.connect(func(): start_requested.emit())
-	add_child(start_button)
+	start_wrap.add_child(start_button)
 
-	rules_button = _make_button("行为准则", false)
+	button_row = HBoxContainer.new()
+	button_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	button_row.custom_minimum_size = Vector2(0, 92)
+	button_row.add_theme_constant_override("separation", 44)
+	content.add_child(button_row)
+
+	rules_button = _make_button(_utf8([232, 161, 140, 228, 184, 186, 229, 135, 134, 229, 136, 153]), false)
 	rules_button.name = "MenuRulesButton"
+	rules_button.custom_minimum_size = Vector2(288, 92)
 	rules_button.pressed.connect(func(): rules_requested.emit())
-	add_child(rules_button)
+	button_row.add_child(rules_button)
 
-	settings_button = _make_button("系统设置", false)
+	settings_button = _make_button(_utf8([231, 179, 187, 231, 187, 159, 232, 174, 190, 231, 189, 174]), false)
 	settings_button.name = "MenuSettingsButton"
+	settings_button.custom_minimum_size = Vector2(288, 92)
 	settings_button.pressed.connect(func(): settings_requested.emit())
-	add_child(settings_button)
+	button_row.add_child(settings_button)
+
+	var bottom_spacer := Control.new()
+	bottom_spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	content.add_child(bottom_spacer)
 
 	var hint := Label.new()
 	hint.name = "StartMenuHint"
-	hint.text = "主菜单概念 v1：最大按钮进入游戏，小按钮承载规则与设置"
+	hint.text = _utf8([228, 184, 187, 232, 143, 156, 229, 141, 149, 230, 166, 130, 229, 191, 181, 32, 118, 49, 239, 188, 154, 230, 156, 128, 229, 164, 167, 230, 140, 137, 233, 146, 174, 232, 191, 155, 229, 133, 165, 230, 184, 184, 230, 136, 143, 239, 188, 140, 229, 176, 143, 230, 140, 137, 233, 146, 174, 230, 137, 191, 232, 189, 189, 232, 167, 132, 229, 136, 153, 228, 184, 142, 232, 174, 190, 231, 189, 174])
 	hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	hint.anchor_left = 0.20
-	hint.anchor_top = 0.88
-	hint.anchor_right = 0.80
-	hint.anchor_bottom = 0.93
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	hint.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	hint.add_theme_font_size_override("font_size", 17)
 	hint.add_theme_color_override("font_color", Color(0.76, 0.66, 0.47, 1.0))
-	add_child(hint)
+	content.add_child(hint)
 
 	var border := TextureRect.new()
 	border.name = "StartMenuBorder"
@@ -126,34 +148,12 @@ func _build() -> void:
 	add_child(border)
 
 
-func _fit_layout() -> void:
-	if start_button == null or rules_button == null or settings_button == null:
-		return
-	var compact := size.x < 700.0
-	_place_centered(start_button, 0.535 if not compact else 0.55, min(620.0, size.x * 0.82), 144.0 if not compact else 116.0)
-	if compact:
-		_place_centered(rules_button, 0.73, min(288.0, size.x * 0.76), 82.0)
-		_place_centered(settings_button, 0.84, min(288.0, size.x * 0.76), 82.0)
-	else:
-		_place_centered(rules_button, 0.755, 288.0, 92.0, -150.0)
-		_place_centered(settings_button, 0.755, 288.0, 92.0, 150.0)
-
-
-func _place_centered(node: Control, center_y: float, width: float, height: float, center_offset_x := 0.0) -> void:
-	node.anchor_left = 0.5
-	node.anchor_top = center_y
-	node.anchor_right = 0.5
-	node.anchor_bottom = center_y
-	node.offset_left = -width / 2.0 + center_offset_x
-	node.offset_top = -height / 2.0
-	node.offset_right = width / 2.0 + center_offset_x
-	node.offset_bottom = height / 2.0
-
-
 func _make_button(text: String, primary: bool) -> Button:
 	var button := Button.new()
 	button.text = text
 	button.tooltip_text = text
+	button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	button.add_theme_font_size_override("font_size", 40 if primary else 24)
 	button.add_theme_color_override("font_color", Color(0.13, 0.03, 0.02, 1.0) if primary else Color(0.96, 0.84, 0.55, 1.0))
 	button.add_theme_color_override("font_hover_color", Color(0.09, 0.02, 0.015, 1.0) if primary else Color(1.0, 0.91, 0.66, 1.0))
@@ -193,3 +193,7 @@ func _texture_path(path: String) -> Texture2D:
 	if image != null:
 		return ImageTexture.create_from_image(image)
 	return null
+
+
+func _utf8(bytes: Array) -> String:
+	return PackedByteArray(bytes).get_string_from_utf8()
