@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs>
+<style>text{font-family:"Noto Sans SC","Microsoft YaHei",sans-serif;dominant-baseline:text-before-edge}.title{font-weight:700}</style>
+</defs>
+<rect x="0" y="0" width="1920" height="1080" fill="#120b0d" stroke="none" stroke-width="0" opacity="1"/>
+<polygon points="0,120 420,0 660,0 180,1080 0,1080" fill="#6d0d21" stroke="none" stroke-width="0" opacity="0.3333333333333333"/>
+<polygon points="1420,0 1920,0 1920,1080 1680,1080 1320,360" fill="#075b5d" stroke="none" stroke-width="0" opacity="0.3137254901960784"/>
+<polygon points="760,0 1140,0 980,1080 600,1080" fill="#3e1455" stroke="none" stroke-width="0" opacity="0.2549019607843137"/>
+<line x1="-100" y1="1080" x2="420" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="140" y1="1080" x2="660" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="380" y1="1080" x2="900" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="620" y1="1080" x2="1140" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="860" y1="1080" x2="1380" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="1100" y1="1080" x2="1620" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="1340" y1="1080" x2="1860" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="1580" y1="1080" x2="2100" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="1820" y1="1080" x2="2340" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="0" y1="0" x2="0" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="96" y1="0" x2="96" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="192" y1="0" x2="192" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="288" y1="0" x2="288" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="384" y1="0" x2="384" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="480" y1="0" x2="480" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="576" y1="0" x2="576" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="672" y1="0" x2="672" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="768" y1="0" x2="768" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="864" y1="0" x2="864" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="960" y1="0" x2="960" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1056" y1="0" x2="1056" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1152" y1="0" x2="1152" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1248" y1="0" x2="1248" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1344" y1="0" x2="1344" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1440" y1="0" x2="1440" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1536" y1="0" x2="1536" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1632" y1="0" x2="1632" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1728" y1="0" x2="1728" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1824" y1="0" x2="1824" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="0" y1="0" x2="1920" y2="0" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="96" x2="1920" y2="96" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="192" x2="1920" y2="192" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="288" x2="1920" y2="288" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="384" x2="1920" y2="384" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="480" x2="1920" y2="480" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="576" x2="1920" y2="576" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="672" x2="1920" y2="672" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="768" x2="1920" y2="768" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="864" x2="1920" y2="864" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="960" x2="1920" y2="960" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="1056" x2="1920" y2="1056" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<polygon points="554,272 1410,272 1410,608 1386,632 530,632 530,296" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="544,260 1400,260 1400,596 1376,620 520,620 520,284" fill="#211014" stroke="#d5a34a" stroke-width="3" opacity="1"/>
+<line x1="544" y1="268" x2="1372" y2="268" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="568" y="312" font-size="40" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">确认玩家行动</text>
+<text x="568" y="374" font-size="22" fill="#a99779" text-anchor="start" opacity="1">你方角色决定执行「决斗」。目标：灯下账房。是否允许本次行动？</text>
+<polygon points="926,524 1114,524 1114,568 1102,580 914,580 914,536" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="916,512 1104,512 1104,556 1092,568 904,568 904,524" fill="#242226" stroke="#5c5960" stroke-width="2" opacity="1"/>
+<line x1="916" y1="520" x2="1076" y2="520" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="1004" y="526" font-size="24" fill="#f6e9cb" text-anchor="middle" opacity="1" class="title">取消</text>
+<polygon points="1154,524 1362,524 1362,568 1350,580 1142,580 1142,536" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="1144,512 1352,512 1352,556 1340,568 1132,568 1132,524" fill="#3a1414" stroke="#b5423c" stroke-width="2" opacity="1"/>
+<line x1="1144" y1="520" x2="1324" y2="520" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="1242" y="526" font-size="24" fill="#f6e9cb" text-anchor="middle" opacity="1" class="title">确定</text>
+</svg>

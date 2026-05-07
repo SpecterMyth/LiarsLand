@@ -1,0 +1,227 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/ui/shop_item_card.tscn" id="1_item"]
+
+[node name="ShopPage" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Veil" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.56)
+
+[node name="TitleBanner" type="TextureRect" parent="."]
+layout_mode = 1
+anchor_top = 0.055
+anchor_right = 0.475
+anchor_bottom = 0.205
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 1
+
+[node name="TitleLabel" type="Label" parent="."]
+layout_mode = 1
+anchor_left = 0.04
+anchor_top = 0.083
+anchor_right = 0.34
+anchor_bottom = 0.163
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 48
+text = "月市商店"
+vertical_alignment = 1
+
+[node name="StatusBar" type="PanelContainer" parent="."]
+layout_mode = 1
+anchor_left = 0.695
+anchor_top = 0.07
+anchor_right = 0.96
+anchor_bottom = 0.13
+
+[node name="StatusRow" type="HBoxContainer" parent="StatusBar"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="EnergyLabel" type="Label" parent="StatusBar/StatusRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 19
+text = "◇ 能量 0"
+vertical_alignment = 1
+
+[node name="InventoryLabel" type="Label" parent="StatusBar/StatusRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 19
+text = "袋 背包 0"
+vertical_alignment = 1
+
+[node name="PlayerCard" type="PanelContainer" parent="."]
+layout_mode = 1
+anchor_left = 0.03
+anchor_top = 0.22
+anchor_right = 0.25
+anchor_bottom = 0.94
+
+[node name="PlayerContent" type="VBoxContainer" parent="PlayerCard"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Portrait" type="TextureRect" parent="PlayerCard/PlayerContent"]
+custom_minimum_size = Vector2(0, 235)
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="NamePlate" type="Label" parent="PlayerCard/PlayerContent"]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "玩家角色"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Stats" type="VBoxContainer" parent="PlayerCard/PlayerContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="AscensionRequirement" type="PanelContainer" parent="."]
+layout_mode = 1
+anchor_left = 0.295
+anchor_top = 0.22
+anchor_right = 0.53
+anchor_bottom = 0.395
+
+[node name="Box" type="VBoxContainer" parent="AscensionRequirement"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="AscensionRequirement/Box"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "升华需求"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Slots" type="HBoxContainer" parent="AscensionRequirement/Box"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="DominionRequirement" type="PanelContainer" parent="."]
+layout_mode = 1
+anchor_left = 0.565
+anchor_top = 0.22
+anchor_right = 0.8
+anchor_bottom = 0.395
+
+[node name="Box" type="VBoxContainer" parent="DominionRequirement"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="DominionRequirement/Box"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "统治需求"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Slots" type="HBoxContainer" parent="DominionRequirement/Box"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="ShopItemsTitle" type="Label" parent="."]
+layout_mode = 1
+anchor_left = 0.405
+anchor_top = 0.415
+anchor_right = 0.695
+anchor_bottom = 0.473
+theme_override_font_sizes/font_size = 26
+text = "可购买法器"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ShopItemSlots" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ShopItem1" parent="ShopItemSlots" instance=ExtResource("1_item")]
+layout_mode = 1
+anchor_left = 0.3
+anchor_top = 0.5
+anchor_right = 0.45
+anchor_bottom = 0.905
+
+[node name="ShopItem2" parent="ShopItemSlots" instance=ExtResource("1_item")]
+layout_mode = 1
+anchor_left = 0.468
+anchor_top = 0.5
+anchor_right = 0.618
+anchor_bottom = 0.905
+
+[node name="ShopItem3" parent="ShopItemSlots" instance=ExtResource("1_item")]
+layout_mode = 1
+anchor_left = 0.636
+anchor_top = 0.5
+anchor_right = 0.786
+anchor_bottom = 0.905
+
+[node name="BackpackPanel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchor_left = 0.805
+anchor_top = 0.24
+anchor_right = 0.97
+anchor_bottom = 0.905
+
+[node name="BackpackContent" type="VBoxContainer" parent="BackpackPanel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="BackpackTitle" type="Label" parent="BackpackPanel/BackpackContent"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "我的背包"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BackpackGrid" type="GridContainer" parent="BackpackPanel/BackpackContent"]
+layout_mode = 2
+columns = 2
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+
+[node name="LeaveButton" type="Button" parent="BackpackPanel/BackpackContent"]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 23
+text = "离开商店"

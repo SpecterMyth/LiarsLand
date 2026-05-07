@@ -13,6 +13,7 @@ var config: Dictionary = {}
 var player_http: HTTPRequest
 var npc_http: HTTPRequest
 var last_error := ""
+var cancelled_sections := {}
 
 
 func _ready() -> void:
@@ -30,9 +31,14 @@ func use_mock_llm() -> bool:
 
 func chat_json(section: String, system_prompt: String, user_prompt: String, fallback: Dictionary, stream_text := false) -> Dictionary:
 	last_error = ""
+	cancelled_sections[section] = false
 	if _should_mock(section):
 		if stream_text:
 			await _emit_mock_response_stream(section, fallback)
+		if _is_cancelled(section):
+			var cancelled_mock := fallback.duplicate(true)
+			cancelled_mock["cancelled"] = true
+			return cancelled_mock
 		return fallback
 	var http := player_http if section == "player_llm" else npc_http
 	var raw := ""
@@ -40,11 +46,27 @@ func chat_json(section: String, system_prompt: String, user_prompt: String, fall
 		raw = await _call_chat_stream(section, system_prompt, user_prompt)
 	else:
 		raw = await _call_chat(http, section, system_prompt, user_prompt, false)
+	if _is_cancelled(section):
+		var cancelled_response := fallback.duplicate(true)
+		cancelled_response["cancelled"] = true
+		return cancelled_response
 	if not last_error.is_empty():
 		var error_response := fallback.duplicate(true)
 		error_response["error"] = last_error
 		return error_response
 	return parse_json_response(raw, fallback)
+
+
+func cancel_section(section: String) -> void:
+	cancelled_sections[section] = true
+	if section == "player_llm" and player_http != null:
+		player_http.cancel_request()
+	elif section == "npc_llm" and npc_http != null:
+		npc_http.cancel_request()
+
+
+func _is_cancelled(section: String) -> bool:
+	return bool(cancelled_sections.get(section, false))
 
 
 func parse_json_response(raw: String, fallback: Dictionary) -> Dictionary:
@@ -110,6 +132,8 @@ func _call_chat(http: HTTPRequest, section: String, system_prompt: String, user_
 		log_message.emit(last_error)
 		return ""
 	var completed: Array = await http.request_completed
+	if _is_cancelled(section):
+		return ""
 	var status_code := int(completed[1])
 	var bytes: PackedByteArray = completed[3]
 	var text := bytes.get_string_from_utf8()
@@ -163,6 +187,9 @@ func _call_chat_stream(section: String, system_prompt: String, user_prompt: Stri
 		log_message.emit(last_error)
 		return ""
 	while client.get_status() == HTTPClient.STATUS_CONNECTING or client.get_status() == HTTPClient.STATUS_RESOLVING:
+		if _is_cancelled(section):
+			client.close()
+			return ""
 		client.poll()
 		await get_tree().process_frame
 	if client.get_status() != HTTPClient.STATUS_CONNECTED:
@@ -181,11 +208,17 @@ func _call_chat_stream(section: String, system_prompt: String, user_prompt: Stri
 	var visible_fields := {}
 	var status_code := 0
 	while client.get_status() == HTTPClient.STATUS_REQUESTING:
+		if _is_cancelled(section):
+			client.close()
+			return ""
 		client.poll()
 		await get_tree().process_frame
 	if client.has_response():
 		status_code = client.get_response_code()
 		while client.get_status() == HTTPClient.STATUS_BODY:
+			if _is_cancelled(section):
+				client.close()
+				return ""
 			client.poll()
 			var chunk := client.read_response_body_chunk()
 			if chunk.size() > 0:
@@ -364,6 +397,8 @@ func _preview_stream_text(content: String) -> String:
 
 func _emit_mock_stream(section: String, text: String) -> void:
 	for i in range(0, text.length(), 6):
+		if _is_cancelled(section):
+			return
 		_emit_stream_field(section, "thinking", text.substr(i, 6))
 		await get_tree().create_timer(0.035).timeout
 
@@ -371,12 +406,16 @@ func _emit_mock_stream(section: String, text: String) -> void:
 func _emit_mock_response_stream(section: String, response: Dictionary) -> void:
 	if response.has("thinking"):
 		await _emit_mock_field_stream(section, "thinking", String(response.get("thinking", "")))
+	if _is_cancelled(section):
+		return
 	if response.has("speech"):
 		await _emit_mock_field_stream(section, "speech", String(response.get("speech", "")))
 
 
 func _emit_mock_field_stream(section: String, field_name: String, text: String) -> void:
 	for i in range(0, text.length(), 6):
+		if _is_cancelled(section):
+			return
 		_emit_stream_field(section, field_name, text.substr(i, 6))
 		await get_tree().create_timer(0.035).timeout
 

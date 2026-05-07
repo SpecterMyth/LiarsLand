@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs>
+<style>text{font-family:"Noto Sans SC","Microsoft YaHei",sans-serif;dominant-baseline:text-before-edge}.title{font-weight:700}</style>
+</defs>
+<rect x="0" y="0" width="1920" height="1080" fill="#120b0d" stroke="none" stroke-width="0" opacity="1"/>
+<polygon points="0,120 420,0 660,0 180,1080 0,1080" fill="#6d0d21" stroke="none" stroke-width="0" opacity="0.3333333333333333"/>
+<polygon points="1420,0 1920,0 1920,1080 1680,1080 1320,360" fill="#075b5d" stroke="none" stroke-width="0" opacity="0.3137254901960784"/>
+<polygon points="760,0 1140,0 980,1080 600,1080" fill="#3e1455" stroke="none" stroke-width="0" opacity="0.2549019607843137"/>
+<line x1="-100" y1="1080" x2="420" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="140" y1="1080" x2="660" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="380" y1="1080" x2="900" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="620" y1="1080" x2="1140" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="860" y1="1080" x2="1380" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="1100" y1="1080" x2="1620" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="1340" y1="1080" x2="1860" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="1580" y1="1080" x2="2100" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="1820" y1="1080" x2="2340" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="0" y1="0" x2="0" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="96" y1="0" x2="96" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="192" y1="0" x2="192" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="288" y1="0" x2="288" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="384" y1="0" x2="384" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="480" y1="0" x2="480" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="576" y1="0" x2="576" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="672" y1="0" x2="672" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="768" y1="0" x2="768" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="864" y1="0" x2="864" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="960" y1="0" x2="960" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1056" y1="0" x2="1056" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1152" y1="0" x2="1152" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1248" y1="0" x2="1248" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1344" y1="0" x2="1344" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1440" y1="0" x2="1440" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1536" y1="0" x2="1536" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1632" y1="0" x2="1632" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1728" y1="0" x2="1728" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1824" y1="0" x2="1824" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="0" y1="0" x2="1920" y2="0" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="96" x2="1920" y2="96" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="192" x2="1920" y2="192" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="288" x2="1920" y2="288" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="384" x2="1920" y2="384" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="480" x2="1920" y2="480" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="576" x2="1920" y2="576" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="672" x2="1920" y2="672" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="768" x2="1920" y2="768" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="864" x2="1920" y2="864" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="960" x2="1920" y2="960" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="1056" x2="1920" y2="1056" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<polygon points="428,208 1538,208 1538,870 1512,896 402,896 402,234" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="418,196 1528,196 1528,858 1502,884 392,884 392,222" fill="#211014" stroke="#d5a34a" stroke-width="3" opacity="1"/>
+<line x1="418" y1="204" x2="1500" y2="204" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="448" y="252" font-size="40" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">NPC 提出法器交换</text>
+<text x="448" y="310" font-size="22" fill="#a99779" text-anchor="start" opacity="1">灯下账房想与你交换法器。下方同时显示你的统治与升华需求，便于判断风险。</text>
+<polygon points="476,392 914,392 914,570 896,588 458,588 458,410" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="466,380 904,380 904,558 886,576 448,576 448,398" fill="#160e12" stroke="#1fb7a6" stroke-width="3" opacity="1"/>
+<line x1="466" y1="388" x2="876" y2="388" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="480" y="412" font-size="24" fill="#1fb7a6" text-anchor="start" opacity="1" class="title">NPC 给出</text>
+<polygon points="502,468 650,468 650,552 638,564 490,564 490,480" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="492,456 640,456 640,540 628,552 480,552 480,468" fill="#111012" stroke="#1fb7a6" stroke-width="3" opacity="1"/>
+<line x1="492" y1="464" x2="612" y2="464" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="512" y="468" width="72" height="72" fill="none" stroke="#1fb7a6" stroke-width="1" opacity="0.01"/>
+<text x="664" y="466" font-size="28" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">月厅密钥</text>
+<text x="664" y="510" font-size="18" fill="#a99779" text-anchor="start" opacity="1">交换获得后进入背包</text>
+<polygon points="1044,392 1482,392 1482,570 1464,588 1026,588 1026,410" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="1034,380 1472,380 1472,558 1454,576 1016,576 1016,398" fill="#160e12" stroke="#b5423c" stroke-width="3" opacity="1"/>
+<line x1="1034" y1="388" x2="1444" y2="388" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="1048" y="412" font-size="24" fill="#b5423c" text-anchor="start" opacity="1" class="title">你交出</text>
+<polygon points="1070,468 1218,468 1218,552 1206,564 1058,564 1058,480" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="1060,456 1208,456 1208,540 1196,552 1048,552 1048,468" fill="#111012" stroke="#b5423c" stroke-width="3" opacity="1"/>
+<line x1="1060" y1="464" x2="1180" y2="464" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="1088" y="468" width="72" height="72" fill="none" stroke="#b5423c" stroke-width="1" opacity="0.01"/>
+<text x="1232" y="466" font-size="28" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">血契棱镜</text>
+<text x="1232" y="510" font-size="18" fill="#a99779" text-anchor="start" opacity="1">统治需求之一</text>
+<line x1="922" y1="486" x2="982" y2="486" stroke="#e4b85b" stroke-width="8" opacity="1"/>
+<polygon points="982,486 960,472 960,500" fill="#e4b85b" stroke="none" stroke-width="0" opacity="1"/>
+<line x1="982" y1="526" x2="922" y2="526" stroke="#e4b85b" stroke-width="8" opacity="1"/>
+<polygon points="922,526 944,512 944,540" fill="#e4b85b" stroke="none" stroke-width="0" opacity="1"/>
+<polygon points="474,628 954,628 954,756 938,772 458,772 458,644" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="464,616 944,616 944,744 928,760 448,760 448,632" fill="#171114" stroke="#b5423c" stroke-width="3" opacity="1"/>
+<line x1="464" y1="624" x2="916" y2="624" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="480" y="644" font-size="24" fill="#b5423c" text-anchor="start" opacity="1" class="title">我的统治需求</text>
+<rect x="480" y="686" width="52" height="52" fill="none" stroke="#b5423c" stroke-width="1" opacity="0.01"/>
+<text x="536" y="700" font-size="16" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">血契</text>
+<rect x="620" y="686" width="52" height="52" fill="none" stroke="#b77725" stroke-width="1" opacity="0.01"/>
+<text x="676" y="700" font-size="16" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">月厅</text>
+<rect x="760" y="686" width="52" height="52" fill="none" stroke="#b77725" stroke-width="1" opacity="0.01"/>
+<text x="816" y="700" font-size="16" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">灰冠</text>
+<polygon points="1002,628 1482,628 1482,756 1466,772 986,772 986,644" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="992,616 1472,616 1472,744 1456,760 976,760 976,632" fill="#171114" stroke="#1fb7a6" stroke-width="3" opacity="1"/>
+<line x1="992" y1="624" x2="1444" y2="624" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="1008" y="644" font-size="24" fill="#1fb7a6" text-anchor="start" opacity="1" class="title">我的升华需求</text>
+<rect x="1008" y="686" width="52" height="52" fill="none" stroke="#1fb7a6" stroke-width="1" opacity="0.01"/>
+<text x="1064" y="700" font-size="16" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">银针</text>
+<rect x="1168" y="686" width="52" height="52" fill="none" stroke="#1fb7a6" stroke-width="1" opacity="0.01"/>
+<text x="1224" y="700" font-size="16" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">失落</text>
+<polygon points="990,808 1178,808 1178,852 1166,864 978,864 978,820" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="980,796 1168,796 1168,840 1156,852 968,852 968,808" fill="#242226" stroke="#5c5960" stroke-width="2" opacity="1"/>
+<line x1="980" y1="804" x2="1140" y2="804" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="1068" y="810" font-size="24" fill="#f6e9cb" text-anchor="middle" opacity="1" class="title">拒绝</text>
+<polygon points="1222,808 1450,808 1450,852 1438,864 1210,864 1210,820" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="1212,796 1440,796 1440,840 1428,852 1200,852 1200,808" fill="#4b3014" stroke="#e4b85b" stroke-width="2" opacity="1"/>
+<line x1="1212" y1="804" x2="1412" y2="804" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="1320" y="810" font-size="24" fill="#f6e9cb" text-anchor="middle" opacity="1" class="title">接受交换</text>
+</svg>

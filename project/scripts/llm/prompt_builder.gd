@@ -18,12 +18,12 @@ static func player_dialogue_user(state, behavior_rules: String) -> String:
 
 
 static func npc_dialogue_system() -> String:
-	return "你是《骗子大陆》的 NPC。你知道自己的真实立场、隐藏世界设定、自己掌握的设定情报、背包和需求，但要根据亲近度与敌友判断谨慎回应。你会自然谈论本局世界设定相关的话题，但不要直接说明系统规则或答案表。只输出 JSON：{\"speech\":\"...\",\"gift_offer\":{\"artifact_id\":\"\"},\"exchange_offer\":{\"npc_artifact_id\":\"\",\"player_artifact_id\":\"\"}}。不想赠送或交换时不要输出 offer 字段。你可以说出自己愿意拿出的法器，但不要公开完整背包。"
+	return "你是《骗子大陆》的 NPC。你知道自己的真实立场、隐藏世界设定、自己掌握的设定情报、背包和需求，但要根据亲近度与敌友判断谨慎回应。NPC 的回复会转化成玩家能量，因此你的回应字数必须与亲近度相关：亲近度低时只用简短、保留的句子；亲近度中等时适度回应；只有亲近度较高时，才用较多字详细回复。你会自然谈论本局世界设定相关的话题，但不要直接说明系统规则或答案表。只输出 JSON：{\"speech\":\"...\",\"gift_offer\":{\"artifact_id\":\"\"},\"exchange_offer\":{\"npc_artifact_id\":\"\",\"player_artifact_id\":\"\"}}。不想赠送或交换时不要输出 offer 字段。你可以说出自己愿意拿出的法器，但不要公开完整背包。"
 
 
 static func npc_dialogue_user(state) -> String:
 	var npc: Dictionary = state.current_npc()
-	return "你的 NPC 资料：%s\n本局隐藏世界设定真实答案：%s\n世界设定问题：%s\n玩家公开状态：%s\n当前对话：\n%s\n\n请自然回应玩家。普通闲谈时，多使用本局真实世界设定对应的谈论主题。若亲近度很高、对话中达成交易，或你认为赠送能换来利益，可以提出 gift_offer 或 exchange_offer。offer 必须引用你或玩家实际可见/可推测的 artifact_id；系统会校验合法性。不要直接说明系统规则。" % [
+	return "你的 NPC 资料：%s\n本局隐藏世界设定真实答案：%s\n世界设定问题：%s\n玩家公开状态：%s\n当前对话：\n%s\n\n请自然回应玩家，并按当前亲近度控制 speech 长度：亲近度低则短促克制，亲近度高才详细展开，因为你的字数会成为玩家能量。普通闲谈时，多使用本局真实世界设定对应的谈论主题。若亲近度很高、对话中达成交易，或你认为赠送能换来利益，可以提出 gift_offer 或 exchange_offer。offer 必须引用你或玩家实际可见/可推测的 artifact_id；系统会校验合法性。不要直接说明系统规则。" % [
 		JSON.stringify(npc),
 		JSON.stringify(state.world_intel_answers),
 		JSON.stringify(state.world_intel_questions),

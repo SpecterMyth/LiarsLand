@@ -1,5 +1,4 @@
 ﻿extends Control
-class_name AdventureScreen
 
 const CHAPTER_PATH := "res://data/chapter_01.json"
 const DEFAULT_RULES := "## 角色基调\n冷静、谨慎、礼貌，不轻易暴露真实目的。\n\n## 对话策略\n优先提升好感度，试探对方如何理解本局世界的隐藏设定。需要统治法器时，可以谈交换、赠送、邀请、施法或撤离。\n\n## 行动策略\n风险不清时优先撤离。确认对方是敌人且收益足够时再暗杀或决斗。不要击杀友方 NPC。最终目标是活过三章并提交 6 条世界设定档案。"
@@ -12,6 +11,14 @@ const PromptBuilderScript := preload("res://scripts/llm/prompt_builder.gd")
 const AdventureLayoutScript := preload("res://scripts/ui/adventure_layout.gd")
 const CardUiKitScript := preload("res://scripts/ui/card_ui_kit.gd")
 const StartMenuScript := preload("res://scripts/ui/start_menu.gd")
+const RoundSelectPageScene := preload("res://scenes/ui/round_select_page.tscn")
+const ShopPageScene := preload("res://scenes/ui/shop_page.tscn")
+const AscensionPageScene := preload("res://scenes/ui/ascension_page.tscn")
+const ArtifactSlotScene := preload("res://scenes/ui/artifact_slot.tscn")
+const ROUND_UI_ROOT := "res://assets/ui/common/"
+const SELECT_CARD_ROOT := "res://assets/ui/characters/cards/"
+const SHOP_UI_ROOT := "res://assets/generated/ui/shop_v2/"
+const UI_FONT_PATH := "res://assets/fonts/NotoSansSC-VF.ttf"
 
 var config: Dictionary = {}
 var state
@@ -65,6 +72,8 @@ var bag_button: Button
 var rules_button: Button
 var status_button: Button
 var settings_button: Button
+var action_buttons: Dictionary = {}
+var auto_decide_check: CheckBox
 var drawer: PanelContainer
 var rules_panel: PanelContainer
 var settings_panel: PanelContainer
@@ -84,6 +93,8 @@ var selection_panel: Control
 var selection_box: Control
 var trade_panel: PanelContainer
 var trade_box: VBoxContainer
+var action_panel: PanelContainer
+var action_box: VBoxContainer
 var shop_panel: Control
 var shop_box: Control
 var ascension_box: Control
@@ -95,6 +106,14 @@ var last_final_speaker := ""
 var last_final_speech := ""
 var last_final_role := "player"
 var active_dialogue_role := "player"
+var action_choice := 0
+var selected_action_artifact := ""
+var manual_action_resolved := false
+var manual_action_in_progress := false
+
+const STATUS_BASE_SIZE := Vector2(1672.0, 941.0)
+const STATUS_PANEL_HEIGHT := 52.0
+const STATUS_PANEL_TOP := 6.0
 
 
 func _ready() -> void:
@@ -107,6 +126,47 @@ func _ready() -> void:
 
 func _fit_full() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
+	_fit_status_panel_to_text()
+
+
+func _set_status_text(text: String) -> void:
+	if status_label == null:
+		return
+	status_label.text = text
+	_fit_status_panel_to_text()
+
+
+func _fit_status_panel_to_text() -> void:
+	if status_label == null or not is_instance_valid(status_label):
+		return
+	var panel := status_label.get_parent() as Control
+	if panel == null:
+		return
+	var text_width: float = _estimate_status_text_width(status_label.text)
+	var panel_width: float = clamp(text_width + 360.0, 620.0, 1180.0)
+	var x: float = (STATUS_BASE_SIZE.x - panel_width) * 0.5
+	panel.anchor_left = x / STATUS_BASE_SIZE.x
+	panel.anchor_top = STATUS_PANEL_TOP / STATUS_BASE_SIZE.y
+	panel.anchor_right = (x + panel_width) / STATUS_BASE_SIZE.x
+	panel.anchor_bottom = (STATUS_PANEL_TOP + STATUS_PANEL_HEIGHT) / STATUS_BASE_SIZE.y
+	panel.offset_left = 0
+	panel.offset_top = 0
+	panel.offset_right = 0
+	panel.offset_bottom = 0
+
+
+func _estimate_status_text_width(text: String) -> float:
+	var font_size := 24.0
+	if status_label != null:
+		font_size = float(status_label.get_theme_font_size("font_size"))
+		var font := status_label.get_theme_font("font")
+		if font != null:
+			return font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1.0, int(font_size)).x
+	var width := 0.0
+	for i in range(text.length()):
+		var code := text.unicode_at(i)
+		width += font_size * (0.58 if code < 128 else 1.02)
+	return width
 
 
 func _setup_llm() -> void:
@@ -160,6 +220,8 @@ func _build_ui() -> void:
 	rules_button = controls.get("rules_button")
 	status_button = controls.get("status_button")
 	settings_button = controls.get("settings_button")
+	action_buttons = controls.get("action_buttons", {})
+	auto_decide_check = controls.get("auto_decide_check")
 	drawer = controls.get("drawer")
 	rules_panel = controls.get("rules_panel")
 	settings_panel = controls.get("settings_panel")
@@ -183,15 +245,21 @@ func _build_ui() -> void:
 	rules_button.pressed.connect(_toggle_rules)
 	status_button.pressed.connect(func(): _show_drawer("status"))
 	settings_button.pressed.connect(_toggle_settings)
+	for action in action_buttons.keys():
+		var action_button := action_buttons[action] as Button
+		if action_button != null:
+			action_button.pressed.connect(Callable(self, "_on_manual_action_pressed").bind(String(action)))
 	modal_backdrop.pressed.connect(_close_float_panels)
 	continue_button.pressed.connect(_on_continue_pressed)
 	_wire_blank_close([intel_panel, drawer, rules_panel, settings_panel, history_dialog])
 	_build_upgrade_buttons()
 	_build_selection_panel()
 	_build_trade_panel()
+	_build_action_panel()
 	_build_shop_panel()
 	_build_ascension_panel()
 	_wire_button_feedback([start_button, reset_button, history_button, info_button, bag_button, rules_button, status_button, settings_button, continue_button])
+	_wire_button_feedback(action_buttons.values())
 	_start_ambience()
 	_build_start_menu()
 
@@ -206,41 +274,56 @@ func _build_start_menu() -> void:
 
 
 func _build_selection_panel() -> void:
-	selection_panel = card_kit.make_reference_page("page_round_start_v4.png")
+	selection_panel = _instantiate_flow_page(RoundSelectPageScene)
 	selection_panel.visible = false
 	add_child(selection_panel)
-	selection_box = Control.new()
-	selection_box.set_anchors_preset(Control.PRESET_FULL_RECT)
-	selection_panel.add_child(selection_box)
+	selection_box = selection_panel
 
 
 func _build_shop_panel() -> void:
-	shop_panel = card_kit.make_reference_page("page_shop_v5.png")
+	shop_panel = _instantiate_flow_page(ShopPageScene)
 	shop_panel.visible = false
 	add_child(shop_panel)
-	shop_box = Control.new()
-	shop_box.set_anchors_preset(Control.PRESET_FULL_RECT)
-	shop_panel.add_child(shop_box)
+	shop_box = shop_panel
 
 
 func _build_ascension_panel() -> void:
 	if upgrade_panel != null:
 		upgrade_panel.visible = false
-	upgrade_panel = card_kit.make_reference_page("page_ascension_v5.png")
+	upgrade_panel = _instantiate_flow_page(AscensionPageScene)
 	upgrade_panel.visible = false
 	add_child(upgrade_panel)
-	ascension_box = Control.new()
-	ascension_box.set_anchors_preset(Control.PRESET_FULL_RECT)
-	upgrade_panel.add_child(ascension_box)
+	ascension_box = upgrade_panel
 
 
 func _build_trade_panel() -> void:
 	trade_panel = _make_overlay_panel(Vector2(620, 260))
 	trade_panel.visible = false
+	trade_panel.z_index = 3000
+	trade_panel.mouse_filter = Control.MOUSE_FILTER_STOP
 	add_child(trade_panel)
 	trade_box = VBoxContainer.new()
 	trade_box.add_theme_constant_override("separation", 10)
 	trade_panel.add_child(trade_box)
+
+
+func _build_action_panel() -> void:
+	action_panel = _make_overlay_panel(Vector2(560, 340))
+	action_panel.visible = false
+	action_panel.z_index = 3010
+	action_panel.mouse_filter = Control.MOUSE_FILTER_STOP
+	add_child(action_panel)
+	action_box = VBoxContainer.new()
+	action_box.add_theme_constant_override("separation", 10)
+	action_panel.add_child(action_box)
+
+
+func _instantiate_flow_page(scene: PackedScene) -> Control:
+	var page: Control = scene.instantiate()
+	page.set_anchors_preset(Control.PRESET_FULL_RECT)
+	page.z_index = 1000
+	page.mouse_filter = Control.MOUSE_FILTER_STOP
+	return page
 
 
 func _make_overlay_panel(size: Vector2) -> PanelContainer:
@@ -270,13 +353,21 @@ func _reset_ui() -> void:
 	pending_stat_points = 0
 	selected_npc_choice = -1
 	shop_done = false
+	action_choice = 0
+	selected_action_artifact = ""
+	manual_action_resolved = false
+	manual_action_in_progress = false
 	start_button.disabled = false
 	rules_edit.editable = true
 	upgrade_panel.visible = false
 	selection_panel.visible = false
 	trade_panel.visible = false
+	if action_panel != null:
+		action_panel.visible = false
 	shop_panel.visible = false
 	result_banner.visible = false
+	if auto_decide_check != null:
+		auto_decide_check.button_pressed = false
 	if settings_panel != null:
 		settings_panel.visible = false
 	if modal_backdrop != null:
@@ -302,10 +393,10 @@ func _reset_ui() -> void:
 	last_final_speaker = ""
 	last_final_speech = ""
 	highlighted_cards.clear()
-	dialogue_title.text = "瀵硅瘽"
+	dialogue_title.text = "对话"
 	dialogue_view.clear()
 	state_view.clear()
-	status_label.text = "%s：等待开始" % state.chapter.get("title", "骗子大陆")
+	_set_status_text("%s：等待开始" % state.chapter.get("title", "骗子大陆"))
 	npc_label.text = "等待选择"
 	player_label.text = _player_short_name()
 	if current_speaker_label != null:
@@ -368,6 +459,7 @@ func _choose_npc_ui() -> void:
 	selection_panel.visible = false
 	if selected_npc_choice >= 0:
 		state.choose_npc(selected_npc_choice)
+		_clear_last_final_dialogue()
 		_set_current_npc_assets()
 	_show_scene_message("已选择和 %s 聊聊。" % [state.current_npc().get("public_name", "NPC")])
 
@@ -376,66 +468,487 @@ func _render_npc_selection_page() -> void:
 	_set_dialogue_visible(false)
 	if selection_panel != null:
 		selection_panel.queue_free()
-	selection_panel = card_kit.make_reference_page("page_round_start_v4.png")
+	selection_panel = _instantiate_flow_page(RoundSelectPageScene)
 	add_child(selection_panel)
-	selection_box = Control.new()
-	selection_box.set_anchors_preset(Control.PRESET_FULL_RECT)
-	selection_panel.add_child(selection_box)
-	_add_hotspot_button(selection_box, "选择", Rect2(0.325, 0.790, 0.130, 0.085), func(): selected_npc_choice = 0)
-	_add_hotspot_button(selection_box, "选择", Rect2(0.515, 0.790, 0.130, 0.085), func(): selected_npc_choice = 1)
-	_add_hotspot_button(selection_box, "选择", Rect2(0.725, 0.790, 0.130, 0.085), func(): selected_npc_choice = 2)
-	_add_final_reference_utility_hotspots(selection_box)
+	selection_box = selection_panel
+	_populate_round_select_page()
 	selection_panel.visible = true
-	status_label.text = "第 %d / %d 回合：选择 NPC" % [state.chapter_round + 1, state.max_rounds]
+	_set_status_text("第 %d / %d 回合：%s" % [state.chapter_round + 1, state.max_rounds, _round_select_scene_name()])
 	_update_progress()
+
+
+func _populate_round_select_page() -> void:
+	var counter := selection_panel.get_node_or_null("RoundCounter/RoundCounterLabel") as Label
+	if counter != null:
+		counter.text = "第 %d / %d 回合" % [state.chapter_round + 1, state.max_rounds]
+	_apply_round_player_card(selection_panel.get_node_or_null("PlayerCard") as Control)
+	var slots := selection_panel.get_node_or_null("NpcCardSlots") as Control
+	if slots != null:
+		for i in range(3):
+			var card := slots.get_node_or_null("NpcCard%d" % [i + 1]) as Button
+			if card == null:
+				continue
+			card.visible = i < state.npc_choices.size()
+			if card.visible:
+				var npc_index: int = state.npc_choices[i]
+				card.visible = npc_index >= 0 and npc_index < state.npcs.size()
+				if card.visible:
+					_apply_npc_select_card(card, state.npcs[npc_index], i)
+	_apply_round_utility_column(selection_panel.get_node_or_null("UtilityColumn") as VBoxContainer)
+
+
+func _apply_round_player_card(root: Control) -> void:
+	if root == null:
+		return
+	var card := root.get_node_or_null("CardTexture") as TextureRect
+	if card != null:
+		card.texture = _load_texture_any(SELECT_CARD_ROOT + "player_select_card.png")
+	_ensure_select_card_shadow_mask(root)
+	var name := root.get_node_or_null("NameLabel") as Label
+	if name != null:
+		name.text = "玩家角色"
+	var stats := root.get_node_or_null("Stats") as Control
+	if stats == null:
+		return
+	_clear_children(stats)
+	var rows := _player_stat_rows()
+	for i in range(rows.size()):
+		var row := _make_select_stat_row(String(rows[i][0]), String(rows[i][1]), i)
+		_place_by_ratio(row, Rect2(0.0, i * 0.250, 1.0, 0.220))
+		stats.add_child(row)
+
+
+func _apply_npc_select_card(card: Button, npc: Dictionary, choice_index: int) -> void:
+	card.text = ""
+	card.focus_mode = Control.FOCUS_NONE
+	card.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
+	card.add_theme_stylebox_override("hover", StyleBoxEmpty.new())
+	card.add_theme_stylebox_override("pressed", StyleBoxEmpty.new())
+	card.pressed.connect(func(): selected_npc_choice = choice_index)
+	_ensure_select_card_shadow_mask(card)
+	var texture := card.get_node_or_null("CardTexture") as TextureRect
+	if texture != null:
+		texture.texture = _load_texture_any(_select_card_path_for_npc(npc))
+	var name := card.get_node_or_null("NameLabel") as Label
+	if name != null:
+		name.text = String(npc.get("public_name", "NPC"))
+	var tag := card.get_node_or_null("TagLabel") as Label
+	if tag != null:
+		tag.visible = false
+	var choose := card.get_node_or_null("ChooseButton") as Button
+	if choose != null:
+		_style_primary_button(choose, "选择", 24)
+		choose.pressed.connect(func(): selected_npc_choice = choice_index)
+		_wire_button_feedback([choose])
+	_wire_hold_hover_feedback([card])
+
+
+func _apply_round_utility_column(box: VBoxContainer) -> void:
+	if box == null:
+		return
+	_clear_children(box)
+	var specs := [
+		["情报", "icon_info.png", Color(0.02, 0.48, 0.45, 1.0), func(): _show_intel_panel()],
+		["背包", "icon_bag.png", Color(0.68, 0.42, 0.03, 1.0), func(): _show_drawer("bag")],
+		["历史", "icon_history.png", Color(0.34, 0.22, 0.52, 1.0), _show_history],
+		["规则", "icon_rules.png", Color(0.70, 0.07, 0.10, 1.0), _toggle_rules],
+		["状态", "icon_status.png", Color(0.10, 0.36, 0.60, 1.0), func(): _show_drawer("status")],
+		["设置", "icon_settings.png", Color(0.30, 0.31, 0.33, 1.0), _toggle_settings]
+	]
+	for spec in specs:
+		var button := _make_round_utility_button(String(spec[0]), String(spec[1]), spec[2])
+		button.pressed.connect(spec[3])
+		box.add_child(button)
+		_wire_button_feedback([button])
+
+
+func _make_round_select_page() -> Control:
+	var page := Control.new()
+	page.set_anchors_preset(Control.PRESET_FULL_RECT)
+	page.visible = false
+	page.z_index = 1000
+	page.mouse_filter = Control.MOUSE_FILTER_STOP
+
+	var bg := TextureRect.new()
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	bg.texture = _round_texture("bg_round_start_city.png")
+	page.add_child(bg)
+
+	var darken := ColorRect.new()
+	darken.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	darken.set_anchors_preset(Control.PRESET_FULL_RECT)
+	darken.color = Color(0.0, 0.0, 0.0, 0.38)
+	page.add_child(darken)
+
+	_add_round_select_slashes(page)
+	return page
+
+
+func _build_round_select_content(parent: Control) -> void:
+	_add_round_title(parent)
+	_add_round_counter(parent)
+	_add_player_select_card(parent)
+	var card_rects := [
+		Rect2(0.300, 0.215, 0.205, 0.700),
+		Rect2(0.495, 0.190, 0.205, 0.720),
+		Rect2(0.690, 0.225, 0.195, 0.690)
+	]
+	for i in range(min(state.npc_choices.size(), card_rects.size())):
+		var npc_index: int = state.npc_choices[i]
+		if npc_index >= 0 and npc_index < state.npcs.size():
+			_add_npc_select_card(parent, state.npcs[npc_index], i, card_rects[i])
+	_add_round_utility_column(parent)
+
+
+func _add_round_select_slashes(parent: Control) -> void:
+	var specs := [
+		[Rect2(-0.04, 0.030, 0.420, 0.120), Color(0.62, 0.02, 0.05, 0.62), -7.0],
+		[Rect2(0.470, -0.020, 0.210, 0.190), Color(0.00, 0.42, 0.42, 0.30), 22.0],
+		[Rect2(0.640, 0.830, 0.370, 0.170), Color(0.66, 0.02, 0.06, 0.36), -13.0],
+		[Rect2(0.310, 0.210, 0.300, 0.700), Color(0.00, 0.45, 0.47, 0.16), -10.0]
+	]
+	for spec in specs:
+		var slash := ColorRect.new()
+		slash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		slash.color = spec[1]
+		slash.rotation_degrees = float(spec[2])
+		_place_by_ratio(slash, spec[0])
+		parent.add_child(slash)
+
+
+func _add_round_title(parent: Control) -> void:
+	var root := Control.new()
+	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_place_by_ratio(root, Rect2(0.030, 0.025, 0.430, 0.145))
+	parent.add_child(root)
+
+	var plate := TextureRect.new()
+	plate.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	plate.set_anchors_preset(Control.PRESET_FULL_RECT)
+	plate.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	plate.stretch_mode = TextureRect.STRETCH_SCALE
+	plate.texture = _round_texture("shop_banner_title_red_large.png")
+	plate.rotation_degrees = -4.0
+	root.add_child(plate)
+
+	var label := Label.new()
+	label.text = "今天和谁聊聊？"
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.anchor_left = 0.06
+	label.anchor_top = 0.10
+	label.anchor_right = 0.74
+	label.anchor_bottom = 0.86
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 52)
+	label.add_theme_constant_override("outline_size", 5)
+	label.add_theme_color_override("font_color", Color.WHITE)
+	label.add_theme_color_override("font_outline_color", Color(0.03, 0.005, 0.006, 1.0))
+	label.clip_text = true
+	root.add_child(label)
+
+
+func _add_round_counter(parent: Control) -> void:
+	var panel := TextureRect.new()
+	_place_by_ratio(panel, Rect2(0.660, 0.045, 0.270, 0.080))
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	panel.stretch_mode = TextureRect.STRETCH_SCALE
+	panel.texture = _round_texture("title_banner_dark_small.png")
+	parent.add_child(panel)
+
+	var label := Label.new()
+	label.text = "第 %d / %d 回合" % [state.chapter_round + 1, state.max_rounds]
+	label.set_anchors_preset(Control.PRESET_FULL_RECT)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 30)
+	label.add_theme_constant_override("outline_size", 3)
+	label.add_theme_color_override("font_color", Color.WHITE)
+	label.add_theme_color_override("font_outline_color", Color(0.02, 0.02, 0.025, 1.0))
+	panel.add_child(label)
+
+
+func _add_player_select_card(parent: Control) -> void:
+	var root := Control.new()
+	_place_by_ratio(root, Rect2(0.030, 0.165, 0.255, 0.775))
+	parent.add_child(root)
+
+	var card := TextureRect.new()
+	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	card.set_anchors_preset(Control.PRESET_FULL_RECT)
+	card.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	card.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	card.texture = _load_texture_any(SELECT_CARD_ROOT + "player_select_card.png")
+	root.add_child(card)
+	_add_select_card_shadow_mask(root)
+
+	var name := _make_select_label("玩家角色", 30, Color.WHITE)
+	_place_by_ratio(name, Rect2(0.18, 0.635, 0.62, 0.105))
+	root.add_child(name)
+
+	var rows := _player_stat_rows()
+	for i in range(rows.size()):
+		var row := _make_select_stat_row(String(rows[i][0]), String(rows[i][1]), i)
+		_place_by_ratio(row, Rect2(0.252, 0.735 + i * 0.050, 0.476, 0.044))
+		root.add_child(row)
+
+
+func _add_npc_select_card(parent: Control, npc: Dictionary, choice_index: int, rect: Rect2) -> void:
+	var button := Button.new()
+	button.text = ""
+	button.focus_mode = Control.FOCUS_NONE
+	button.clip_contents = false
+	_place_by_ratio(button, rect)
+	button.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
+	button.add_theme_stylebox_override("hover", StyleBoxEmpty.new())
+	button.add_theme_stylebox_override("pressed", StyleBoxEmpty.new())
+	button.pressed.connect(func(): selected_npc_choice = choice_index)
+	parent.add_child(button)
+
+	var texture := TextureRect.new()
+	texture.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	texture.set_anchors_preset(Control.PRESET_FULL_RECT)
+	texture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	texture.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	texture.texture = _load_texture_any(_select_card_path_for_npc(npc))
+	button.add_child(texture)
+	_add_select_card_shadow_mask(button)
+
+	var name := _make_select_label(String(npc.get("public_name", "NPC")), 28, Color.WHITE)
+	_place_by_ratio(name, Rect2(0.16, 0.655, 0.68, 0.100))
+	button.add_child(name)
+
+	var choose := _make_select_choose_button()
+	_place_by_ratio(choose, Rect2(0.136, 0.735, 0.728, 0.075))
+	choose.pressed.connect(func(): selected_npc_choice = choice_index)
+	button.add_child(choose)
+	_wire_button_feedback([button, choose])
+
+
+func _add_round_utility_column(parent: Control) -> void:
+	var box := VBoxContainer.new()
+	_place_by_ratio(box, Rect2(0.898, 0.120, 0.098, 0.780))
+	box.add_theme_constant_override("separation", 13)
+	parent.add_child(box)
+	var specs := [
+		["情报", "icon_info.png", Color(0.02, 0.48, 0.45, 1.0), func(): _show_intel_panel()],
+		["背包", "icon_bag.png", Color(0.68, 0.42, 0.03, 1.0), func(): _show_drawer("bag")],
+		["历史", "icon_history.png", Color(0.34, 0.22, 0.52, 1.0), _show_history],
+		["规则", "icon_rules.png", Color(0.70, 0.07, 0.10, 1.0), _toggle_rules],
+		["状态", "icon_status.png", Color(0.10, 0.36, 0.60, 1.0), func(): _show_drawer("status")],
+		["设置", "icon_settings.png", Color(0.30, 0.31, 0.33, 1.0), _toggle_settings]
+	]
+	for spec in specs:
+		var button := _make_round_utility_button(String(spec[0]), String(spec[1]), spec[2])
+		button.pressed.connect(spec[3])
+		box.add_child(button)
+		_wire_button_feedback([button])
+
 
 func _run_current_dialogue() -> void:
 	_set_dialogue_visible(true)
-	for i in range(state.max_dialogue_turns):
+	manual_action_resolved = false
+	manual_action_in_progress = false
+	var dialogue_guard := 0
+	while dialogue_guard < 20 and running and not state.ended:
+		while state.turn < state.max_dialogue_turns and running and not state.ended:
+			dialogue_guard += 1
+			if dialogue_guard >= 20:
+				break
+			if manual_action_resolved:
+				return
+			state.turn += 1
+			_set_status_text("第 %d 回合：%s" % [state.chapter_round + 1, _current_dialogue_scene_name()])
+			_update_progress()
+			_set_active_speaker("player")
+			var player_response := await _get_player_dialogue()
+			if manual_action_resolved:
+				return
+			if bool(player_response.get("cancelled", false)):
+				return
+			if player_response.has("error"):
+				_show_error(player_response.get("error", ""))
+				return
+			var speech := String(player_response.get("speech", "我想先听听你的看法。")).strip_edges()
+			var raw_action := String(player_response.get("action", "none")).strip_edges().to_lower()
+			state.add_dialogue("player", speech)
+			await _finish_speech_stream("你方", speech, Color(0.58, 0.82, 1.0, 1.0))
+			if manual_action_resolved:
+				return
+			if raw_action != "" and raw_action != "none":
+				var resolved := await _resolve_decided_action(raw_action, {"artifact_id": String(player_response.get("artifact_id", ""))}, "即时行动")
+				if resolved:
+					return
+			_set_status_text("第 %d 回合：%s" % [state.chapter_round + 1, _current_dialogue_scene_name()])
+			_set_active_speaker("npc")
+			var npc_response := await _get_npc_dialogue()
+			if manual_action_resolved:
+				return
+			if npc_response.has("error"):
+				_show_error(npc_response.get("error", ""))
+				return
+			var npc_speech := String(npc_response.get("speech", "NPC response.")).strip_edges()
+			state.add_dialogue("npc", npc_speech)
+			await _finish_speech_stream("NPC", npc_speech, Color(1.0, 0.61, 0.48, 1.0))
+			if manual_action_resolved:
+				return
+			var accepted_response := await _confirm_npc_offer(npc_response)
+			for event in RulesEngineScript.apply_dialogue_turn(state, speech, npc_speech, accepted_response):
+				_append_system_log(event)
+				_mark_event_cards(event)
+			_update_state_panel()
+			if bool(player_response.get("end_dialogue", false)):
+				break
+			await get_tree().create_timer(0.2).timeout
 		if state.ended:
 			return
-		state.turn += 1
-		status_label.text = "第 %d 回合：月市商店" % (state.chapter_round + 1)
-		_update_progress()
-		_set_active_speaker("player")
-		var player_response := await _get_player_dialogue()
-		if player_response.has("error"):
-			_show_error(player_response.get("error", ""))
+		if manual_action_resolved:
 			return
-		var speech := String(player_response.get("speech", "我想先听听你的看法。")).strip_edges()
-		var raw_action := String(player_response.get("action", "none")).strip_edges().to_lower()
-		state.add_dialogue("player", speech)
-		await _finish_speech_stream("浣犳柟", speech, Color(0.58, 0.82, 1.0, 1.0))
-		if raw_action != "" and raw_action != "none":
-			await _resolve_action(raw_action, {"artifact_id": String(player_response.get("artifact_id", ""))}, "鍗虫椂琛屽姩")
-			return
-		status_label.text = "第 %d 回合：月市商店" % (state.chapter_round + 1)
-		_set_active_speaker("npc")
-		var npc_response := await _get_npc_dialogue()
-		if npc_response.has("error"):
-			_show_error(npc_response.get("error", ""))
-			return
-		var npc_speech := String(npc_response.get("speech", "NPC response.")).strip_edges()
-		state.add_dialogue("npc", npc_speech)
-		await _finish_speech_stream("NPC", npc_speech, Color(1.0, 0.61, 0.48, 1.0))
-		var accepted_response := await _confirm_npc_offer(npc_response)
-		for event in RulesEngineScript.apply_dialogue_turn(state, speech, npc_speech, accepted_response):
-			_append_system_log(event)
-			_mark_event_cards(event)
-		_update_state_panel()
-		if bool(player_response.get("end_dialogue", false)):
-			break
-		await get_tree().create_timer(0.2).timeout
-	if not state.ended:
 		var response := await _get_post_action()
-		await _resolve_action(String(response.get("action", "leave")), {"artifact_id": String(response.get("artifact_id", ""))}, "瀵硅瘽缁撴潫琛屽姩")
+		if manual_action_resolved:
+			return
+		if bool(response.get("cancelled", false)):
+			return
+		var post_resolved := await _resolve_decided_action(String(response.get("action", "leave")), {"artifact_id": String(response.get("artifact_id", ""))}, "对话结束行动")
+		if post_resolved:
+			return
+		_append_system_log("你取消了行动，角色继续聊天。")
+		state.turn = max(0, state.max_dialogue_turns - 1)
+	if not state.ended and not manual_action_resolved:
+		await _resolve_action("leave", {}, "对话结束行动")
+
+
+func _resolve_decided_action(action: String, payload: Dictionary, label: String) -> bool:
+	var normalized := RulesEngineScript.normalize_action(action)
+	if auto_decide_check != null and auto_decide_check.button_pressed:
+		await _resolve_action(normalized, payload, label)
+		return true
+	var confirmed := await _confirm_player_action(normalized, payload, label)
+	if not confirmed:
+		return false
+	await _resolve_action(normalized, payload, label)
+	return true
+
+
+func _on_manual_action_pressed(action: String) -> void:
+	if not running or state == null or state.ended:
+		return
+	if lower_box == null or not lower_box.visible:
+		return
+	if manual_action_in_progress or manual_action_resolved:
+		return
+	manual_action_in_progress = true
+	if llm_client != null and llm_client.has_method("cancel_section"):
+		llm_client.cancel_section("player_llm")
+	var normalized := RulesEngineScript.normalize_action(action)
+	var payload := {}
+	if normalized == "gift" or normalized == "cast":
+		var artifact_id := await _choose_action_artifact(normalized)
+		if artifact_id.is_empty():
+			manual_action_in_progress = false
+			return
+		payload["artifact_id"] = artifact_id
+	await _resolve_action(normalized, payload, "手动行动")
+	manual_action_resolved = true
+	manual_action_in_progress = false
+
+
+func _confirm_player_action(action: String, payload: Dictionary, label: String) -> bool:
+	action_choice = 0
+	action_panel.visible = true
+	action_panel.move_to_front()
+	_clear_children(action_box)
+	_add_panel_label(action_box, "确认%s" % label)
+	var detail := Label.new()
+	detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	detail.add_theme_font_size_override("font_size", 18)
+	detail.add_theme_color_override("font_color", Color(0.92, 0.98, 0.94, 1.0))
+	_apply_ui_font(detail)
+	var artifact_id := String(payload.get("artifact_id", ""))
+	var artifact_text := ""
+	if not artifact_id.is_empty():
+		artifact_text = "\n法器：%s" % state.artifact_name(artifact_id)
+	detail.text = "你方角色决定执行：%s%s\n是否允许？" % [_action_name(action), artifact_text]
+	action_box.add_child(detail)
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 12)
+	action_box.add_child(row)
+	var confirm := Button.new()
+	confirm.text = "确定"
+	confirm.custom_minimum_size = Vector2(0, 44)
+	confirm.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_apply_ui_font(confirm)
+	confirm.pressed.connect(func(): action_choice = 1)
+	row.add_child(confirm)
+	var cancel := Button.new()
+	cancel.text = "取消"
+	cancel.custom_minimum_size = Vector2(0, 44)
+	cancel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_apply_ui_font(cancel)
+	cancel.pressed.connect(func(): action_choice = -1)
+	row.add_child(cancel)
+	_wire_button_feedback([confirm, cancel])
+	while action_choice == 0 and running and not state.ended:
+		await get_tree().process_frame
+	action_panel.visible = false
+	return action_choice == 1
+
+
+func _choose_action_artifact(action: String) -> String:
+	var inventory: Array = state.player.get("inventory", [])
+	if inventory.is_empty():
+		_show_result_banner("%s需要先拥有法器" % _action_name(action), Color(1.0, 0.36, 0.32, 1.0))
+		return ""
+	action_choice = 0
+	selected_action_artifact = ""
+	action_panel.visible = true
+	action_panel.move_to_front()
+	_clear_children(action_box)
+	_add_panel_label(action_box, "选择%s法器" % _action_name(action))
+	var detail := Label.new()
+	detail.text = "选择要用于%s的法器。" % _action_name(action)
+	detail.add_theme_font_size_override("font_size", 16)
+	detail.add_theme_color_override("font_color", Color(0.92, 0.98, 0.94, 1.0))
+	_apply_ui_font(detail)
+	action_box.add_child(detail)
+	var counts := _artifact_counts(inventory)
+	for artifact_id in counts.keys():
+		var id := String(artifact_id)
+		var button := Button.new()
+		button.text = "%s x%d" % [state.artifact_name(id), int(counts[id])]
+		button.custom_minimum_size = Vector2(0, 42)
+		_apply_ui_font(button)
+		button.pressed.connect(Callable(self, "_select_action_artifact").bind(id))
+		action_box.add_child(button)
+		_wire_button_feedback([button])
+	var cancel := Button.new()
+	cancel.text = "取消"
+	cancel.custom_minimum_size = Vector2(0, 42)
+	_apply_ui_font(cancel)
+	cancel.pressed.connect(func(): action_choice = -1)
+	action_box.add_child(cancel)
+	_wire_button_feedback([cancel])
+	while action_choice == 0 and running and not state.ended:
+		await get_tree().process_frame
+	action_panel.visible = false
+	if action_choice == 1:
+		return selected_action_artifact
+	return ""
+
+
+func _select_action_artifact(artifact_id: String) -> void:
+	selected_action_artifact = artifact_id
+	action_choice = 1
 
 
 func _resolve_action(action: String, payload: Dictionary, label: String) -> void:
 	for event in RulesEngineScript.resolve_player_action(state, action, payload):
 		_append_system_log(event)
 		_mark_event_cards(event)
-	_show_result_banner("%s锛?s" % [label, _action_name(action)], _action_color(action))
+	_show_result_banner("%s：%s" % [label, _action_name(action)], _action_color(action))
 	_update_state_panel()
 	await get_tree().create_timer(0.35).timeout
 
@@ -443,12 +956,12 @@ func _resolve_action(action: String, payload: Dictionary, label: String) -> void
 func _run_shop_ui() -> void:
 	_set_dialogue_visible(false)
 	shop_done = false
-	shop_panel.visible = true
 	_render_shop()
-	status_label.text = "绗?%d 鍥炲悎锛氭湀甯傚晢搴? % (state.chapter_round + 1)
+	_set_status_text("第 %d 回合：%s" % [state.chapter_round + 1, _shop_scene_name()])
 	while not shop_done and running and not state.ended:
 		await get_tree().process_frame
-	shop_panel.visible = false
+	if shop_panel != null:
+		shop_panel.visible = false
 
 
 func _confirm_npc_offer(npc_response: Dictionary) -> Dictionary:
@@ -456,31 +969,35 @@ func _confirm_npc_offer(npc_response: Dictionary) -> Dictionary:
 		return npc_response
 	trade_choice = 0
 	trade_panel.visible = true
+	trade_panel.move_to_front()
 	_clear_children(trade_box)
-	_add_panel_label(trade_box, "NPC 鎻愬嚭娉曞櫒浜ゆ槗")
+	_add_panel_label(trade_box, "NPC 提出法器交易")
 	var detail := Label.new()
 	detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	detail.add_theme_font_size_override("font_size", 16)
 	detail.add_theme_color_override("font_color", Color(0.92, 0.98, 0.94, 1.0))
+	_apply_ui_font(detail)
 	if npc_response.has("gift_offer"):
 		var offer: Dictionary = npc_response.get("gift_offer", {})
-		detail.text = "%s 鎰挎剰璧犻€侊細%s" % [state.current_npc().get("public_name", "NPC"), state.artifact_name(String(offer.get("artifact_id", "")))]
+		detail.text = "%s 愿意赠送：%s" % [state.current_npc().get("public_name", "NPC"), state.artifact_name(String(offer.get("artifact_id", "")))]
 	else:
 		var offer: Dictionary = npc_response.get("exchange_offer", {})
-		detail.text = "%s 鎯崇敤 %s 浜ゆ崲浣犵殑 %s" % [
+		detail.text = "%s 想用 %s 交换你的 %s" % [
 			state.current_npc().get("public_name", "NPC"),
 			state.artifact_name(String(offer.get("npc_artifact_id", ""))),
 			state.artifact_name(String(offer.get("player_artifact_id", "")))
 		]
 	trade_box.add_child(detail)
 	var accept := Button.new()
-	accept.text = "鎺ュ彈"
+	accept.text = "接受"
 	accept.custom_minimum_size = Vector2(0, 42)
+	_apply_ui_font(accept)
 	accept.pressed.connect(func(): trade_choice = 1)
 	trade_box.add_child(accept)
 	var reject := Button.new()
-	reject.text = "鎷掔粷"
+	reject.text = "拒绝"
 	reject.custom_minimum_size = Vector2(0, 42)
+	_apply_ui_font(reject)
 	reject.pressed.connect(func(): trade_choice = -1)
 	trade_box.add_child(reject)
 	_wire_button_feedback([accept, reject])
@@ -492,7 +1009,7 @@ func _confirm_npc_offer(npc_response: Dictionary) -> Dictionary:
 	var cleaned := npc_response.duplicate(true)
 	cleaned.erase("gift_offer")
 	cleaned.erase("exchange_offer")
-	_append_system_log("浣犳嫆缁濅簡 NPC 鐨勪氦鏄撱€?)
+	_append_system_log("You declined the NPC trade.")
 	return cleaned
 
 
@@ -500,26 +1017,599 @@ func _render_shop() -> void:
 	_set_dialogue_visible(false)
 	if shop_panel != null:
 		shop_panel.queue_free()
-	shop_panel = card_kit.make_reference_page("page_shop_v5.png")
+	shop_panel = _instantiate_flow_page(ShopPageScene)
 	add_child(shop_panel)
-	shop_box = Control.new()
-	shop_box.set_anchors_preset(Control.PRESET_FULL_RECT)
-	shop_panel.add_child(shop_box)
-	var buy_rects := [
-		Rect2(0.290, 0.855, 0.118, 0.065),
-		Rect2(0.450, 0.855, 0.118, 0.065),
-		Rect2(0.610, 0.855, 0.118, 0.065)
-	]
-	for i in range(min(3, state.shop_items.size())):
-		var id := String(state.shop_items[i])
-		_add_hotspot_button(shop_box, "购买", buy_rects[i], func(item_id := id):
+	shop_box = shop_panel
+	_populate_shop_page()
+	shop_panel.visible = true
+
+
+func _populate_shop_page() -> void:
+	var bg := shop_panel.get_node_or_null("Background") as TextureRect
+	if bg != null:
+		bg.texture = _load_texture_any(_current_shop_background_path())
+		bg.material = _shop_blur_material()
+	var title_banner := shop_panel.get_node_or_null("TitleBanner") as TextureRect
+	if title_banner != null:
+		title_banner.texture = _shop_texture("shop_title_banner_red.png")
+	var title := shop_panel.get_node_or_null("TitleLabel") as Label
+	if title != null:
+		title.text = _shop_scene_name()
+		title.add_theme_color_override("font_color", Color.WHITE)
+		title.add_theme_color_override("font_outline_color", Color(0.02, 0.01, 0.01, 0.95))
+		title.add_theme_constant_override("outline_size", 4)
+	_apply_shop_status_bar()
+	_apply_shop_player_card()
+	_apply_shop_requirement_panel(shop_panel.get_node_or_null("AscensionRequirement") as PanelContainer, "升华需求", state.player.get("ascension_requirement", []), state.player.get("inventory", []), "red")
+	_apply_shop_requirement_panel(shop_panel.get_node_or_null("DominionRequirement") as PanelContainer, "统治需求", state.player.get("dominion_requirement", []), state.player.get("artifact_history", []), "teal")
+	var item_title := shop_panel.get_node_or_null("ShopItemsTitle") as Label
+	if item_title != null:
+		item_title.text = "可购买法器"
+		item_title.add_theme_stylebox_override("normal", _shop_texture_style("shop_section_title_teal.png", 18))
+		item_title.add_theme_color_override("font_color", Color.WHITE)
+		item_title.add_theme_color_override("font_outline_color", Color(0.02, 0.01, 0.01, 0.95))
+		item_title.add_theme_constant_override("outline_size", 4)
+	_apply_shop_items()
+	_apply_shop_backpack_panel()
+
+
+func _apply_shop_status_bar() -> void:
+	var panel := shop_panel.get_node_or_null("StatusBar") as PanelContainer
+	if panel != null:
+		panel.add_theme_stylebox_override("panel", _shop_texture_style("shop_status_bar_dark.png", 26))
+	var energy := shop_panel.get_node_or_null("StatusBar/StatusRow/EnergyLabel") as Label
+	if energy != null:
+		energy.text = "◇ 能量 %d" % int(state.player.get("energy", 0))
+		energy.add_theme_color_override("font_color", Color(1.0, 0.30, 0.28, 1.0))
+	var inventory := shop_panel.get_node_or_null("StatusBar/StatusRow/InventoryLabel") as Label
+	if inventory != null:
+		inventory.text = "袋 背包 %d" % state.player.get("inventory", []).size()
+		inventory.add_theme_color_override("font_color", Color(1.0, 0.73, 0.16, 1.0))
+
+
+func _apply_shop_player_card() -> void:
+	var panel := shop_panel.get_node_or_null("PlayerCard") as PanelContainer
+	if panel == null:
+		return
+	panel.add_theme_stylebox_override("panel", _shop_texture_style("shop_player_card_red.png", 34))
+	var portrait := panel.get_node_or_null("PlayerContent/Portrait") as TextureRect
+	if portrait != null:
+		_set_texture_or_fallback(portrait, "res://assets/generated/ui/card/avatar_fox_card.png", "res://assets/generated/player_portrait.png")
+	var name := panel.get_node_or_null("PlayerContent/NamePlate") as Label
+	if name != null:
+		name.text = _player_short_name()
+		name.add_theme_stylebox_override("normal", _shop_texture_style("shop_nameplate_red.png", 18))
+		name.add_theme_color_override("font_color", Color.WHITE)
+	var stats := panel.get_node_or_null("PlayerContent/Stats") as VBoxContainer
+	if stats == null:
+		return
+	_clear_children(stats)
+	for row in _player_stat_rows():
+		stats.add_child(_make_shop_stat_row(String(row[0]), String(row[1])))
+
+
+func _apply_shop_requirement_panel(panel: PanelContainer, title: String, required: Array, owned: Array, tone: String) -> void:
+	if panel == null:
+		return
+	var panel_asset := "shop_requirement_panel_red.png" if tone == "red" else "shop_requirement_panel_teal.png"
+	panel.add_theme_stylebox_override("panel", _shop_texture_style(panel_asset, 24))
+	var title_label := panel.get_node_or_null("Box/Title") as Label
+	if title_label != null:
+		title_label.text = title
+		title_label.add_theme_stylebox_override("normal", _shop_texture_style("shop_requirement_title_red.png" if tone == "red" else "shop_requirement_title_teal.png", 18))
+		title_label.add_theme_color_override("font_color", Color.WHITE)
+	var slots := panel.get_node_or_null("Box/Slots") as HBoxContainer
+	if slots == null:
+		return
+	_clear_children(slots)
+	for i in range(4):
+		if i < required.size():
+			var artifact_id := String(required[i])
+			slots.add_child(_make_artifact_slot(artifact_id, artifact_id in owned, _artifact_count(owned, artifact_id)))
+		else:
+			slots.add_child(_make_artifact_slot("", false, 0))
+
+
+func _apply_shop_items() -> void:
+	var slots := shop_panel.get_node_or_null("ShopItemSlots") as Control
+	if slots == null:
+		return
+	for i in range(3):
+		var card := slots.get_node_or_null("ShopItem%d" % [i + 1]) as PanelContainer
+		if card == null:
+			continue
+		card.visible = i < state.shop_items.size()
+		if card.visible:
+			_apply_shop_item_card(card, String(state.shop_items[i]), i)
+
+
+func _apply_shop_item_card(card: PanelContainer, artifact_id: String, index: int) -> void:
+	var tones := ["red", "teal", "purple"]
+	var tone: String = String(tones[index % tones.size()])
+	var artifact: Dictionary = state.get_artifact(artifact_id)
+	card.add_theme_stylebox_override("panel", _shop_texture_style("shop_item_card_%s.png" % tone, 20))
+	var card_texture := card.get_node_or_null("CardTexture") as TextureRect
+	if card_texture != null:
+		card_texture.visible = false
+	var frame := card.get_node_or_null("Content/ArtifactFrame") as PanelContainer
+	if frame != null:
+		frame.add_theme_stylebox_override("panel", _shop_texture_style("shop_artifact_frame_%s.png" % tone, 18))
+	var icon := card.get_node_or_null("Content/ArtifactFrame/ArtifactIcon") as TextureRect
+	if icon != null:
+		_set_texture_or_fallback(icon, _artifact_icon_path(artifact_id), "res://assets/generated/ui/card/artifact_moon_lantern.png")
+	var title := card.get_node_or_null("Content/NameLabel") as Label
+	if title != null:
+		title.text = String(artifact.get("name", artifact_id))
+	var price := int(artifact.get("price", 0))
+	var can_afford := int(state.player.get("energy", 0)) >= price
+	var price_label := card.get_node_or_null("Content/PriceLabel") as Label
+	if price_label != null:
+		price_label.text = "◇ %d" % price
+		price_label.add_theme_stylebox_override("normal", _shop_texture_style("shop_price_plate_dark.png", 18))
+		price_label.add_theme_color_override("font_color", Color(1.0, 0.74, 0.18, 1.0) if can_afford else Color(1.0, 0.40, 0.34, 1.0))
+	var button := card.get_node_or_null("Content/BuyButton") as Button
+	if button != null:
+		_style_shop_button(button, "购买", can_afford)
+		button.tooltip_text = String(artifact.get("story", ""))
+		button.disabled = not can_afford
+		button.pressed.connect(func(item_id := artifact_id):
 			for event in RulesEngineScript.buy_player_artifact(state, item_id):
 				_append_system_log(event)
 			_update_state_panel()
 			_render_shop()
 		)
-	_add_hotspot_button(shop_box, "结束商店", Rect2(0.680, 0.055, 0.300, 0.085), func(): shop_done = true)
-	shop_panel.visible = true
+		_wire_button_feedback([button])
+
+
+func _apply_shop_backpack_panel() -> void:
+	var panel := shop_panel.get_node_or_null("BackpackPanel") as PanelContainer
+	if panel == null:
+		return
+	panel.add_theme_stylebox_override("panel", _shop_texture_style("shop_backpack_panel_purple.png", 24))
+	var title := panel.get_node_or_null("BackpackContent/BackpackTitle") as Label
+	if title != null:
+		title.text = "我的背包"
+		title.add_theme_stylebox_override("normal", _shop_texture_style("shop_backpack_title_purple.png", 18))
+		title.add_theme_color_override("font_color", Color.WHITE)
+	var grid := panel.get_node_or_null("BackpackContent/BackpackGrid") as GridContainer
+	if grid != null:
+		_clear_children(grid)
+		var counts := _artifact_counts(state.player.get("inventory", []))
+		var shown := 0
+		for artifact_id in counts.keys():
+			grid.add_child(_make_artifact_slot(String(artifact_id), true, int(counts[artifact_id])))
+			shown += 1
+		while shown < 6:
+			grid.add_child(_make_artifact_slot("", false, 0))
+			shown += 1
+	var leave := panel.get_node_or_null("BackpackContent/LeaveButton") as Button
+	if leave != null:
+		_style_shop_button(leave, "离开商店", true)
+		leave.pressed.connect(func(): shop_done = true)
+		_wire_button_feedback([leave])
+
+
+func _build_shop_status_bar() -> void:
+	var player_energy := int(state.player.get("energy", 0))
+	var inventory: Array = state.player.get("inventory", [])
+	var panel := _make_shop_panel("shop_status_bar_dark.png", 26)
+	_place_ratio(panel, Rect2(0.695, 0.070, 0.265, 0.060))
+	shop_box.add_child(panel)
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 10)
+	panel.add_child(row)
+	row.add_child(_make_shop_resource_label("◇ 能量", str(player_energy), Color(1.0, 0.30, 0.28, 1.0)))
+	row.add_child(_make_shop_resource_label("袋 背包", str(inventory.size()), Color(1.0, 0.73, 0.16, 1.0)))
+
+
+func _build_shop_scene_background(parent: Control) -> void:
+	var bg := TextureRect.new()
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	bg.texture = _load_texture_any(_current_shop_background_path())
+	bg.material = _shop_blur_material()
+	parent.add_child(bg)
+	var veil := ColorRect.new()
+	veil.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	veil.set_anchors_preset(Control.PRESET_FULL_RECT)
+	veil.color = Color(0.0, 0.0, 0.0, 0.56)
+	parent.add_child(veil)
+
+
+func _build_shop_title_banner() -> void:
+	var banner := TextureRect.new()
+	banner.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_place_ratio(banner, Rect2(0.000, 0.055, 0.475, 0.150))
+	banner.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	banner.stretch_mode = TextureRect.STRETCH_SCALE
+	banner.texture = _shop_texture("shop_title_banner_red.png")
+	shop_box.add_child(banner)
+	var title := _make_shop_text_label(_shop_scene_name(), 48, Color.WHITE)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_place_ratio(title, Rect2(0.040, 0.083, 0.300, 0.080))
+	shop_box.add_child(title)
+
+
+func _build_shop_player_card() -> void:
+	var panel := _make_shop_panel("shop_player_card_red.png", 34)
+	_place_ratio(panel, Rect2(0.030, 0.220, 0.220, 0.720))
+	shop_box.add_child(panel)
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 8)
+	panel.add_child(box)
+	var portrait := TextureRect.new()
+	portrait.custom_minimum_size = Vector2(0, 235)
+	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	_set_texture_or_fallback(portrait, "res://assets/generated/ui/card/avatar_fox_card.png", "res://assets/generated/player_portrait.png")
+	box.add_child(portrait)
+	var name_plate := _make_shop_plate_label(_player_short_name(), "shop_nameplate_red.png", 24, Vector2(0, 46))
+	box.add_child(name_plate)
+	for row in _player_stat_rows():
+		box.add_child(_make_shop_stat_row(String(row[0]), String(row[1])))
+
+
+func _build_shop_requirement_panel(title: String, required: Array, owned: Array, rect: Rect2, tone: String) -> void:
+	var panel_asset := "shop_requirement_panel_red.png" if tone == "red" else "shop_requirement_panel_teal.png"
+	var panel := _make_shop_panel(panel_asset, 24)
+	_place_ratio(panel, rect)
+	shop_box.add_child(panel)
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 8)
+	panel.add_child(box)
+	box.add_child(_make_shop_plate_label(title, "shop_requirement_title_red.png" if tone == "red" else "shop_requirement_title_teal.png", 20, Vector2(0, 36)))
+	var slots := HBoxContainer.new()
+	slots.add_theme_constant_override("separation", 5)
+	box.add_child(slots)
+	for i in range(4):
+		if i < required.size():
+			var artifact_id := String(required[i])
+			slots.add_child(_make_artifact_slot(artifact_id, artifact_id in owned, _artifact_count(owned, artifact_id)))
+		else:
+			slots.add_child(_make_artifact_slot("", false, 0))
+
+
+func _build_shop_item_card(artifact_id: String, rect: Rect2, index: int) -> void:
+	var artifact: Dictionary = state.get_artifact(artifact_id)
+	var tones := ["red", "teal", "purple"]
+	var tone: String = String(tones[index % tones.size()])
+	var asset := "shop_item_card_%s.png" % tone
+	var panel := _make_shop_panel(asset, 20)
+	_place_ratio(panel, rect)
+	shop_box.add_child(panel)
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 6)
+	panel.add_child(box)
+	box.add_child(_make_shop_artifact_icon(artifact_id, "shop_artifact_frame_%s.png" % tone, Vector2(0, 106)))
+	var title := _make_shop_text_label(String(artifact.get("name", artifact_id)), 21, Color.WHITE)
+	title.custom_minimum_size = Vector2(0, 34)
+	box.add_child(title)
+	var price := int(artifact.get("price", 0))
+	var can_afford := int(state.player.get("energy", 0)) >= price
+	var price_label := _make_shop_plate_label("◇ %d" % price, "shop_price_plate_dark.png", 23, Vector2(0, 40))
+	price_label.add_theme_color_override("font_color", Color(1.0, 0.74, 0.18, 1.0) if can_afford else Color(1.0, 0.40, 0.34, 1.0))
+	box.add_child(price_label)
+	var button: Button = _make_shop_button("购买", can_afford)
+	button.custom_minimum_size = Vector2(0, 44)
+	button.tooltip_text = String(artifact.get("story", ""))
+	button.disabled = not can_afford
+	button.pressed.connect(func(item_id := artifact_id):
+		for event in RulesEngineScript.buy_player_artifact(state, item_id):
+			_append_system_log(event)
+		_update_state_panel()
+		_render_shop()
+	)
+	box.add_child(button)
+	_wire_button_feedback([button])
+
+
+func _build_shop_backpack_panel() -> void:
+	var panel := _make_shop_panel("shop_backpack_panel_purple.png", 24)
+	_place_ratio(panel, Rect2(0.805, 0.240, 0.165, 0.665))
+	shop_box.add_child(panel)
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 8)
+	panel.add_child(box)
+	box.add_child(_make_shop_plate_label("我的背包", "shop_backpack_title_purple.png", 22, Vector2(0, 42)))
+	var grid := GridContainer.new()
+	grid.columns = 2
+	grid.add_theme_constant_override("h_separation", 8)
+	grid.add_theme_constant_override("v_separation", 8)
+	box.add_child(grid)
+	var counts := _artifact_counts(state.player.get("inventory", []))
+	var shown := 0
+	for artifact_id in counts.keys():
+		grid.add_child(_make_artifact_slot(String(artifact_id), true, int(counts[artifact_id])))
+		shown += 1
+	while shown < 6:
+		grid.add_child(_make_artifact_slot("", false, 0))
+		shown += 1
+	var leave: Button = _make_shop_button("离开商店", true)
+	leave.custom_minimum_size = Vector2(0, 46)
+	leave.pressed.connect(func(): shop_done = true)
+	box.add_child(leave)
+	_wire_button_feedback([leave])
+
+
+func _add_shop_icon(parent: Control, rect: Rect2, path: String) -> void:
+	var icon := TextureRect.new()
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	icon.anchor_left = rect.position.x
+	icon.anchor_top = rect.position.y
+	icon.anchor_right = rect.position.x + rect.size.x
+	icon.anchor_bottom = rect.position.y + rect.size.y
+	icon.offset_left = 0
+	icon.offset_top = 0
+	icon.offset_right = 0
+	icon.offset_bottom = 0
+	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_set_texture_or_fallback(icon, path, "res://assets/generated/ui/card/artifact_moon_lantern.png")
+	parent.add_child(icon)
+
+
+func _add_shop_plate(parent: Control, rect: Rect2, text: String, font_size: int, color: Color) -> Label:
+	var label := Label.new()
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.anchor_left = rect.position.x
+	label.anchor_top = rect.position.y
+	label.anchor_right = rect.position.x + rect.size.x
+	label.anchor_bottom = rect.position.y + rect.size.y
+	label.offset_left = 0
+	label.offset_top = 0
+	label.offset_right = 0
+	label.offset_bottom = 0
+	label.text = text
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.clip_text = true
+	label.add_theme_font_size_override("font_size", font_size)
+	label.add_theme_color_override("font_color", color)
+	label.add_theme_constant_override("outline_size", 5)
+	label.add_theme_color_override("font_outline_color", Color(0.02, 0.01, 0.01, 0.95))
+	parent.add_child(label)
+	return label
+
+
+func _make_shop_panel(asset: String, margin: int) -> PanelContainer:
+	var panel := PanelContainer.new()
+	panel.add_theme_stylebox_override("panel", _shop_texture_style(asset, margin))
+	return panel
+
+
+func _make_shop_plate_label(text: String, asset: String, font_size: int, min_size := Vector2.ZERO) -> Label:
+	var label := _make_shop_text_label(text, font_size, Color.WHITE)
+	label.custom_minimum_size = min_size
+	label.add_theme_stylebox_override("normal", _shop_texture_style(asset, 18))
+	return label
+
+
+func _make_shop_stat_row(label_text: String, value: String) -> Control:
+	var row := HBoxContainer.new()
+	row.custom_minimum_size = Vector2(0, 44)
+	row.add_theme_constant_override("separation", 8)
+	row.add_theme_stylebox_override("panel", _shop_texture_style("shop_stat_row_dark.png", 16))
+	var label := _make_shop_text_label(label_text, 18, Color(1.0, 0.93, 0.78, 1.0))
+	label.custom_minimum_size = Vector2(92, 0)
+	row.add_child(label)
+	var value_label := _make_shop_text_label(value, 22, Color.WHITE)
+	value_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(value_label)
+	return row
+
+
+func _make_shop_artifact_icon(artifact_id: String, frame_asset: String, min_size: Vector2) -> Control:
+	var frame := PanelContainer.new()
+	frame.custom_minimum_size = min_size
+	frame.add_theme_stylebox_override("panel", _shop_texture_style(frame_asset, 18))
+	var icon := TextureRect.new()
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	icon.set_anchors_preset(Control.PRESET_FULL_RECT)
+	icon.offset_left = 12
+	icon.offset_top = 12
+	icon.offset_right = -12
+	icon.offset_bottom = -12
+	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_set_texture_or_fallback(icon, _artifact_icon_path(artifact_id), "res://assets/generated/ui/card/artifact_moon_lantern.png")
+	frame.add_child(icon)
+	return frame
+
+
+func _make_shop_button(text: String, enabled: bool) -> Button:
+	var button := Button.new()
+	_style_shop_button(button, text, enabled)
+	return button
+
+
+func _style_shop_button(button: Button, text: String, enabled: bool) -> void:
+	button.text = text
+	button.focus_mode = Control.FOCUS_NONE
+	button.add_theme_font_size_override("font_size", 23)
+	button.add_theme_color_override("font_color", Color(0.08, 0.035, 0.0, 1.0) if enabled else Color(0.70, 0.66, 0.58, 1.0))
+	button.add_theme_constant_override("outline_size", 2)
+	button.add_theme_color_override("font_outline_color", Color(1.0, 0.88, 0.30, 0.38) if enabled else Color(0.0, 0.0, 0.0, 0.4))
+	button.add_theme_stylebox_override("normal", _shop_texture_style("shop_button_gold.png" if enabled else "shop_button_disabled.png", 24))
+	button.add_theme_stylebox_override("hover", _shop_texture_style("shop_button_gold.png" if enabled else "shop_button_disabled.png", 24))
+	button.add_theme_stylebox_override("pressed", _shop_texture_style("shop_button_gold.png" if enabled else "shop_button_disabled.png", 24))
+	button.add_theme_stylebox_override("disabled", _shop_texture_style("shop_button_disabled.png", 24))
+
+
+func _style_primary_button(button: Button, text: String, font_size: int) -> void:
+	button.text = ""
+	button.focus_mode = Control.FOCUS_NONE
+	button.add_theme_font_size_override("font_size", font_size)
+	button.add_theme_color_override("font_color", Color(0.06, 0.025, 0.0, 1.0))
+	button.add_theme_constant_override("outline_size", 2)
+	button.add_theme_color_override("font_outline_color", Color(1.0, 0.86, 0.25, 0.35))
+	button.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
+	button.add_theme_stylebox_override("hover", StyleBoxEmpty.new())
+	button.add_theme_stylebox_override("pressed", StyleBoxEmpty.new())
+	button.add_theme_stylebox_override("disabled", StyleBoxEmpty.new())
+	_apply_primary_button_texture(button, text, font_size)
+
+
+func _make_shop_resource_label(label_text: String, value: String, color: Color) -> Control:
+	var row := HBoxContainer.new()
+	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_theme_constant_override("separation", 6)
+	var label := _make_shop_text_label(label_text, 19, Color(1.0, 0.93, 0.78, 1.0))
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(label)
+	var value_label := _make_shop_text_label(value, 27, color)
+	value_label.custom_minimum_size = Vector2(48, 0)
+	row.add_child(value_label)
+	return row
+
+
+func _add_shop_title_plate(text: String, rect: Rect2, tone: String) -> void:
+	var label := _make_shop_plate_label(text, "shop_section_title_teal.png", 26, Vector2(0, 54))
+	_place_ratio(label, rect)
+	shop_box.add_child(label)
+
+
+func _make_shop_text_label(text: String, font_size: int, color: Color) -> Label:
+	var label := Label.new()
+	label.text = text
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.clip_text = true
+	label.add_theme_font_size_override("font_size", font_size)
+	label.add_theme_color_override("font_color", color)
+	label.add_theme_constant_override("outline_size", 4)
+	label.add_theme_color_override("font_outline_color", Color(0.02, 0.01, 0.01, 0.95))
+	return label
+
+
+func _shop_texture_style(asset: String, margin: int) -> StyleBoxTexture:
+	var style := StyleBoxTexture.new()
+	style.texture = _shop_texture(asset)
+	style.texture_margin_left = margin
+	style.texture_margin_right = margin
+	style.texture_margin_top = margin
+	style.texture_margin_bottom = margin
+	style.content_margin_left = max(8, margin / 2)
+	style.content_margin_right = max(8, margin / 2)
+	style.content_margin_top = max(8, margin / 2)
+	style.content_margin_bottom = max(8, margin / 2)
+	return style
+
+
+func _shop_texture(asset: String) -> Texture2D:
+	return _load_texture_any(SHOP_UI_ROOT + asset)
+
+
+func _current_shop_background_path() -> String:
+	var npc: Dictionary = state.current_npc() if state != null else {}
+	var background_name := String(npc.get("background", "bg_moon_market.png"))
+	if background_name.is_empty():
+		background_name = "bg_moon_market.png"
+	return "res://assets/generated/%s" % background_name
+
+
+func _current_dialogue_scene_name() -> String:
+	var npc: Dictionary = state.current_npc() if state != null else {}
+	var background_name := String(npc.get("background", "bg_moon_market.png"))
+	return _scene_name_from_background(background_name)
+
+
+func _round_select_scene_name() -> String:
+	return "赤金街口"
+
+
+func _shop_scene_name() -> String:
+	return "夜市法器铺"
+
+
+func _ascension_scene_name() -> String:
+	return "升华祭坛"
+
+
+func _scene_name_from_background(background_name: String) -> String:
+	match background_name:
+		"bg_archive_hall.png":
+			return "旧档案馆"
+		"bg_embassy_garden.png":
+			return "使节花园"
+		"bg_duel_alley.png":
+			return "暗巷药铺"
+		"bg_border_gate.png":
+			return "边境关门"
+		"bg_moon_market.png":
+			return "月息夜市"
+		_:
+			return "赤金夜市"
+
+
+func _shop_blur_material() -> ShaderMaterial:
+	var shader := Shader.new()
+	shader.code = """
+shader_type canvas_item;
+uniform float blur_amount = 1.6;
+void fragment() {
+	vec2 px = TEXTURE_PIXEL_SIZE * blur_amount;
+	vec4 c = texture(TEXTURE, UV) * 0.30;
+	c += texture(TEXTURE, UV + vec2(px.x, 0.0)) * 0.12;
+	c += texture(TEXTURE, UV - vec2(px.x, 0.0)) * 0.12;
+	c += texture(TEXTURE, UV + vec2(0.0, px.y)) * 0.12;
+	c += texture(TEXTURE, UV - vec2(0.0, px.y)) * 0.12;
+	c += texture(TEXTURE, UV + px) * 0.11;
+	c += texture(TEXTURE, UV - px) * 0.11;
+	COLOR = vec4(c.rgb * 0.72, c.a);
+}
+"""
+	var material := ShaderMaterial.new()
+	material.shader = shader
+	return material
+
+
+func _make_artifact_slot(artifact_id: String, satisfied: bool, count: int) -> Control:
+	var slot := ArtifactSlotScene.instantiate() as PanelContainer
+	slot.custom_minimum_size = Vector2(58, 58)
+	var slot_asset := "shop_slot_filled_red.png" if satisfied else "shop_slot_missing_dark.png"
+	if artifact_id.is_empty():
+		slot_asset = "shop_slot_empty.png"
+	slot.add_theme_stylebox_override("panel", _shop_texture_style(slot_asset, 16))
+	var icon := slot.get_node_or_null("Root/Icon") as TextureRect
+	if icon != null:
+		icon.visible = not artifact_id.is_empty()
+	if not artifact_id.is_empty() and icon != null:
+		icon.modulate.a = 1.0 if satisfied else 0.34
+		_set_texture_or_fallback(icon, _artifact_icon_path(artifact_id), "res://assets/generated/ui/card/artifact_moon_lantern.png")
+		slot.tooltip_text = state.artifact_name(artifact_id)
+	var badge_panel := slot.get_node_or_null("Root/Badge") as PanelContainer
+	if badge_panel != null:
+		badge_panel.visible = count > 1 and not artifact_id.is_empty()
+		badge_panel.add_theme_stylebox_override("panel", _shop_texture_style("shop_count_badge_dark.png", 10))
+	var badge := slot.get_node_or_null("Root/Badge/CountLabel") as Label
+	if badge != null:
+		badge.text = str(count)
+	return slot
+
+
+func _artifact_icon_path(artifact_id: String) -> String:
+	return "res://assets/generated/ui/card/artifact_%s.png" % artifact_id
+
+
+func _artifact_count(items: Array, artifact_id: String) -> int:
+	var total := 0
+	for item in items:
+		if String(item) == artifact_id:
+			total += 1
+	return total
+
+
+func _place_ratio(node: Control, rect: Rect2) -> void:
+	node.anchor_left = rect.position.x
+	node.anchor_top = rect.position.y
+	node.anchor_right = rect.position.x + rect.size.x
+	node.anchor_bottom = rect.position.y + rect.size.y
+	node.offset_left = 0
+	node.offset_top = 0
+	node.offset_right = 0
+	node.offset_bottom = 0
 
 func _offer_ascension_or_dominion() -> void:
 	var can_ascend: bool = state.ascension_met(state.player) and int(state.player.get("level", 1)) < 10
@@ -541,33 +1631,58 @@ func _render_ascension_page(can_ascend: bool, can_dominate: bool) -> void:
 	_set_dialogue_visible(false)
 	if upgrade_panel != null:
 		upgrade_panel.queue_free()
-	upgrade_panel = card_kit.make_reference_page("page_ascension_v5.png")
+	upgrade_panel = _instantiate_flow_page(AscensionPageScene)
 	add_child(upgrade_panel)
-	ascension_box = Control.new()
-	ascension_box.set_anchors_preset(Control.PRESET_FULL_RECT)
-	upgrade_panel.add_child(ascension_box)
-	for row_index in range(_stat_defs().size()):
-		var item = _stat_defs()[row_index]
-		var stat := String(item[0])
-		var y := 0.250 + float(row_index) * 0.088
-		_add_hotspot_button(ascension_box, "−", Rect2(0.335, y, 0.040, 0.070), func(s := stat): _change_pending_stat(s, -1, can_ascend, can_dominate))
-		_add_hotspot_button(ascension_box, "+", Rect2(0.595, y, 0.040, 0.070), func(s := stat): _change_pending_stat(s, 1, can_ascend, can_dominate))
-	var confirm: Button = _add_hotspot_button(ascension_box, "确认升华", Rect2(0.342, 0.790, 0.292, 0.105), func():
-		var gains: Dictionary = selected_upgrade if typeof(selected_upgrade) == TYPE_DICTIONARY else {}
-		for event in RulesEngineScript.ascend_player(state, gains):
-			_append_system_log(event)
-		upgrade_done = true
-	)
-	confirm.disabled = not can_ascend or pending_stat_points > 0
-	var dominion: Button = _add_hotspot_button(ascension_box, "选择统治", Rect2(0.696, 0.805, 0.255, 0.095), func():
-		state.player_declared_dominion = true
-		for event in RulesEngineScript.finish_round(state):
-			_append_system_log(event)
-			_mark_event_cards(event)
-		upgrade_done = true
-	)
-	dominion.disabled = not can_dominate
+	ascension_box = upgrade_panel
+	_populate_ascension_page(can_ascend, can_dominate)
 	upgrade_panel.visible = true
+	_set_status_text("第 %d 回合：%s" % [state.chapter_round + 1, _ascension_scene_name()])
+
+
+func _populate_ascension_page(can_ascend: bool, can_dominate: bool) -> void:
+	var stat_buttons := {
+		"hp": ["HpMinusButton", "HpPlusButton"],
+		"frontal_attack": ["FrontalAttackMinusButton", "FrontalAttackPlusButton"],
+		"frontal_defense": ["FrontalDefenseMinusButton", "FrontalDefensePlusButton"],
+		"assassination_attack": ["AssassinationAttackMinusButton", "AssassinationAttackPlusButton"],
+		"assassination_defense": ["AssassinationDefenseMinusButton", "AssassinationDefensePlusButton"],
+		"charm": ["CharmMinusButton", "CharmPlusButton"]
+	}
+	for stat in stat_buttons.keys():
+		var paths: Array = stat_buttons[stat]
+		var minus := upgrade_panel.get_node_or_null("StatControls/%s" % String(paths[0])) as Button
+		var plus := upgrade_panel.get_node_or_null("StatControls/%s" % String(paths[1])) as Button
+		if minus != null:
+			_style_primary_button(minus, "−", 22)
+			minus.pressed.connect(func(s := String(stat)): _change_pending_stat(s, -1, can_ascend, can_dominate))
+			_wire_button_feedback([minus])
+		if plus != null:
+			_style_primary_button(plus, "+", 22)
+			plus.pressed.connect(func(s := String(stat)): _change_pending_stat(s, 1, can_ascend, can_dominate))
+			_wire_button_feedback([plus])
+	var confirm := upgrade_panel.get_node_or_null("AscendConfirmButton") as Button
+	if confirm != null:
+		_style_primary_button(confirm, "确认升华", 24)
+		confirm.pressed.connect(func():
+			var gains: Dictionary = selected_upgrade if typeof(selected_upgrade) == TYPE_DICTIONARY else {}
+			for event in RulesEngineScript.ascend_player(state, gains):
+				_append_system_log(event)
+			upgrade_done = true
+		)
+		confirm.disabled = not can_ascend or pending_stat_points > 0
+		_wire_button_feedback([confirm])
+	var dominion := upgrade_panel.get_node_or_null("DominionButton") as Button
+	if dominion != null:
+		_style_primary_button(dominion, "选择统治", 24)
+		dominion.pressed.connect(func():
+			state.player_declared_dominion = true
+			for event in RulesEngineScript.finish_round(state):
+				_append_system_log(event)
+				_mark_event_cards(event)
+			upgrade_done = true
+		)
+		dominion.disabled = not can_dominate
+		_wire_button_feedback([dominion])
 
 func _change_pending_stat(stat: String, delta: int, can_ascend: bool, can_dominate: bool) -> void:
 	var gains: Dictionary = selected_upgrade if typeof(selected_upgrade) == TYPE_DICTIONARY else {}
@@ -592,22 +1707,265 @@ func _stat_preview_value(stat: String) -> int:
 
 func _player_stat_rows() -> Array:
 	return [
-		["鑳介噺", str(int(state.player.get("energy", 0)))],
-		["绛夌骇", str(int(state.player.get("level", 1)))],
-		["缁熸不", state.dominion_progress(state.player)],
-		["鑳屽寘", str(state.player.get("inventory", []).size())]
+		["能量", str(int(state.player.get("energy", 0)))],
+		["等级", str(int(state.player.get("level", 1)))],
+		["统治", state.dominion_progress(state.player)],
+		["背包", str(state.player.get("inventory", []).size())]
 	]
 
 
 func _stat_defs() -> Array:
 	return [
-		["hp", "鐢熷懡"],
-		["frontal_attack", "姝ｆ敾"],
-		["frontal_defense", "姝ｉ槻"],
-		["assassination_attack", "鏆楁敾"],
-		["assassination_defense", "鏆楅槻"],
-		["charm", "榄呭姏"]
+		["hp", "生命"],
+		["frontal_attack", "正攻"],
+		["frontal_defense", "正防"],
+		["assassination_attack", "暗攻"],
+		["assassination_defense", "暗防"],
+		["charm", "魅力"]
 	]
+
+
+func _place_by_ratio(node: Control, rect: Rect2) -> void:
+	node.anchor_left = rect.position.x
+	node.anchor_top = rect.position.y
+	node.anchor_right = rect.position.x + rect.size.x
+	node.anchor_bottom = rect.position.y + rect.size.y
+	node.offset_left = 0
+	node.offset_top = 0
+	node.offset_right = 0
+	node.offset_bottom = 0
+
+
+func _load_texture_any(path: String) -> Texture2D:
+	if ResourceLoader.exists(path):
+		return load(path)
+	var image := Image.load_from_file(ProjectSettings.globalize_path(path))
+	if image != null:
+		return ImageTexture.create_from_image(image)
+	return null
+
+
+func _round_texture(name: String) -> Texture2D:
+	return _load_texture_any(ROUND_UI_ROOT + name)
+
+
+func _round_texture_style(name: String, margin: int) -> StyleBoxTexture:
+	var style := StyleBoxTexture.new()
+	style.texture = _round_texture(name)
+	style.texture_margin_left = margin
+	style.texture_margin_right = margin
+	style.texture_margin_top = margin
+	style.texture_margin_bottom = margin
+	style.content_margin_left = max(6, margin / 2)
+	style.content_margin_right = max(6, margin / 2)
+	style.content_margin_top = max(4, margin / 3)
+	style.content_margin_bottom = max(4, margin / 3)
+	return style
+
+
+func _icon_tile_name(icon_name: String) -> String:
+	return "icon_tile_%s" % icon_name.trim_prefix("icon_")
+
+
+func _apply_primary_button_texture(button: Button, text: String, font_size: int) -> void:
+	var bg := button.get_node_or_null("PrimaryButtonBackground") as TextureRect
+	if bg == null:
+		bg = TextureRect.new()
+		bg.name = "PrimaryButtonBackground"
+		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+		bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		bg.stretch_mode = TextureRect.STRETCH_SCALE
+		button.add_child(bg)
+		button.move_child(bg, 0)
+	bg.offset_left = 0
+	bg.offset_top = 0
+	bg.offset_right = 0
+	bg.offset_bottom = 0
+	bg.texture = _round_texture("button_primary_gold_normal.png")
+
+	var label := button.get_node_or_null("PrimaryButtonLabel") as Label
+	if label == null:
+		label = Label.new()
+		label.name = "PrimaryButtonLabel"
+		label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		label.set_anchors_preset(Control.PRESET_FULL_RECT)
+		button.add_child(label)
+	label.offset_left = 0
+	label.offset_top = 0
+	label.offset_right = 0
+	label.offset_bottom = 0
+	label.text = text
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", font_size)
+	label.add_theme_color_override("font_color", Color(0.06, 0.025, 0.0, 1.0))
+	label.add_theme_constant_override("outline_size", 2)
+	label.add_theme_color_override("font_outline_color", Color(1.0, 0.86, 0.25, 0.35))
+
+	button.set_meta("primary_button_normal", "button_primary_gold_normal.png")
+	button.set_meta("primary_button_hover", "button_primary_gold_hover.png")
+	button.set_meta("primary_button_pressed", "button_primary_gold_pressed.png")
+	button.set_meta("primary_button_disabled", "button_disabled_dark.png")
+	if not button.has_meta("primary_button_texture_wired"):
+		button.set_meta("primary_button_texture_wired", true)
+		button.mouse_entered.connect(func(): _update_primary_button_texture(button))
+		button.mouse_exited.connect(func(): _update_primary_button_texture(button))
+		button.button_down.connect(func(): _update_primary_button_texture(button))
+		button.button_up.connect(func(): _update_primary_button_texture(button))
+		button.toggled.connect(func(_pressed: bool): _update_primary_button_texture(button))
+	_update_primary_button_texture(button)
+
+
+func _update_primary_button_texture(button: Button) -> void:
+	if button == null or not is_instance_valid(button):
+		return
+	var bg := button.get_node_or_null("PrimaryButtonBackground") as TextureRect
+	if bg == null:
+		return
+	var asset := String(button.get_meta("primary_button_normal", "button_primary_gold_normal.png"))
+	if button.disabled:
+		asset = String(button.get_meta("primary_button_disabled", "button_disabled_dark.png"))
+	elif button.button_pressed:
+		asset = String(button.get_meta("primary_button_pressed", "button_primary_gold_pressed.png"))
+	elif button.is_hovered():
+		asset = String(button.get_meta("primary_button_hover", "button_primary_gold_hover.png"))
+	bg.texture = _round_texture(asset)
+
+
+func _select_card_shadow_material() -> ShaderMaterial:
+	var shader := Shader.new()
+	shader.code = """
+shader_type canvas_item;
+
+void fragment() {
+	vec4 tex = texture(TEXTURE, UV);
+	float alpha = smoothstep(0.40, 1.0, UV.y) * 0.80;
+	COLOR = vec4(0.0, 0.0, 0.0, alpha * tex.a);
+}
+"""
+	var material := ShaderMaterial.new()
+	material.shader = shader
+	return material
+
+
+func _add_select_card_shadow_mask(parent: Control) -> TextureRect:
+	var mask := TextureRect.new()
+	mask.name = "BottomShadowMask"
+	mask.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	mask.set_anchors_preset(Control.PRESET_FULL_RECT)
+	mask.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	mask.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	mask.material = _select_card_shadow_material()
+	var card_texture := parent.get_node_or_null("CardTexture") as TextureRect
+	if card_texture != null:
+		mask.texture = card_texture.texture
+		mask.stretch_mode = card_texture.stretch_mode
+		mask.expand_mode = card_texture.expand_mode
+	parent.add_child(mask)
+	return mask
+
+
+func _ensure_select_card_shadow_mask(parent: Control) -> void:
+	if parent == null:
+		return
+	var mask := parent.get_node_or_null("BottomShadowMask") as TextureRect
+	if mask == null:
+		mask = _add_select_card_shadow_mask(parent)
+	var card_texture := parent.get_node_or_null("CardTexture") as TextureRect
+	if card_texture != null:
+		mask.texture = card_texture.texture
+		mask.stretch_mode = card_texture.stretch_mode
+		mask.expand_mode = card_texture.expand_mode
+		parent.move_child(mask, card_texture.get_index() + 1)
+
+
+func _make_select_label(text: String, size: int, color: Color) -> Label:
+	var label := Label.new()
+	label.text = text
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", size)
+	label.add_theme_constant_override("outline_size", 4)
+	label.add_theme_color_override("font_color", color)
+	label.add_theme_color_override("font_outline_color", Color(0.015, 0.012, 0.014, 1.0))
+	label.clip_text = true
+	return label
+
+
+func _make_select_stat_row(label_text: String, value_text: String, index: int) -> PanelContainer:
+	var row := PanelContainer.new()
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_theme_stylebox_override("panel", _round_texture_style("button_secondary_blank.png", 0))
+	var box := HBoxContainer.new()
+	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	box.set_anchors_preset(Control.PRESET_FULL_RECT)
+	box.add_theme_constant_override("separation", 0)
+	row.add_child(box)
+	var name := Label.new()
+	name.text = label_text
+	name.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	name.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	name.add_theme_font_size_override("font_size", 16)
+	name.add_theme_color_override("font_color", Color(0.96, 0.92, 0.82, 1.0))
+	box.add_child(name)
+	var value := Label.new()
+	value.text = value_text
+	value.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	value.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	value.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	value.add_theme_font_size_override("font_size", 18)
+	value.add_theme_constant_override("outline_size", 2)
+	value.add_theme_color_override("font_color", Color.WHITE)
+	value.add_theme_color_override("font_outline_color", Color(0.015, 0.012, 0.014, 1.0))
+	box.add_child(value)
+	return row
+
+
+func _select_card_path_for_npc(npc: Dictionary) -> String:
+	var id := String(npc.get("id", ""))
+	return "%s%s_select_card.png" % [SELECT_CARD_ROOT, id]
+
+
+func _make_select_choose_button() -> Button:
+	var button := Button.new()
+	_style_primary_button(button, "选择", 24)
+	return button
+
+
+func _make_round_utility_button(label_text: String, icon_name: String, color: Color) -> Button:
+	var button := Button.new()
+	button.text = ""
+	button.tooltip_text = label_text
+	button.custom_minimum_size = Vector2(82, 82)
+	button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	button.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
+	button.add_theme_stylebox_override("hover", StyleBoxEmpty.new())
+	button.add_theme_stylebox_override("pressed", StyleBoxEmpty.new())
+	var icon := TextureRect.new()
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	icon.set_anchors_preset(Control.PRESET_FULL_RECT)
+	icon.custom_minimum_size = Vector2(82, 82)
+	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon.texture = _round_texture(_icon_tile_name(icon_name))
+	button.add_child(icon)
+	return button
+
+
+func _round_utility_style(bg: Color, border: Color) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = bg
+	style.border_color = border
+	style.set_border_width_all(2)
+	style.set_corner_radius_all(0)
+	style.content_margin_left = 4
+	style.content_margin_right = 4
+	style.content_margin_top = 4
+	style.content_margin_bottom = 4
+	return style
 
 
 func _add_hotspot_button(parent: Control, text: String, rect: Rect2, callback: Callable) -> Button:
@@ -628,17 +1986,36 @@ func _add_hotspot_button(parent: Control, text: String, rect: Rect2, callback: C
 	return button
 
 
+func _add_visible_hotspot_button(parent: Control, text: String, rect: Rect2, callback: Callable) -> Button:
+	var button := Button.new()
+	button.text = text
+	button.anchor_left = rect.position.x
+	button.anchor_top = rect.position.y
+	button.anchor_right = rect.position.x + rect.size.x
+	button.anchor_bottom = rect.position.y + rect.size.y
+	button.offset_left = 0
+	button.offset_top = 0
+	button.offset_right = 0
+	button.offset_bottom = 0
+	_style_primary_button(button, text, 24)
+	button.pressed.connect(callback)
+	parent.add_child(button)
+	_wire_button_feedback([button])
+	return button
+
+
 func _add_final_reference_utility_hotspots(parent: Control) -> void:
 	var specs := [
-		["情报", Rect2(0.898, 0.120, 0.084, 0.105), func(): _show_drawer("intel")],
-		["背包", Rect2(0.898, 0.250, 0.084, 0.105), func(): _show_drawer("bag")],
-		["历史", Rect2(0.898, 0.385, 0.084, 0.105), _show_history],
-		["规则", Rect2(0.898, 0.515, 0.084, 0.105), _toggle_rules],
-		["状态", Rect2(0.898, 0.645, 0.084, 0.105), func(): _show_drawer("status")],
-		["设置", Rect2(0.898, 0.775, 0.084, 0.105), _toggle_settings]
+		[Rect2(0.916, 0.190, 0.050, 0.070), func(): _show_drawer("intel")],
+		[Rect2(0.916, 0.285, 0.050, 0.070), func(): _show_drawer("bag")],
+		[Rect2(0.916, 0.380, 0.050, 0.070), _show_history],
+		[Rect2(0.916, 0.475, 0.050, 0.070), _toggle_rules],
+		[Rect2(0.916, 0.570, 0.050, 0.070), func(): _show_drawer("status")],
+		[Rect2(0.916, 0.665, 0.050, 0.070), _toggle_settings]
 	]
-	for spec in specs:
-		_add_hotspot_button(parent, String(spec[0]), spec[1], spec[2])
+	for i in range(specs.size()):
+		var spec: Array = specs[i]
+		_add_hotspot_button(parent, "工具", spec[0], spec[1])
 
 func _make_section_title(text: String) -> Label:
 	var tone := "teal"
@@ -673,7 +2050,7 @@ func _make_backpack_panel() -> PanelContainer:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 10)
 	panel.add_child(box)
-	box.add_child(card_kit.make_plate_label("鎴戠殑鑳屽寘", "purple", 28, Vector2(0, 62)))
+	box.add_child(card_kit.make_plate_label("我的背包", "purple", 28, Vector2(0, 62)))
 	var grid := GridContainer.new()
 	grid.columns = 2
 	grid.add_theme_constant_override("h_separation", 14)
@@ -685,7 +2062,7 @@ func _make_backpack_panel() -> PanelContainer:
 		grid.add_child(card_kit.make_item_tile(card_kit.artifact_icon_name(id), int(counts[id]), true, state.artifact_name(id)))
 	if counts.is_empty():
 		var empty := Label.new()
-		empty.text = "鏆傛棤娉曞櫒"
+		empty.text = "暂无法器"
 		empty.add_theme_font_size_override("font_size", 18)
 		empty.add_theme_color_override("font_color", Color(0.72, 0.70, 0.66, 1.0))
 		box.add_child(empty)
@@ -703,19 +2080,17 @@ func _artifact_counts(items: Array) -> Dictionary:
 func _avatar_for_npc(npc: Dictionary) -> String:
 	var id := String(npc.get("id", ""))
 	var species := String(npc.get("animal_species", ""))
-	if id.contains("wolf") or species.contains("鐙?):
+	if id.contains("wolf") or species.contains("狼"):
 		return "avatar_wolf_card.png"
 	return "avatar_fox_card.png"
 
 
 func _npc_card_tag(npc: Dictionary, index: int) -> String:
 	if index == 0:
-		return "楂橀闄?
+		return "高风险"
 	if index == 1:
-		return "鎯呮姤"
-	return "鍚屾棌"
-
-
+		return "情报"
+	return "同族"
 func _make_card_utility_column() -> VBoxContainer:
 	var box := VBoxContainer.new()
 	box.anchor_left = 0.91
@@ -724,12 +2099,12 @@ func _make_card_utility_column() -> VBoxContainer:
 	box.anchor_bottom = 0.96
 	box.add_theme_constant_override("separation", 12)
 	var specs := [
-		["鎯呮姤", "icon_info.png", Color(0.02, 0.42, 0.38, 1.0), func(): _show_drawer("intel")],
-		["鑳屽寘", "icon_bag.png", Color(0.62, 0.38, 0.02, 1.0), func(): _show_drawer("bag")],
-		["鍘嗗彶", "icon_history.png", Color(0.27, 0.16, 0.43, 1.0), _show_history],
-		["瑙勫垯", "icon_rules.png", Color(0.58, 0.08, 0.10, 1.0), _toggle_rules],
-		["鐘舵€?, "icon_status.png", Color(0.08, 0.30, 0.50, 1.0), func(): _show_drawer("status")],
-		["璁剧疆", "icon_settings.png", Color(0.26, 0.27, 0.28, 1.0), _toggle_settings]
+		["情报", "icon_info.png", Color(0.02, 0.42, 0.38, 1.0), func(): _show_drawer("intel")],
+		["背包", "icon_bag.png", Color(0.62, 0.38, 0.02, 1.0), func(): _show_drawer("bag")],
+		["历史", "icon_history.png", Color(0.27, 0.16, 0.43, 1.0), _show_history],
+		["规则", "icon_rules.png", Color(0.58, 0.08, 0.10, 1.0), _toggle_rules],
+		["状态", "icon_status.png", Color(0.08, 0.30, 0.50, 1.0), func(): _show_drawer("status")],
+		["设置", "icon_settings.png", Color(0.26, 0.27, 0.28, 1.0), _toggle_settings]
 	]
 	for spec in specs:
 		var button: Button = card_kit.make_utility_button(String(spec[0]), String(spec[1]), spec[2])
@@ -740,12 +2115,12 @@ func _make_card_utility_column() -> VBoxContainer:
 
 func _build_upgrade_buttons() -> void:
 	var upgrades := [
-		["hp", "鐢熷懡"],
-		["frontal_attack", "姝ｉ潰鏀诲嚮"],
-		["frontal_defense", "姝ｉ潰闃插尽"],
-		["assassination_attack", "鏆楁潃鏀诲嚮"],
-		["assassination_defense", "鏆楁潃闃插尽"],
-		["charm", "姒勫懎濮?]
+		["hp", "生命"],
+		["frontal_attack", "正面攻击"],
+		["frontal_defense", "正面防御"],
+		["assassination_attack", "暗杀攻击"],
+		["assassination_defense", "暗杀防御"],
+		["charm", "魅力"]
 	]
 	for item in upgrades:
 		var button := Button.new()
@@ -774,19 +2149,19 @@ func _on_continue_pressed() -> void:
 func _get_player_dialogue() -> Dictionary:
 	dialogue_title.text = "鎬濊€冧腑"
 	dialogue_view.clear()
-	_prepare_llm_stream("player_llm", "浣犳柟", Color(0.58, 0.82, 1.0, 1.0))
+	_prepare_llm_stream("player_llm", "你方", Color(0.58, 0.82, 1.0, 1.0))
 	if llm_client.use_mock_llm():
 		var npc: Dictionary = state.current_npc()
 		var mock := {}
-		mock["thinking"] = "鎴戜細鍏堣瘯鎺㈠鏂瑰涓栫晫璁惧畾鍜屾硶鍣ㄧ殑鐞嗚В锛屼笉鎬ョ潃鍔ㄦ墜銆?
-		mock["speech"] = "鍚%s闄勮繎鏈変簺娉曞櫒鎹㈡墜寰堝揩銆傝嫢鎴戜滑鍚勬湁鎵€闇€锛屼篃璁歌兘璋堜竴绗斾氦鎹€? % npc.get("territory", "杩欓噷")
+		mock["thinking"] = "我先试探对方对世界设定和法器的理解，不急着动手。"
+		mock["speech"] = "听说%s附近有些法器换手很快。若我们各有所需，也许能谈一笔交换。" % npc.get("territory", "这里")
 		mock["action"] = "none"
 		mock["artifact_id"] = ""
 		mock["end_dialogue"] = state.turn >= state.max_dialogue_turns
 		await llm_client.chat_json("player_llm", "", "", mock, true)
 		streaming_section = ""
 		return mock
-	var fallback := {"thinking": "鍏堣皑鎱庤瘯鎺€?, "speech": "鎴戞兂鍏堝惉鍚綘鎬庝箞鐪嬫渶杩戠殑浼犻椈銆?, "action": "none", "artifact_id": "", "end_dialogue": false}
+	var fallback := {"thinking": "先谨慎试探。", "speech": "我想先听听你怎么看最近的传闻。", "action": "none", "artifact_id": "", "end_dialogue": false}
 	var result: Dictionary = await llm_client.chat_json(
 		"player_llm",
 		PromptBuilderScript.player_dialogue_system(state),
@@ -802,13 +2177,13 @@ func _get_npc_dialogue() -> Dictionary:
 	_prepare_llm_stream("npc_llm", "NPC", Color(1.0, 0.61, 0.48, 1.0), false)
 	if llm_client.use_mock_llm():
 		var npc: Dictionary = state.current_npc()
-		var response := {"speech": "浣犻棶寰楀緢宸с€傝嫢浣犳噦%s锛屽氨璇ョ煡閬撶ぜ鐗╁拰浠ｄ环甯稿父鏄竴鍥炰簨銆? % npc.get("liked_topics", ["瑙勭煩"])[0]}
+		var response := {"speech": "你问得很巧。若你懂%s，就该知道礼物和代价常常是一回事。" % npc.get("liked_topics", ["规矩"])[0]}
 		if int(npc.get("affinity", 0)) >= 6 and not npc.get("inventory", []).is_empty():
 			response["gift_offer"] = {"artifact_id": String(npc.get("inventory", [])[0]), "affinity_required": 6}
 		await llm_client.chat_json("npc_llm", "", "", response, true)
 		streaming_section = ""
 		return response
-	var fallback := {"speech": "浣犵殑璇濊鎴戞湁鐐瑰叴瓒ｏ紝浣嗘垜杩橀渶瑕佹洿澶氳瘹鎰忋€?}
+	var fallback := {"speech": "你的话让我有点兴趣，但我还需要更多诚意。"}
 	var result: Dictionary = await llm_client.chat_json(
 		"npc_llm",
 		PromptBuilderScript.npc_dialogue_system(),
@@ -821,15 +2196,15 @@ func _get_npc_dialogue() -> Dictionary:
 
 
 func _get_post_action() -> Dictionary:
-	dialogue_title.text = "琛屽姩鍐崇瓥涓?
+	dialogue_title.text = "行动决策中"
 	dialogue_view.clear()
 	_prepare_llm_stream("player_llm", "", Color.WHITE)
 	if llm_client.use_mock_llm():
-		var mock := {"thinking": "椋庨櫓涓嶆竻锛屽厛鎾ょ杩涘叆鍟嗗簵銆?, "action": "leave", "artifact_id": ""}
+		var mock := {"thinking": "风险不清，先撤离进入商店。", "action": "leave", "artifact_id": ""}
 		await llm_client.chat_json("player_llm", "", "", mock, true)
 		streaming_section = ""
 		return mock
-	var fallback := {"thinking": "椋庨櫓涓嶆竻锛屼紭鍏堢寮€銆?, "action": "leave", "artifact_id": ""}
+	var fallback := {"thinking": "风险不清，优先离开。", "action": "leave", "artifact_id": ""}
 	var result: Dictionary = await llm_client.chat_json(
 		"player_llm",
 		PromptBuilderScript.post_action_system(),
@@ -857,10 +2232,10 @@ func _set_current_npc_assets() -> void:
 	npc_label.text = String(npc.get("public_name", ""))
 	if current_speaker_label != null:
 		current_speaker_label.text = String(npc.get("public_name", "NPC"))
-	npc_public_label.text = "鍏紑璧勬枡锛?s\n鍦扮洏锛?s\n鍋忓ソ璇濋锛?s\n鑳屽寘涓庨渶姹傦細涓嶅彲瑙? % [
-		String(npc.get("public_identity", "鏈煡韬唤")),
-		String(npc.get("territory", "鏈煡")),
-		"銆?.join(npc.get("liked_topics", []))
+	npc_public_label.text = "公开资料：%s\n地盘：%s\n偏好话题：%s\n背包与需求：不可见" % [
+		String(npc.get("public_identity", "未知身份")),
+		String(npc.get("territory", "未知")),
+		"、".join(npc.get("liked_topics", []))
 	]
 	_update_progress()
 
@@ -871,9 +2246,9 @@ func _update_state_panel() -> void:
 	if player_label != null:
 		player_label.text = _player_short_name()
 	var stats: Dictionary = state.player.get("stats", {})
-	var inventory_text := "銆?.join(state.describe_inventory(state.player.get("inventory", [])))
-	var ascension_text := "銆?.join(state.describe_inventory(state.player.get("ascension_requirement", [])))
-	stats_label.text = "绔犺妭锛?d / %d\n鍥炲悎锛?d / %d\n瀛楃锛?d / %d\n鑳介噺锛?d\n绛夌骇锛?d\n缁熸不锛?s\n鑳屽寘锛?s\n鍗囧崕闇€姹傦細%s\n鐢熷懡锛?d  榄呭姏锛?d\n姝ｉ潰锛?d/%d  鏆楁潃锛?d/%d" % [
+	var inventory_text := "、".join(state.describe_inventory(state.player.get("inventory", [])))
+	var ascension_text := "、".join(state.describe_inventory(state.player.get("ascension_requirement", [])))
+	stats_label.text = "章节：%d / %d\n回合：%d / %d\n字符：%d / %d\n能量：%d\n等级：%d\n统治：%s\n背包：%s\n升华需求：%s\n生命：%d  魅力：%d\n正面：%d/%d  暗杀：%d/%d" % [
 		state.chapter_index + 1, state.max_chapters,
 		state.chapter_round + 1, state.max_rounds,
 		state.player_chars, state.max_player_chars,
@@ -887,21 +2262,21 @@ func _update_state_panel() -> void:
 		int(stats.get("assassination_attack", 0)), int(stats.get("assassination_defense", 0))
 	]
 	state_view.clear()
-	state_view.append_text("[b]缁熸不闇€姹俒/b]\n")
+	state_view.append_text("[b]统治需求[/b]\n")
 	for artifact_id in state.player.get("dominion_requirement", []):
-		var mark := "宸茶幏" if String(artifact_id) in state.player.get("artifact_history", []) else "鏈幏"
+		var mark := "已获得" if String(artifact_id) in state.player.get("artifact_history", []) else "未获得"
 		state_view.append_text("- %s [%s]\n" % [state.artifact_name(String(artifact_id)), mark])
-	state_view.append_text("\n[b]杩戞湡璁板繂[/b]\n")
+	state_view.append_text("\n[b]近期记忆[/b]\n")
 	for item in state.recent_memory(state.player, 8):
 		state_view.append_text("- %s\n" % _escape(String(item)))
-	state_view.append_text("\n[b]鎯呮姤鍗/b]\n")
+	state_view.append_text("\n[b]情报卡[/b]\n")
 	for question in state.world_intel_questions:
 		var question_id := String(question.get("id", ""))
-		var selected := String(state.selected_world_intel.get(question_id, "鏈€夋嫨"))
-		var answer_title: String = state.world_intel_option_title(question_id, selected) if selected != "鏈€夋嫨" else selected
-		state_view.append_text("- %s锛?s\n" % [String(question.get("title", question_id)), answer_title])
+		var selected := String(state.selected_world_intel.get(question_id, "未选择"))
+		var answer_title: String = state.world_intel_option_title(question_id, selected) if selected != "未选择" else selected
+		state_view.append_text("- %s：%s\n" % [String(question.get("title", question_id)), answer_title])
 	if state.ended:
-		state_view.append_text("\n[b]缁撶畻[/b]\n%s\n" % state.end_reason)
+		state_view.append_text("\n[b]结算[/b]\n%s\n" % state.end_reason)
 	_update_card_grid()
 	if intel_panel != null and intel_panel.visible:
 		_update_intel_panel()
@@ -943,7 +2318,7 @@ func _prepare_llm_stream(section: String, speaker: String, color: Color, clear_f
 
 func _begin_speech_stream() -> void:
 	speech_stream_started = true
-	dialogue_title.text = "鐎电鐦?
+	dialogue_title.text = "对话中"
 	result_banner.visible = false
 	dialogue_view.clear()
 	_pop_control(dialogue_view)
@@ -964,7 +2339,7 @@ func _finish_speech_stream(speaker: String, speech: String, color: Color) -> voi
 
 
 func _show_speech_stream(speaker: String, speech: String, color: Color) -> void:
-	dialogue_title.text = "鐎电鐦?
+	dialogue_title.text = "对话中"
 	result_banner.visible = false
 	dialogue_view.clear()
 	_pop_control(dialogue_view)
@@ -975,7 +2350,7 @@ func _show_speech_stream(speaker: String, speech: String, color: Color) -> void:
 
 
 func _show_scene_message(text: String) -> void:
-	dialogue_title.text = "鐎电鐦?
+	dialogue_title.text = "场景"
 	dialogue_view.clear()
 	dialogue_view.append_text("[color=#f3d28b]%s[/color]" % _escape(text))
 	_follow_dialogue_view(dialogue_view)
@@ -1010,10 +2385,10 @@ func _set_active_speaker(role: String) -> void:
 
 func _show_history() -> void:
 	history_view.clear()
-	history_view.append_text("[b]瀵硅瘽鍘嗗彶[/b]\n")
+	history_view.append_text("[b]对话历史[/b]\n")
 	history_view.append_text(_escape(state.format_full_history()))
 	if not state.event_log.is_empty():
-		history_view.append_text("\n\n[b]琛屽姩涓庡彂鐜癧/b]\n")
+		history_view.append_text("\n\n[b]行动与发现[/b]\n")
 		for item in state.event_log:
 			history_view.append_text("- %s\n" % _escape(String(item)))
 	if intel_panel != null:
@@ -1053,11 +2428,11 @@ func _show_drawer(mode: String) -> void:
 	if title != null:
 		match drawer_mode:
 			"bag":
-				title.text = "鑳屽寘"
+				title.text = "背包"
 			"status":
-				title.text = "鐘舵€?
+				title.text = "状态"
 			_:
-				title.text = "鎯呮姤"
+				title.text = "情报"
 	_update_state_panel()
 	_show_modal_backdrop()
 	_slide_in(drawer)
@@ -1098,11 +2473,12 @@ func _toggle_settings() -> void:
 
 func _show_modal_backdrop() -> void:
 	if modal_backdrop != null:
+		modal_backdrop.z_index = 4000
 		modal_backdrop.visible = true
 		modal_backdrop.move_to_front()
 	for panel in [intel_panel, drawer, rules_panel, settings_panel, history_dialog, upgrade_panel]:
 		if panel != null and panel.visible:
-			panel.z_index = 90
+			panel.z_index = 4010
 			panel.move_to_front()
 
 
@@ -1153,30 +2529,30 @@ func _update_card_grid() -> void:
 	stats_label.visible = drawer_mode == "status"
 	match drawer_mode:
 		"bag":
-			_add_section_label("缁熸不闇€姹?)
+			_add_section_label("统治需求")
 			for artifact_id in state.player.get("dominion_requirement", []):
 				var known: bool = String(artifact_id) in state.player.get("artifact_history", [])
-				_add_info_card(String(artifact_id), state.artifact_name(String(artifact_id)), "宸茶幏寰? if known else "鏈幏寰?, "缁熸不闇€姹傛硶鍣?, true, false, known)
-			_add_section_label("鑳屽寘")
+				_add_info_card(String(artifact_id), state.artifact_name(String(artifact_id)), "已获得" if known else "未获得", "统治需求法器", true, false, known)
+			_add_section_label("背包")
 			for artifact_id in state.player.get("inventory", []):
 				var artifact: Dictionary = state.get_artifact(String(artifact_id))
-				_add_info_card(String(artifact_id), String(artifact.get("name", artifact_id)), "鎸佹湁涓?, String(artifact.get("story", "")), true, false, false)
-			_add_section_label("鍗囧崕闇€姹?)
+				_add_info_card(String(artifact_id), String(artifact.get("name", artifact_id)), "持有中", String(artifact.get("story", "")), true, false, false)
+			_add_section_label("升华需求")
 			for artifact_id in state.player.get("ascension_requirement", []):
-				_add_info_card(String(artifact_id), state.artifact_name(String(artifact_id)), "闇€姹?, "鍗囧崕娑堣€楁硶鍣?, true, false, false)
+				_add_info_card(String(artifact_id), state.artifact_name(String(artifact_id)), "需求", "升华消耗法器", true, false, false)
 		"status":
-			_add_section_label("褰撳墠鐘舵€?)
-			_add_info_card("round", "绔犺妭 / 鍥炲悎", "%d / %d 绔? % [state.chapter_index + 1, state.max_chapters], "鍥炲悎 %d / %d锛屽璇?%d / %d" % [state.chapter_round + 1, state.max_rounds, state.turn, state.max_dialogue_turns], true, false, false)
-			_add_info_card("budget", "瀛楃涓庤兘閲?, "%d / %d" % [state.player_chars, state.max_player_chars], "鑳介噺锛?d  绛夌骇锛?d" % [int(state.player.get("energy", 0)), int(state.player.get("level", 1))], true, false, false)
+			_add_section_label("当前状态")
+			_add_info_card("round", "章节 / 回合", "%d / %d 章" % [state.chapter_index + 1, state.max_chapters], "回合 %d / %d，对话 %d / %d" % [state.chapter_round + 1, state.max_rounds, state.turn, state.max_dialogue_turns], true, false, false)
+			_add_info_card("budget", "字符与能量", "%d / %d" % [state.player_chars, state.max_player_chars], "能量：%d  等级：%d" % [int(state.player.get("energy", 0)), int(state.player.get("level", 1))], true, false, false)
 			var npc: Dictionary = state.current_npc()
 			if not npc.is_empty():
-				_add_info_card("npc", String(npc.get("public_name", "NPC")), String(npc.get("friend_judgement", "unknown")), "浜茶繎搴︼細%d  鍦扮洏锛?s" % [int(npc.get("affinity", 0)), String(npc.get("territory", "鏈煡"))], true, false, false)
+				_add_info_card("npc", String(npc.get("public_name", "NPC")), String(npc.get("friend_judgement", "unknown")), "亲近度：%d  地盘：%s" % [int(npc.get("affinity", 0)), String(npc.get("territory", "未知"))], true, false, false)
 		_:
-			_add_section_label("瑜版挸澧?NPC")
+			_add_section_label("当前 NPC")
 			if state != null and not state.current_npc().is_empty():
 				var npc: Dictionary = state.current_npc()
-				_add_info_card("npc_public", String(npc.get("public_name", "NPC")), String(npc.get("territory", "鏈煡")), String(npc.get("public_identity", "鏈煡韬唤")), true, false, false)
-			_add_section_label("涓栫晫璁惧畾妗ｆ")
+				_add_info_card("npc_public", String(npc.get("public_name", "NPC")), String(npc.get("territory", "未知")), String(npc.get("public_identity", "未知身份")), true, false, false)
+			_add_section_label("世界设定档案")
 			for question in state.world_intel_questions:
 				_add_world_intel_question(question)
 			_add_submit_world_intel_button()
@@ -1204,7 +2580,7 @@ func _update_intel_panel() -> void:
 		_update_modal_backdrop()
 	)
 	intel_footer.add_child(close_button)
-	var submit_button: Button = card_kit.make_primary_button("鎻愪氦涓栫晫璁惧畾妗ｆ")
+	var submit_button: Button = card_kit.make_primary_button("提交世界设定档案")
 	submit_button.custom_minimum_size = Vector2(320, 58)
 	submit_button.disabled = state.intel_submitted
 	submit_button.pressed.connect(_confirm_submit_world_intel)
@@ -1285,7 +2661,7 @@ func _add_intel_answer_card(parent: HBoxContainer, question_id: String, option: 
 	box.add_child(title)
 	var sources := _world_intel_sources(question_id, option_id)
 	var source_label := Label.new()
-	source_label.text = "璇佽瘝锛?s" % ("鏆傛棤" if sources.is_empty() else " / ".join(sources))
+	source_label.text = "证词：%s" % ("暂无" if sources.is_empty() else " / ".join(sources))
 	source_label.add_theme_font_size_override("font_size", 15)
 	source_label.add_theme_color_override("font_color", Color(0.78, 0.75, 0.68, 1.0))
 	source_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -1306,7 +2682,7 @@ func _add_intel_testimony_portraits(parent: HBoxContainer, question_id: String, 
 		portrait.custom_minimum_size = Vector2(42, 42)
 		portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-		portrait.tooltip_text = "绗?%d 绔?%s" % [int(source.get("chapter", 1)), String(source.get("npc_name", "NPC"))]
+		portrait.tooltip_text = "第%d章%s" % [int(source.get("chapter", 1)), String(source.get("npc_name", "NPC"))]
 		_set_texture_or_fallback(portrait, "res://assets/generated/%s" % String(source.get("portrait", "")), "res://assets/generated/opponent_portrait.png")
 		parent.add_child(portrait)
 
@@ -1380,7 +2756,20 @@ func _add_panel_label(parent: Control, text: String) -> void:
 	label.text = text
 	label.add_theme_font_size_override("font_size", 22)
 	label.add_theme_color_override("font_color", Color(1.0, 0.78, 0.45, 1.0))
+	_apply_ui_font(label)
 	parent.add_child(label)
+
+
+func _apply_ui_font(control: Control) -> void:
+	var font := _load_ui_font()
+	if font != null:
+		control.add_theme_font_override("font", font)
+
+
+func _load_ui_font() -> Font:
+	if ResourceLoader.exists(UI_FONT_PATH):
+		return load(UI_FONT_PATH)
+	return null
 
 
 func _add_section_label(text: String) -> void:
@@ -1453,14 +2842,14 @@ func _add_world_intel_option(parent: VBoxContainer, question_id: String, option:
 	text_box.add_theme_constant_override("separation", 1)
 	row.add_child(text_box)
 	var title := Label.new()
-	title.text = ("%s  " % ("宸查€? if selected else "")) + String(option.get("title", option_id))
+	title.text = ("%s  " % ("已选" if selected else "")) + String(option.get("title", option_id))
 	title.add_theme_font_size_override("font_size", 15)
 	title.add_theme_color_override("font_color", Color(0.78, 1.0, 0.86, 1.0) if selected else Color(1.0, 0.91, 0.74, 1.0))
 	title.clip_text = true
 	text_box.add_child(title)
 	var sources := _world_intel_sources(question_id, option_id)
 	var source_label := Label.new()
-	source_label.text = "璇佽瘝锛?s" % ("鏆傛棤" if sources.is_empty() else "銆?.join(sources))
+	source_label.text = "证词：%s" % ("暂无" if sources.is_empty() else "、".join(sources))
 	source_label.add_theme_font_size_override("font_size", 12)
 	source_label.add_theme_color_override("font_color", Color(0.84, 0.80, 0.68, 1.0))
 	source_label.clip_text = true
@@ -1473,7 +2862,7 @@ func _add_world_intel_option(parent: VBoxContainer, question_id: String, option:
 		portrait.custom_minimum_size = Vector2(34, 34)
 		portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-		portrait.tooltip_text = "绗?%d 绔?%s" % [int(source.get("chapter", 1)), String(source.get("npc_name", "NPC"))]
+		portrait.tooltip_text = "第%d章%s" % [int(source.get("chapter", 1)), String(source.get("npc_name", "NPC"))]
 		_set_texture_or_fallback(portrait, "res://assets/generated/%s" % String(source.get("portrait", "")), "res://assets/generated/opponent_portrait.png")
 		portraits.add_child(portrait)
 
@@ -1481,13 +2870,13 @@ func _add_world_intel_option(parent: VBoxContainer, question_id: String, option:
 func _world_intel_sources(question_id: String, option_id: String) -> Array[String]:
 	var result: Array[String] = []
 	for source in state.intel_testimonies.get(question_id, {}).get(option_id, []):
-		result.append("绗?d绔?s" % [int(source.get("chapter", 1)), String(source.get("npc_name", "NPC"))])
+		result.append("第%d章%s" % [int(source.get("chapter", 1)), String(source.get("npc_name", "NPC"))])
 	return result
 
 
 func _add_submit_world_intel_button() -> void:
 	var button := Button.new()
-	button.text = "鎻愪氦涓栫晫璁惧畾妗ｆ"
+	button.text = "提交世界设定档案"
 	button.custom_minimum_size = Vector2(0, 48)
 	button.disabled = state.intel_submitted
 	button.pressed.connect(_confirm_submit_world_intel)
@@ -1497,8 +2886,8 @@ func _add_submit_world_intel_button() -> void:
 
 func _confirm_submit_world_intel() -> void:
 	var dialog := ConfirmationDialog.new()
-	dialog.title = "鎻愪氦涓栫晫璁惧畾妗ｆ"
-	dialog.dialog_text = "鎻愪氦鍚庢棤娉曚慨鏀广€? 鏉¤瀹氬叏閮ㄦ纭墠浼氳儨鍒╋紝浠绘剰閿欒閮戒細澶辫触銆?
+	dialog.title = "提交世界设定档案"
+	dialog.dialog_text = "提交后无法修改。全部设定正确才会胜利，任意错误都会失败。"
 	add_child(dialog)
 	dialog.confirmed.connect(func():
 		for event in RulesEngineScript.submit_world_intel(state, state.selected_world_intel.duplicate(true)):
@@ -1555,6 +2944,40 @@ func _wire_button_feedback(buttons: Array) -> void:
 			continue
 		button.mouse_entered.connect(func(): _hover_control(button))
 		button.pressed.connect(func(): _press_control(button))
+
+
+func _wire_hold_hover_feedback(buttons: Array) -> void:
+	for button in buttons:
+		if button == null:
+			continue
+		if button.has_meta("hold_hover_feedback_wired"):
+			continue
+		button.set_meta("hold_hover_feedback_wired", true)
+		button.mouse_entered.connect(func(): _hold_hover_enter(button))
+		button.mouse_exited.connect(func(): _hold_hover_exit(button))
+		button.pressed.connect(func(): _press_control(button))
+
+
+func _hold_hover_enter(node: Control) -> void:
+	_kill_feedback_tween(node)
+	var tween := create_tween()
+	node.set_meta("feedback_tween", tween)
+	tween.tween_property(node, "scale", Vector2(1.035, 1.035), 0.08).set_trans(Tween.TRANS_QUAD)
+
+
+func _hold_hover_exit(node: Control) -> void:
+	_kill_feedback_tween(node)
+	var tween := create_tween()
+	node.set_meta("feedback_tween", tween)
+	tween.tween_property(node, "scale", Vector2.ONE, 0.16).set_trans(Tween.TRANS_BACK)
+
+
+func _kill_feedback_tween(node: Control) -> void:
+	if node == null or not node.has_meta("feedback_tween"):
+		return
+	var tween = node.get_meta("feedback_tween")
+	if tween is Tween and tween.is_valid():
+		tween.kill()
 
 
 func _hover_control(node: Control) -> void:
@@ -1659,23 +3082,23 @@ func _action_color(action: String) -> Color:
 func _action_name(action: String) -> String:
 	match RulesEngineScript.normalize_action(action):
 		"invite":
-			return "閭€璇?
+			return "邀请"
 		"assassinate":
-			return "鏆楁潃"
+			return "暗杀"
 		"duel":
-			return "鍐虫枟"
+			return "决斗"
 		"gift":
-			return "璧犻€?
+			return "赠送"
 		"cast":
-			return "鏂芥硶"
+			return "施法"
 		_:
-			return "鎾ょ"
+			return "撤离"
 
 
 func _update_progress() -> void:
 	if progress_label == null or state == null:
 		return
-	progress_label.text = "绗?%d / %d 绔? 鍥炲悎 %d / %d  瀵硅瘽 %d / %d" % [state.chapter_index + 1, state.max_chapters, min(state.chapter_round + 1, state.max_rounds), state.max_rounds, state.turn, state.max_dialogue_turns]
+	progress_label.text = "第 %d / %d 章  回合 %d / %d  对话 %d / %d" % [state.chapter_index + 1, state.max_chapters, min(state.chapter_round + 1, state.max_rounds), state.max_rounds, state.turn, state.max_dialogue_turns]
 
 
 func _update_upgrade_buttons() -> void:
@@ -1687,23 +3110,23 @@ func _update_upgrade_buttons() -> void:
 		button.text = "%s %d -> %d" % [_stat_name(stat), value, value + int(gains.get(stat, 0))]
 		button.disabled = pending_stat_points <= 0
 	if upgrade_hint != null:
-		upgrade_hint.text = "鍓╀綑灞炴€х偣锛?d" % pending_stat_points
+		upgrade_hint.text = "剩余属性点：%d" % pending_stat_points
 
 
 func _stat_name(stat: String) -> String:
 	match stat:
 		"hp":
-			return "鐢熷懡"
+			return "生命"
 		"frontal_attack":
-			return "姝ｉ潰鏀诲嚮"
+			return "正面攻击"
 		"frontal_defense":
-			return "姝ｉ潰闃插尽"
+			return "正面防御"
 		"assassination_attack":
-			return "鏆楁潃鏀诲嚮"
+			return "暗杀攻击"
 		"assassination_defense":
-			return "鏆楁潃闃插尽"
+			return "暗杀防御"
 		"charm":
-			return "姒勫懎濮?
+			return "魅力"
 		_:
 			return stat
 
@@ -1726,7 +3149,7 @@ func _clear_children(parent: Node) -> void:
 
 func _update_after_end() -> void:
 	if state.ended:
-		status_label.text = state.end_reason
+		_set_status_text(state.end_reason)
 		_show_result_banner(state.end_reason, Color(0.62, 1.0, 0.78, 1.0) if state.victory else Color(1.0, 0.36, 0.32, 1.0))
 	start_button.disabled = false
 	rules_edit.editable = true
@@ -1737,10 +3160,20 @@ func _store_final_dialogue(speaker: String, speech: String) -> void:
 	var npc_name := "NPC"
 	if state != null and state.has_method("current_npc") and not state.current_npc().is_empty():
 		npc_name = String(state.current_npc().get("public_name", "NPC"))
-	var is_player := speaker == "浣犳柟" or speaker == _player_short_name()
+	var is_player := speaker == "你方" or speaker == _player_short_name()
 	last_final_speaker = _player_short_name() if is_player else npc_name
 	last_final_speech = speech
 	last_final_role = "player" if is_player else "npc"
+
+
+func _clear_last_final_dialogue() -> void:
+	last_final_speaker = ""
+	last_final_speech = ""
+	last_final_role = "player"
+	if upper_box != null:
+		upper_box.visible = false
+	if recent_view != null:
+		recent_view.clear()
 
 
 func _show_previous_final_if_ready() -> void:
@@ -1753,29 +3186,34 @@ func _show_previous_final_if_ready() -> void:
 	if last_final_role == "player":
 		upper_box.texture = load("res://assets/generated/ui/dialogue/dialogue_gold_blank.png")
 	else:
-		upper_box.texture = load("res://assets/generated/ui/dialogue/dialogue_red_blank.png")
+		upper_box.texture = load("res://assets/generated/ui/dialogue/dialogue_upper_red_full.png")
 	if previous_nameplate != null:
 		previous_nameplate.texture = load("res://assets/generated/ui/dialogue/nameplate_left_exact.png") if last_final_role == "player" else load("res://assets/generated/ui/dialogue/nameplate_right_exact.png")
-		_place_label_relative(previous_nameplate, Rect2(0.045, -0.30, 0.20, 0.42) if last_final_role == "player" else Rect2(0.76, -0.29, 0.22, 0.42))
+		_place_dialogue_nameplate(previous_nameplate, last_final_role, last_final_speaker, true)
 	if previous_speaker_label != null:
 		previous_speaker_label.text = last_final_speaker
-		_place_label_relative(previous_speaker_label, Rect2(0.045, -0.30, 0.20, 0.42) if last_final_role == "player" else Rect2(0.76, -0.29, 0.22, 0.42))
+		_style_dialogue_name_label(previous_speaker_label, last_final_role)
+		_place_dialogue_nameplate(previous_speaker_label, last_final_role, last_final_speaker, true)
 	recent_view.clear()
-	recent_view.append_text("[font_size=18][color=#130905]%s[/color][/font_size]" % _escape(last_final_speech))
+	recent_view.append_text("[font_size=17][color=#130905]%s[/color][/font_size]" % _escape(last_final_speech))
 	_follow_dialogue_view(recent_view)
 	_animate_previous_dialogue()
 
 
 func _set_current_dialogue_role(role: String) -> void:
 	if lower_box != null:
-		lower_box.texture = load("res://assets/generated/ui/dialogue/dialogue_gold_blank.png") if role == "player" else load("res://assets/generated/ui/dialogue/dialogue_red_blank.png")
+		lower_box.texture = load("res://assets/generated/ui/dialogue/dialogue_lower_gold_full.png") if role == "player" else load("res://assets/generated/ui/dialogue/dialogue_red_blank.png")
 		lower_box.move_to_front()
 	if current_nameplate != null:
 		current_nameplate.texture = load("res://assets/generated/ui/dialogue/nameplate_left_exact.png") if role == "player" else load("res://assets/generated/ui/dialogue/nameplate_right_exact.png")
-		_place_label_relative(current_nameplate, Rect2(0.035, -0.21, 0.18, 0.31) if role == "player" else Rect2(0.77, -0.20, 0.18, 0.31))
+	var speaker_name := _player_short_name() if role == "player" else String(state.current_npc().get("public_name", "NPC")) if state != null and not state.current_npc().is_empty() else "NPC"
 	if current_speaker_label != null:
-		current_speaker_label.text = _player_short_name() if role == "player" else String(state.current_npc().get("public_name", "NPC")) if state != null and not state.current_npc().is_empty() else "NPC"
-		_place_label_relative(current_speaker_label, Rect2(0.035, -0.21, 0.18, 0.31) if role == "player" else Rect2(0.77, -0.20, 0.18, 0.31))
+		current_speaker_label.text = speaker_name
+		_style_dialogue_name_label(current_speaker_label, role)
+	if current_nameplate != null:
+		_place_dialogue_nameplate(current_nameplate, role, speaker_name, false)
+	if current_speaker_label != null:
+		_place_dialogue_nameplate(current_speaker_label, role, speaker_name, false)
 	if dialogue_view != null:
 		dialogue_view.clear()
 	_animate_current_dialogue_pop()
@@ -1789,9 +3227,17 @@ func _set_dialogue_visible(visible: bool) -> void:
 	if side_shadow_right != null:
 		side_shadow_right.visible = visible
 	_update_dialogue_scene_visibility()
-	for node in [status_label, progress_label, info_button, bag_button, history_button, rules_button, status_button, settings_button]:
+	if progress_label != null:
+		progress_label.visible = false
+	for node in [status_label, info_button, bag_button, history_button, rules_button, status_button, settings_button]:
 		if node != null:
 			node.visible = visible
+	if auto_decide_check != null:
+		auto_decide_check.visible = visible
+	for action_button in action_buttons.values():
+		var button := action_button as Button
+		if button != null:
+			button.visible = visible
 	if not visible:
 		if upper_box != null:
 			upper_box.visible = false
@@ -1847,6 +3293,36 @@ func _place_label_relative(label: Control, rect: Rect2) -> void:
 	label.offset_bottom = 0
 
 
+func _place_dialogue_nameplate(label: Control, role: String, speaker_name: String, is_previous: bool) -> void:
+	var box_width := 953.0 if is_previous else 1339.0
+	var min_texture_width := 184.0 if role == "player" else 209.0
+	var char_width := 28.0
+	var content_width: float = max(min_texture_width, float(speaker_name.length() + 3) * char_width)
+	var width: float = clamp(content_width / box_width, 0.16 if is_previous else 0.18, 0.42 if is_previous else 0.36)
+	var rect := Rect2()
+	if is_previous:
+		rect.position.y = -0.30 if role == "player" else -0.29
+		rect.size.y = 0.42
+		rect.position.x = 0.045 if role == "player" else 0.98 - width
+	else:
+		rect.position.y = -0.21 if role == "player" else -0.20
+		rect.size.y = 0.31
+		rect.position.x = 0.035 if role == "player" else 0.95 - width
+	rect.size.x = width
+	_place_label_relative(label, rect)
+
+
+func _style_dialogue_name_label(label: Label, role: String) -> void:
+	if role == "npc":
+		label.add_theme_color_override("font_color", Color(1.0, 0.18, 0.16, 1.0))
+		label.add_theme_constant_override("outline_size", 2)
+		label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 1.0))
+	else:
+		label.add_theme_color_override("font_color", Color(1.0, 0.76, 0.22, 1.0))
+		label.add_theme_constant_override("outline_size", 2)
+		label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 1.0))
+
+
 func _follow_dialogue_view(view: RichTextLabel) -> void:
 	if view == null:
 		return
@@ -1857,22 +3333,22 @@ func _follow_dialogue_view(view: RichTextLabel) -> void:
 
 func _player_short_name() -> String:
 	if state == null:
-		return "鐜╁瑙掕壊"
+		return "玩家角色"
 	var identity := String(state.player.get("public_identity", "")).strip_edges()
 	if identity.is_empty():
-		return "鐜╁瑙掕壊"
-	var first_clause := identity.split("锛?, false)[0].strip_edges()
+		return "玩家角色"
+	var first_clause := identity.split("，", false)[0].strip_edges()
 	if first_clause.is_empty():
 		first_clause = identity.split(",", false)[0].strip_edges()
-	var marker := first_clause.rfind("鐨?)
+	var marker := first_clause.rfind("的")
 	if marker >= 0 and marker < first_clause.length() - 1:
 		first_clause = first_clause.substr(marker + 1).strip_edges()
-	for token in ["鏉ヨ嚜", "涓€鍚?, "涓€涓?, "鐨?]:
+	for token in ["来自", "一名", "一个", "的"]:
 		first_clause = first_clause.replace(token, "")
 	first_clause = first_clause.strip_edges()
 	if first_clause.length() > 8:
 		first_clause = first_clause.substr(0, 8)
-	return first_clause if not first_clause.is_empty() else "鐜╁瑙掕壊"
+	return first_clause if not first_clause.is_empty() else "玩家角色"
 
 
 func _escape(value: String) -> String:

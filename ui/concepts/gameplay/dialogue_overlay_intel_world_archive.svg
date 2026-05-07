@@ -1,0 +1,201 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs>
+<style>text{font-family:"Noto Sans SC","Microsoft YaHei",sans-serif;dominant-baseline:text-before-edge}.title{font-weight:700}</style>
+</defs>
+<rect x="0" y="0" width="1920" height="1080" fill="#120b0d" stroke="none" stroke-width="0" opacity="1"/>
+<polygon points="0,120 420,0 660,0 180,1080 0,1080" fill="#6d0d21" stroke="none" stroke-width="0" opacity="0.3333333333333333"/>
+<polygon points="1420,0 1920,0 1920,1080 1680,1080 1320,360" fill="#075b5d" stroke="none" stroke-width="0" opacity="0.3137254901960784"/>
+<polygon points="760,0 1140,0 980,1080 600,1080" fill="#3e1455" stroke="none" stroke-width="0" opacity="0.2549019607843137"/>
+<line x1="-100" y1="1080" x2="420" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="140" y1="1080" x2="660" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="380" y1="1080" x2="900" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="620" y1="1080" x2="1140" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="860" y1="1080" x2="1380" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="1100" y1="1080" x2="1620" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="1340" y1="1080" x2="1860" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="1580" y1="1080" x2="2100" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="1820" y1="1080" x2="2340" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="0" y1="0" x2="0" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="96" y1="0" x2="96" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="192" y1="0" x2="192" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="288" y1="0" x2="288" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="384" y1="0" x2="384" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="480" y1="0" x2="480" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="576" y1="0" x2="576" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="672" y1="0" x2="672" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="768" y1="0" x2="768" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="864" y1="0" x2="864" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="960" y1="0" x2="960" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1056" y1="0" x2="1056" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1152" y1="0" x2="1152" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1248" y1="0" x2="1248" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1344" y1="0" x2="1344" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1440" y1="0" x2="1440" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1536" y1="0" x2="1536" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1632" y1="0" x2="1632" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1728" y1="0" x2="1728" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1824" y1="0" x2="1824" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="0" y1="0" x2="1920" y2="0" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="96" x2="1920" y2="96" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="192" x2="1920" y2="192" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="288" x2="1920" y2="288" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="384" x2="1920" y2="384" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="480" x2="1920" y2="480" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="576" x2="1920" y2="576" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="672" x2="1920" y2="672" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="768" x2="1920" y2="768" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="864" x2="1920" y2="864" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="960" x2="1920" y2="960" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="1056" x2="1920" y2="1056" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<polygon points="274,108 1690,108 1690,196 1666,220 250,220 250,132" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="264,96 1680,96 1680,184 1656,208 240,208 240,120" fill="#211014" stroke="#d5a34a" stroke-width="3" opacity="1"/>
+<line x1="264" y1="104" x2="1652" y2="104" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="280" y="120" font-size="40" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">世界设定档案</text>
+<text x="282" y="170" font-size="18" fill="#a99779" text-anchor="start" opacity="1">每张候选卡包含图片、文本与支持者头像；选择只代表你的判断，不显示真假。</text>
+<polygon points="212,244 1754,244 1754,866 1728,892 186,892 186,270" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="202,232 1744,232 1744,854 1718,880 176,880 176,258" fill="#160e12" stroke="#1fb7a6" stroke-width="3" opacity="1"/>
+<line x1="202" y1="240" x2="1716" y2="240" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<polygon points="236,268 938,268 938,426 920,444 218,444 218,286" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="226,256 928,256 928,414 910,432 208,432 208,274" fill="#211014" stroke="#7d4f24" stroke-width="2" opacity="1"/>
+<line x1="226" y1="264" x2="900" y2="264" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="232" y="278" font-size="24" fill="#e4b85b" text-anchor="start" opacity="1" class="title">01  谎言从哪里来</text>
+<polygon points="252,330 450,330 450,412 440,422 242,422 242,340" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="242,318 440,318 440,400 430,410 232,410 232,328" fill="#151013" stroke="#1fb7a6" stroke-width="2" opacity="1"/>
+<line x1="242" y1="326" x2="412" y2="326" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="240" y="328" width="60" height="60" fill="#120d10" stroke="#1fb7a6" stroke-width="2" opacity="1"/>
+<text x="310" y="326" font-size="16" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">谎言来自月亮</text>
+<text x="310" y="370" font-size="13" fill="#a99779" text-anchor="start" opacity="1">支持：绯尾、鸦账</text>
+<polygon points="476,330 674,330 674,412 664,422 466,422 466,340" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="466,318 664,318 664,400 654,410 456,410 456,328" fill="#151013" stroke="#7d4f24" stroke-width="2" opacity="1"/>
+<line x1="466" y1="326" x2="636" y2="326" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="464" y="328" width="60" height="60" fill="#120d10" stroke="#d5a34a" stroke-width="2" opacity="1"/>
+<text x="534" y="326" font-size="16" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">谎言来自名字</text>
+<text x="534" y="370" font-size="13" fill="#a99779" text-anchor="start" opacity="1">支持：银针</text>
+<polygon points="700,330 898,330 898,412 888,422 690,422 690,340" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="690,318 888,318 888,400 878,410 680,410 680,328" fill="#151013" stroke="#7d4f24" stroke-width="2" opacity="1"/>
+<line x1="690" y1="326" x2="860" y2="326" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="688" y="328" width="60" height="60" fill="#120d10" stroke="#d5a34a" stroke-width="2" opacity="1"/>
+<text x="758" y="326" font-size="16" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">谎言来自债务</text>
+<text x="758" y="370" font-size="13" fill="#a99779" text-anchor="start" opacity="1">支持：无</text>
+<polygon points="1004,268 1706,268 1706,426 1688,444 986,444 986,286" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="994,256 1696,256 1696,414 1678,432 976,432 976,274" fill="#211014" stroke="#7d4f24" stroke-width="2" opacity="1"/>
+<line x1="994" y1="264" x2="1668" y2="264" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="1000" y="278" font-size="24" fill="#e4b85b" text-anchor="start" opacity="1" class="title">02  旧王朝为什么消失</text>
+<polygon points="1020,330 1218,330 1218,412 1208,422 1010,422 1010,340" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="1010,318 1208,318 1208,400 1198,410 1000,410 1000,328" fill="#151013" stroke="#7d4f24" stroke-width="2" opacity="1"/>
+<line x1="1010" y1="326" x2="1180" y2="326" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="1008" y="328" width="60" height="60" fill="#120d10" stroke="#d5a34a" stroke-width="2" opacity="1"/>
+<text x="1078" y="326" font-size="16" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">被亲近者出卖</text>
+<text x="1078" y="370" font-size="13" fill="#a99779" text-anchor="start" opacity="1">支持：绯尾</text>
+<polygon points="1244,330 1442,330 1442,412 1432,422 1234,422 1234,340" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="1234,318 1432,318 1432,400 1422,410 1224,410 1224,328" fill="#151013" stroke="#7d4f24" stroke-width="2" opacity="1"/>
+<line x1="1234" y1="326" x2="1404" y2="326" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="1232" y="328" width="60" height="60" fill="#120d10" stroke="#d5a34a" stroke-width="2" opacity="1"/>
+<text x="1302" y="326" font-size="16" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">被法器吞掉</text>
+<text x="1302" y="370" font-size="13" fill="#a99779" text-anchor="start" opacity="1">支持：无</text>
+<polygon points="1468,330 1666,330 1666,412 1656,422 1458,422 1458,340" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="1458,318 1656,318 1656,400 1646,410 1448,410 1448,328" fill="#151013" stroke="#7d4f24" stroke-width="2" opacity="1"/>
+<line x1="1458" y1="326" x2="1628" y2="326" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="1456" y="328" width="60" height="60" fill="#120d10" stroke="#d5a34a" stroke-width="2" opacity="1"/>
+<text x="1526" y="326" font-size="16" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">旧王族仍藏着</text>
+<text x="1526" y="370" font-size="13" fill="#a99779" text-anchor="start" opacity="1">支持：灰冠、灯婆</text>
+<polygon points="236,468 938,468 938,626 920,644 218,644 218,486" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="226,456 928,456 928,614 910,632 208,632 208,474" fill="#211014" stroke="#7d4f24" stroke-width="2" opacity="1"/>
+<line x1="226" y1="464" x2="900" y2="464" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="232" y="478" font-size="24" fill="#e4b85b" text-anchor="start" opacity="1" class="title">03  动物族群共同禁忌</text>
+<polygon points="252,530 450,530 450,612 440,622 242,622 242,540" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="242,518 440,518 440,600 430,610 232,610 232,528" fill="#151013" stroke="#7d4f24" stroke-width="2" opacity="1"/>
+<line x1="242" y1="526" x2="412" y2="526" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="240" y="528" width="60" height="60" fill="#120d10" stroke="#d5a34a" stroke-width="2" opacity="1"/>
+<text x="310" y="526" font-size="16" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">第一份礼物</text>
+<text x="310" y="570" font-size="13" fill="#a99779" text-anchor="start" opacity="1">支持：无</text>
+<polygon points="476,530 674,530 674,612 664,622 466,622 466,540" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="466,518 664,518 664,600 654,610 456,610 456,528" fill="#151013" stroke="#7d4f24" stroke-width="2" opacity="1"/>
+<line x1="466" y1="526" x2="636" y2="526" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="464" y="528" width="60" height="60" fill="#120d10" stroke="#d5a34a" stroke-width="2" opacity="1"/>
+<text x="534" y="526" font-size="16" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">门槛上真话</text>
+<text x="534" y="570" font-size="13" fill="#a99779" text-anchor="start" opacity="1">支持：绯尾</text>
+<polygon points="700,530 898,530 898,612 888,622 690,622 690,540" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="690,518 888,518 888,600 878,610 680,610 680,528" fill="#151013" stroke="#1fb7a6" stroke-width="2" opacity="1"/>
+<line x1="690" y1="526" x2="860" y2="526" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="688" y="528" width="60" height="60" fill="#120d10" stroke="#1fb7a6" stroke-width="2" opacity="1"/>
+<text x="758" y="526" font-size="16" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">死者遗物</text>
+<text x="758" y="570" font-size="13" fill="#a99779" text-anchor="start" opacity="1">支持：鸦账</text>
+<polygon points="1004,468 1706,468 1706,626 1688,644 986,644 986,486" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="994,456 1696,456 1696,614 1678,632 976,632 976,474" fill="#211014" stroke="#7d4f24" stroke-width="2" opacity="1"/>
+<line x1="994" y1="464" x2="1668" y2="464" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="1000" y="478" font-size="24" fill="#e4b85b" text-anchor="start" opacity="1" class="title">04  夜市真正尊重什么</text>
+<polygon points="1020,530 1218,530 1218,612 1208,622 1010,622 1010,540" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="1010,518 1208,518 1208,600 1198,610 1000,610 1000,528" fill="#151013" stroke="#7d4f24" stroke-width="2" opacity="1"/>
+<line x1="1010" y1="526" x2="1180" y2="526" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="1008" y="528" width="60" height="60" fill="#120d10" stroke="#d5a34a" stroke-width="2" opacity="1"/>
+<text x="1078" y="526" font-size="16" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">公平交易</text>
+<text x="1078" y="570" font-size="13" fill="#a99779" text-anchor="start" opacity="1">支持：灯婆</text>
+<polygon points="1244,530 1442,530 1442,612 1432,622 1234,622 1234,540" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="1234,518 1432,518 1432,600 1422,610 1224,610 1224,528" fill="#151013" stroke="#1fb7a6" stroke-width="2" opacity="1"/>
+<line x1="1234" y1="526" x2="1404" y2="526" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="1232" y="528" width="60" height="60" fill="#120d10" stroke="#1fb7a6" stroke-width="2" opacity="1"/>
+<text x="1302" y="526" font-size="16" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">漂亮谎言</text>
+<text x="1302" y="570" font-size="13" fill="#a99779" text-anchor="start" opacity="1">支持：无</text>
+<polygon points="1468,530 1666,530 1666,612 1656,622 1458,622 1458,540" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="1458,518 1656,518 1656,600 1646,610 1448,610 1448,528" fill="#151013" stroke="#7d4f24" stroke-width="2" opacity="1"/>
+<line x1="1458" y1="526" x2="1628" y2="526" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="1456" y="528" width="60" height="60" fill="#120d10" stroke="#d5a34a" stroke-width="2" opacity="1"/>
+<text x="1526" y="526" font-size="16" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">守住秘密</text>
+<text x="1526" y="570" font-size="13" fill="#a99779" text-anchor="start" opacity="1">支持：银针</text>
+<polygon points="236,668 938,668 938,826 920,844 218,844 218,686" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="226,656 928,656 928,814 910,832 208,832 208,674" fill="#211014" stroke="#7d4f24" stroke-width="2" opacity="1"/>
+<line x1="226" y1="664" x2="900" y2="664" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="232" y="678" font-size="24" fill="#e4b85b" text-anchor="start" opacity="1" class="title">05  法器到底是什么</text>
+<polygon points="252,730 450,730 450,812 440,822 242,822 242,740" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="242,718 440,718 440,800 430,810 232,810 232,728" fill="#151013" stroke="#1fb7a6" stroke-width="2" opacity="1"/>
+<line x1="242" y1="726" x2="412" y2="726" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="240" y="728" width="60" height="60" fill="#120d10" stroke="#1fb7a6" stroke-width="2" opacity="1"/>
+<text x="310" y="726" font-size="16" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">记忆容器</text>
+<text x="310" y="770" font-size="13" fill="#a99779" text-anchor="start" opacity="1">支持：灰冠</text>
+<polygon points="476,730 674,730 674,812 664,822 466,822 466,740" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="466,718 664,718 664,800 654,810 456,810 456,728" fill="#151013" stroke="#7d4f24" stroke-width="2" opacity="1"/>
+<line x1="466" y1="726" x2="636" y2="726" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="464" y="728" width="60" height="60" fill="#120d10" stroke="#d5a34a" stroke-width="2" opacity="1"/>
+<text x="534" y="726" font-size="16" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">活着的债主</text>
+<text x="534" y="770" font-size="13" fill="#a99779" text-anchor="start" opacity="1">支持：绯尾</text>
+<polygon points="700,730 898,730 898,812 888,822 690,822 690,740" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="690,718 888,718 888,800 878,810 680,810 680,728" fill="#151013" stroke="#7d4f24" stroke-width="2" opacity="1"/>
+<line x1="690" y1="726" x2="860" y2="726" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="688" y="728" width="60" height="60" fill="#120d10" stroke="#d5a34a" stroke-width="2" opacity="1"/>
+<text x="758" y="726" font-size="16" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">身份伪装</text>
+<text x="758" y="770" font-size="13" fill="#a99779" text-anchor="start" opacity="1">支持：无</text>
+<polygon points="1004,668 1706,668 1706,826 1688,844 986,844 986,686" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="994,656 1696,656 1696,814 1678,832 976,832 976,674" fill="#211014" stroke="#7d4f24" stroke-width="2" opacity="1"/>
+<line x1="994" y1="664" x2="1668" y2="664" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="1000" y="678" font-size="24" fill="#e4b85b" text-anchor="start" opacity="1" class="title">06  本章背叛像什么</text>
+<polygon points="1020,730 1218,730 1218,812 1208,822 1010,822 1010,740" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="1010,718 1208,718 1208,800 1198,810 1000,810 1000,728" fill="#151013" stroke="#7d4f24" stroke-width="2" opacity="1"/>
+<line x1="1010" y1="726" x2="1180" y2="726" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="1008" y="728" width="60" height="60" fill="#120d10" stroke="#d5a34a" stroke-width="2" opacity="1"/>
+<text x="1078" y="726" font-size="16" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">政治清洗</text>
+<text x="1078" y="770" font-size="13" fill="#a99779" text-anchor="start" opacity="1">支持：无</text>
+<polygon points="1244,730 1442,730 1442,812 1432,822 1234,822 1234,740" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="1234,718 1432,718 1432,800 1422,810 1224,810 1224,728" fill="#151013" stroke="#7d4f24" stroke-width="2" opacity="1"/>
+<line x1="1234" y1="726" x2="1404" y2="726" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="1232" y="728" width="60" height="60" fill="#120d10" stroke="#d5a34a" stroke-width="2" opacity="1"/>
+<text x="1302" y="726" font-size="16" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">古老祭仪</text>
+<text x="1302" y="770" font-size="13" fill="#a99779" text-anchor="start" opacity="1">支持：鸦账</text>
+<polygon points="1468,730 1666,730 1666,812 1656,822 1458,822 1458,740" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="1458,718 1656,718 1656,800 1646,810 1448,810 1448,728" fill="#151013" stroke="#7d4f24" stroke-width="2" opacity="1"/>
+<line x1="1458" y1="726" x2="1628" y2="726" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="1456" y="728" width="60" height="60" fill="#120d10" stroke="#d5a34a" stroke-width="2" opacity="1"/>
+<text x="1526" y="726" font-size="16" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">身份误认</text>
+<text x="1526" y="770" font-size="13" fill="#a99779" text-anchor="start" opacity="1">支持：灯婆</text>
+<polygon points="268,892 1690,892 1690,978 1672,996 250,996 250,910" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="258,880 1680,880 1680,966 1662,984 240,984 240,898" fill="#1a1012" stroke="#7d4f24" stroke-width="2" opacity="1"/>
+<line x1="258" y1="888" x2="1652" y2="888" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<polygon points="1134,916 1346,916 1346,960 1334,972 1122,972 1122,928" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="1124,904 1336,904 1336,948 1324,960 1112,960 1112,916" fill="#242226" stroke="#5c5960" stroke-width="2" opacity="1"/>
+<line x1="1124" y1="912" x2="1308" y2="912" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="1224" y="918" font-size="24" fill="#f6e9cb" text-anchor="middle" opacity="1" class="title">返回</text>
+<polygon points="1382,916 1634,916 1634,960 1622,972 1370,972 1370,928" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="1372,904 1624,904 1624,948 1612,960 1360,960 1360,916" fill="#4b3014" stroke="#e4b85b" stroke-width="2" opacity="1"/>
+<line x1="1372" y1="912" x2="1596" y2="912" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="1492" y="918" font-size="24" fill="#f6e9cb" text-anchor="middle" opacity="1" class="title">提交档案</text>
+</svg>

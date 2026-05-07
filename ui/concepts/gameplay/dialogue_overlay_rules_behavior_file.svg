@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs>
+<style>text{font-family:"Noto Sans SC","Microsoft YaHei",sans-serif;dominant-baseline:text-before-edge}.title{font-weight:700}</style>
+</defs>
+<rect x="0" y="0" width="1920" height="1080" fill="#120b0d" stroke="none" stroke-width="0" opacity="1"/>
+<polygon points="0,120 420,0 660,0 180,1080 0,1080" fill="#6d0d21" stroke="none" stroke-width="0" opacity="0.3333333333333333"/>
+<polygon points="1420,0 1920,0 1920,1080 1680,1080 1320,360" fill="#075b5d" stroke="none" stroke-width="0" opacity="0.3137254901960784"/>
+<polygon points="760,0 1140,0 980,1080 600,1080" fill="#3e1455" stroke="none" stroke-width="0" opacity="0.2549019607843137"/>
+<line x1="-100" y1="1080" x2="420" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="140" y1="1080" x2="660" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="380" y1="1080" x2="900" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="620" y1="1080" x2="1140" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="860" y1="1080" x2="1380" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="1100" y1="1080" x2="1620" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="1340" y1="1080" x2="1860" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="1580" y1="1080" x2="2100" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="1820" y1="1080" x2="2340" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="0" y1="0" x2="0" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="96" y1="0" x2="96" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="192" y1="0" x2="192" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="288" y1="0" x2="288" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="384" y1="0" x2="384" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="480" y1="0" x2="480" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="576" y1="0" x2="576" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="672" y1="0" x2="672" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="768" y1="0" x2="768" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="864" y1="0" x2="864" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="960" y1="0" x2="960" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1056" y1="0" x2="1056" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1152" y1="0" x2="1152" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1248" y1="0" x2="1248" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1344" y1="0" x2="1344" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1440" y1="0" x2="1440" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1536" y1="0" x2="1536" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1632" y1="0" x2="1632" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1728" y1="0" x2="1728" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1824" y1="0" x2="1824" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="0" y1="0" x2="1920" y2="0" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="96" x2="1920" y2="96" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="192" x2="1920" y2="192" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="288" x2="1920" y2="288" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="384" x2="1920" y2="384" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="480" x2="1920" y2="480" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="576" x2="1920" y2="576" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="672" x2="1920" y2="672" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="768" x2="1920" y2="768" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="864" x2="1920" y2="864" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="960" x2="1920" y2="960" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="1056" x2="1920" y2="1056" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<polygon points="274,108 1690,108 1690,196 1666,220 250,220 250,132" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="264,96 1680,96 1680,184 1656,208 240,208 240,120" fill="#211014" stroke="#d5a34a" stroke-width="3" opacity="1"/>
+<line x1="264" y1="104" x2="1652" y2="104" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="280" y="120" font-size="40" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">行为文件</text>
+<text x="282" y="170" font-size="18" fill="#a99779" text-anchor="start" opacity="1">三段策略并列编辑，下方为完整自由输入区。</text>
+<polygon points="250,260 1714,260 1714,844 1690,868 226,868 226,284" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="240,248 1704,248 1704,832 1680,856 216,856 216,272" fill="#160e12" stroke="#d5a34a" stroke-width="3" opacity="1"/>
+<line x1="240" y1="256" x2="1676" y2="256" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<polygon points="284,316 698,316 698,486 680,504 266,504 266,334" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="274,304 688,304 688,474 670,492 256,492 256,322" fill="#211014" stroke="#b5423c" stroke-width="3" opacity="1"/>
+<line x1="274" y1="312" x2="660" y2="312" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="284" y="332" font-size="28" fill="#b5423c" text-anchor="start" opacity="1" class="title">决策基调</text>
+<text x="284" y="384" font-size="22" fill="#f6e9cb" text-anchor="start" opacity="1">冷静、谨慎、礼貌，不轻易暴露真实</text>
+<text x="284" y="413" font-size="22" fill="#f6e9cb" text-anchor="start" opacity="1">目的。</text>
+<polygon points="764,316 1178,316 1178,486 1160,504 746,504 746,334" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="754,304 1168,304 1168,474 1150,492 736,492 736,322" fill="#211014" stroke="#1fb7a6" stroke-width="3" opacity="1"/>
+<line x1="754" y1="312" x2="1140" y2="312" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="764" y="332" font-size="28" fill="#1fb7a6" text-anchor="start" opacity="1" class="title">对话策略</text>
+<text x="764" y="384" font-size="22" fill="#f6e9cb" text-anchor="start" opacity="1">先提升好感，试探世界设定与法器需</text>
+<text x="764" y="413" font-size="22" fill="#f6e9cb" text-anchor="start" opacity="1">求。</text>
+<polygon points="1244,316 1658,316 1658,486 1640,504 1226,504 1226,334" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="1234,304 1648,304 1648,474 1630,492 1216,492 1216,322" fill="#211014" stroke="#b77725" stroke-width="3" opacity="1"/>
+<line x1="1234" y1="312" x2="1620" y2="312" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="1244" y="332" font-size="28" fill="#b77725" text-anchor="start" opacity="1" class="title">行动策略</text>
+<text x="1244" y="384" font-size="22" fill="#f6e9cb" text-anchor="start" opacity="1">风险不清时撤离，收益明确时再交易</text>
+<text x="1244" y="413" font-size="22" fill="#f6e9cb" text-anchor="start" opacity="1">或决斗。</text>
+<text x="256" y="536" font-size="28" fill="#e4b85b" text-anchor="start" opacity="1" class="title">自由输入</text>
+<polygon points="282,596 1674,596 1674,804 1658,820 266,820 266,612" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="272,584 1664,584 1664,792 1648,808 256,808 256,600" fill="#100b0d" stroke="#7d4f24" stroke-width="3" opacity="1"/>
+<line x1="272" y1="592" x2="1636" y2="592" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="296" y="624" font-size="22" fill="#a99779" text-anchor="start" opacity="1">在这里补充你希望角色长期遵循的细节，例如优先保护哪些目标、如何判断交换收益、何时停止追问。</text>
+<polygon points="268,892 1690,892 1690,978 1672,996 250,996 250,910" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="258,880 1680,880 1680,966 1662,984 240,984 240,898" fill="#1a1012" stroke="#7d4f24" stroke-width="2" opacity="1"/>
+<line x1="258" y1="888" x2="1652" y2="888" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<polygon points="1134,916 1346,916 1346,960 1334,972 1122,972 1122,928" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="1124,904 1336,904 1336,948 1324,960 1112,960 1112,916" fill="#242226" stroke="#5c5960" stroke-width="2" opacity="1"/>
+<line x1="1124" y1="912" x2="1308" y2="912" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="1224" y="918" font-size="24" fill="#f6e9cb" text-anchor="middle" opacity="1" class="title">放弃修改</text>
+<polygon points="1382,916 1634,916 1634,960 1622,972 1370,972 1370,928" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="1372,904 1624,904 1624,948 1612,960 1360,960 1360,916" fill="#4b3014" stroke="#e4b85b" stroke-width="2" opacity="1"/>
+<line x1="1372" y1="912" x2="1596" y2="912" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="1492" y="918" font-size="24" fill="#f6e9cb" text-anchor="middle" opacity="1" class="title">保存行为文件</text>
+</svg>

@@ -1,0 +1,67 @@
+[gd_scene format=3 uid="uid://3uygw7rfmobn"]
+
+[ext_resource type="Texture2D" uid="uid://rcyfg2y3st2q" path="res://assets/ui/characters/cards/npc_fox_select_card.png" id="1_card"]
+
+[node name="NpcSelectCard" type="Button" unique_id=145331449]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+
+[node name="CardTexture" type="TextureRect" parent="." unique_id=1876179582]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("1_card")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="NameLabel" type="Label" parent="." unique_id=1197016854]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.16
+anchor_top = 0.655
+anchor_right = 0.84
+anchor_bottom = 0.755
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.015, 0.012, 0.014, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 28
+text = "NPC"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+
+[node name="TagLabel" type="Label" parent="." unique_id=1119211693]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.22
+anchor_top = 0.745
+anchor_right = 0.78
+anchor_bottom = 0.811
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.015, 0.012, 0.014, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 19
+text = "试探"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+
+[node name="ChooseButton" type="Button" parent="." unique_id=2049887048]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.136
+anchor_top = 0.735
+anchor_right = 0.864
+anchor_bottom = 0.81
+focus_mode = 0
+theme_override_font_sizes/font_size = 24
+text = "选择"

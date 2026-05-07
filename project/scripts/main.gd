@@ -29,7 +29,7 @@ func _fill_control(node: Control) -> void:
 
 
 func _install_theme() -> void:
-	var font_path := "res://assets/fonts/NotoSansSC-VF.ttf"
+	var font_path := "res://assets/fonts/AlibabaPuHuiTi-3-105-Heavy.ttf"
 	if not ResourceLoader.exists(font_path):
 		return
 	var ui_theme := Theme.new()

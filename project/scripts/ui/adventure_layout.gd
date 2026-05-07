@@ -3,7 +3,8 @@ class_name AdventureLayout
 
 const CardUiKitScript := preload("res://scripts/ui/card_ui_kit.gd")
 const UI_ROOT := "res://assets/generated/ui/dialogue/"
-const DIALOGUE_FONT_PATH := "res://assets/fonts/NotoSansSC-VF.ttf"
+const COMMON_UI_ROOT := "res://assets/ui/common/"
+const DIALOGUE_FONT_PATH := "res://assets/fonts/AlibabaPuHuiTi-3-105-Heavy.ttf"
 const BASE_SIZE := Vector2(1672, 941)
 const NINE_MARGIN := 34
 
@@ -40,15 +41,16 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 	hud.set_anchors_preset(Control.PRESET_FULL_RECT)
 	owner.add_child(hud)
 
-	var status_panel := _make_exact_texture("top_status_full.png", Rect2(6, 6, 1660, 52))
+	var status_panel := _make_status_panel(Rect2(586, 6, 500, 52))
+	status_panel.name = "StatusPanel"
 	status_panel.z_index = 40
 	hud.add_child(status_panel)
 
 	var status_label := Label.new()
 	status_label.text = "赤金夜市：等待开始"
 	status_label.set_anchors_preset(Control.PRESET_FULL_RECT)
-	status_label.offset_left = 0
-	status_label.offset_right = 0
+	status_label.offset_left = 92
+	status_label.offset_right = -92
 	status_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	status_label.add_theme_font_size_override("font_size", 24)
@@ -60,7 +62,7 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 	progress_label.visible = false
 	hud.add_child(progress_label)
 
-	var upper_box := _make_exact_texture("dialogue_red_blank.png", Rect2(395, 584, 953, 127))
+	var upper_box := _make_exact_texture("dialogue_upper_red_full.png", Rect2(395, 584, 953, 127))
 	upper_box.z_index = 24
 	upper_box.visible = false
 	hud.add_child(upper_box)
@@ -91,12 +93,12 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 	result_banner.add_theme_color_override("font_color", Color(1.0, 0.87, 0.42, 1.0))
 	hud.add_child(result_banner)
 
-	var recent_view := _make_log(18, Color(0.08, 0.04, 0.03, 1.0))
+	var recent_view := _make_log(17, Color(0.08, 0.04, 0.03, 1.0))
 	recent_view.name = "PreviousDialogue"
-	_place_relative(recent_view, Rect2(0.08, 0.13, 0.78, 0.68))
+	_place_relative(recent_view, Rect2(0.08, 0.09, 0.80, 0.80))
 	upper_box.add_child(recent_view)
 
-	var lower_box := _make_exact_texture("dialogue_gold_blank.png", Rect2(176, 728, 1339, 194))
+	var lower_box := _make_exact_texture("dialogue_lower_gold_full.png", Rect2(176, 728, 1339, 194))
 	lower_box.z_index = 25
 	lower_box.visible = false
 	hud.add_child(lower_box)
@@ -118,14 +120,10 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 	npc_label.visible = false
 	hud.add_child(npc_label)
 
-	var dialogue_view := _make_log(24, Color(0.08, 0.04, 0.03, 1.0))
+	var dialogue_view := _make_log(23, Color(0.08, 0.04, 0.03, 1.0))
 	dialogue_view.name = "CurrentDialogue"
-	_place_relative(dialogue_view, Rect2(0.09, 0.17, 0.80, 0.60))
+	_place_relative(dialogue_view, Rect2(0.08, 0.14, 0.82, 0.70))
 	lower_box.add_child(dialogue_view)
-
-	var side_strip := _make_exact_texture("right_button_strip.png", Rect2(1558, 86, 104, 726))
-	side_strip.z_index = 45
-	hud.add_child(side_strip)
 
 	var side_buttons := Control.new()
 	side_buttons.z_index = 46
@@ -153,6 +151,54 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 		side_buttons.add_child(button)
 
 	var drawer := _make_modal_panel(Vector2(430, 650), "情报")
+	var action_buttons_root := Control.new()
+	action_buttons_root.z_index = 46
+	action_buttons_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	action_buttons_root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	hud.add_child(action_buttons_root)
+
+	var auto_decide_check := CheckBox.new()
+	auto_decide_check.text = "自行决定"
+	auto_decide_check.button_pressed = false
+	auto_decide_check.focus_mode = Control.FOCUS_NONE
+	auto_decide_check.tooltip_text = "勾选后你方角色会自动执行自己的行动决策"
+	auto_decide_check.add_theme_font_size_override("font_size", 19)
+	auto_decide_check.add_theme_color_override("font_color", Color(1.0, 0.82, 0.42, 1.0))
+	auto_decide_check.add_theme_constant_override("h_separation", 10)
+	auto_decide_check.add_theme_icon_override("unchecked", _make_checkbox_icon(false))
+	auto_decide_check.add_theme_icon_override("checked", _make_checkbox_icon(true))
+	auto_decide_check.add_theme_icon_override("unchecked_disabled", _make_checkbox_icon(false))
+	auto_decide_check.add_theme_icon_override("checked_disabled", _make_checkbox_icon(true))
+	var dialogue_font := _load_dialogue_font()
+	if dialogue_font != null:
+		auto_decide_check.add_theme_font_override("font", dialogue_font)
+	_place_by_source_rect(auto_decide_check, Rect2(12, 36, 174, 52))
+	action_buttons_root.add_child(auto_decide_check)
+
+	var action_button_specs := [
+		["leave", "撤离", "icon_action_leave.png"],
+		["gift", "赠送", "icon_action_gift.png"],
+		["cast", "施法", "icon_action_cast.png"],
+		["invite", "邀请", "icon_action_invite.png"],
+		["duel", "决斗", "icon_action_duel.png"],
+		["assassinate", "暗杀", "icon_action_assassinate.png"]
+	]
+	var action_buttons := {}
+	var left_hot_zones := [
+		Rect2(15, 91, 94, 95),
+		Rect2(15, 213, 94, 96),
+		Rect2(15, 339, 94, 96),
+		Rect2(15, 462, 94, 96),
+		Rect2(15, 586, 94, 96),
+		Rect2(15, 710, 94, 96)
+	]
+	for i in range(action_button_specs.size()):
+		var spec: Array = action_button_specs[i]
+		var action_button := _make_icon_button(String(spec[1]), String(spec[2]))
+		_place_by_source_rect(action_button, left_hot_zones[i])
+		action_buttons_root.add_child(action_button)
+		action_buttons[String(spec[0])] = action_button
+
 	drawer.visible = false
 	owner.add_child(drawer)
 	var drawer_box: VBoxContainer = drawer.get_meta("body")
@@ -295,13 +341,13 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 	var side_shadow_left := _make_side_shadow(false)
 	side_shadow_left.z_index = 6
 	side_shadow_left.visible = false
-	_place_by_source_rect(side_shadow_left, Rect2(0, 0, 640, 941))
+	_place_by_source_rect(side_shadow_left, Rect2(0, 0, 735, 941))
 	hud.add_child(side_shadow_left)
 
 	var side_shadow_right := _make_side_shadow(true)
 	side_shadow_right.z_index = 6
 	side_shadow_right.visible = false
-	_place_by_source_rect(side_shadow_right, Rect2(1032, 0, 640, 941))
+	_place_by_source_rect(side_shadow_right, Rect2(937, 0, 735, 941))
 	hud.add_child(side_shadow_right)
 
 	var player_portrait := TextureRect.new()
@@ -337,8 +383,8 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 	upper_box.move_to_front()
 	lower_box.move_to_front()
 	status_panel.move_to_front()
-	side_strip.move_to_front()
 	side_buttons.move_to_front()
+	action_buttons_root.move_to_front()
 
 	var modal_backdrop := Button.new()
 	modal_backdrop.name = "ModalBlankClose"
@@ -392,6 +438,8 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 		"rules_button": rules_button,
 		"status_button": status_button,
 		"settings_button": settings_button,
+		"action_buttons": action_buttons,
+		"auto_decide_check": auto_decide_check,
 		"drawer": drawer,
 		"rules_panel": rules_panel,
 		"settings_panel": settings_panel,
@@ -424,6 +472,16 @@ func _make_exact_texture(texture_name: String, source_rect: Rect2) -> TextureRec
 	return rect
 
 
+func _make_status_panel(source_rect: Rect2) -> TextureRect:
+	var rect := TextureRect.new()
+	rect.texture = _load_texture("top_status_full.png")
+	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	rect.stretch_mode = TextureRect.STRETCH_SCALE
+	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_place_by_source_rect(rect, source_rect)
+	return rect
+
+
 func _make_nameplate_texture(texture_name: String) -> TextureRect:
 	var rect := TextureRect.new()
 	rect.texture = _load_texture(texture_name)
@@ -434,24 +492,36 @@ func _make_nameplate_texture(texture_name: String) -> TextureRect:
 
 
 func _make_side_shadow(reverse: bool) -> Control:
-	var root := Control.new()
+	var root := ColorRect.new()
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	for i in range(10):
-		var strip := ColorRect.new()
-		strip.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		var t := float(i) / 9.0
-		var edge_strength := 1.0 - t if not reverse else t
-		strip.color = Color(0, 0, 0, 0.04 + 0.42 * pow(edge_strength, 1.8))
-		strip.anchor_left = float(i) / 10.0
-		strip.anchor_right = float(i + 1) / 10.0
-		strip.anchor_top = 0.0
-		strip.anchor_bottom = 1.0
-		strip.offset_left = 0
-		strip.offset_right = 0
-		strip.offset_top = 0
-		strip.offset_bottom = 0
-		root.add_child(strip)
+	root.color = Color.WHITE
+	var shader := Shader.new()
+	shader.code = """
+shader_type canvas_item;
+uniform bool reverse = false;
+uniform float max_alpha = 0.58;
+
+void fragment() {
+	float t = reverse ? UV.x : 1.0 - UV.x;
+	float alpha = smoothstep(0.0, 1.0, clamp(t, 0.0, 1.0)) * max_alpha;
+	COLOR = vec4(0.0, 0.0, 0.0, alpha);
+}
+"""
+	var material := ShaderMaterial.new()
+	material.shader = shader
+	material.set_shader_parameter("reverse", reverse)
+	root.material = material
 	return root
+
+
+func _make_checkbox_icon(checked: bool) -> Texture2D:
+	var name := "checkbox_checked.png" if checked else "checkbox_unchecked.png"
+	var image := Image.load_from_file(ProjectSettings.globalize_path(UI_ROOT + name))
+	if image != null:
+		return ImageTexture.create_from_image(image)
+	if ResourceLoader.exists(UI_ROOT + name):
+		return load(UI_ROOT + name)
+	return null
 
 
 func _place_by_source_rect(node: Control, source_rect: Rect2) -> void:
@@ -507,12 +577,12 @@ func _make_plain_name_label(text: String) -> Label:
 	label.text = text
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	label.add_theme_font_size_override("font_size", 24)
+	label.add_theme_font_size_override("font_size", 22)
 	var font := _load_dialogue_font()
 	if font != null:
 		label.add_theme_font_override("font", font)
 	label.add_theme_color_override("font_color", Color(1.0, 0.72, 0.18, 1.0))
-	label.add_theme_constant_override("outline_size", 4)
+	label.add_theme_constant_override("outline_size", 2)
 	label.add_theme_color_override("font_outline_color", Color(0.02, 0.01, 0.01, 1.0))
 	label.clip_text = true
 	return label
@@ -528,6 +598,7 @@ func _make_log(size: int, color: Color) -> RichTextLabel:
 	view.add_theme_font_size_override("normal_font_size", size)
 	view.add_theme_font_size_override("bold_font_size", size)
 	view.add_theme_font_size_override("italics_font_size", size)
+	view.add_theme_constant_override("line_separation", 0)
 	var font := _load_dialogue_font()
 	if font != null:
 		view.add_theme_font_override("normal_font", font)
@@ -551,8 +622,32 @@ func _make_icon_button(label: String, icon_name: String) -> Button:
 	button.text = ""
 	button.flat = true
 	button.tooltip_text = label
-	button.modulate.a = 0.02
+	button.focus_mode = Control.FOCUS_NONE
+	button.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
+	button.add_theme_stylebox_override("hover", StyleBoxEmpty.new())
+	button.add_theme_stylebox_override("pressed", StyleBoxEmpty.new())
+	var icon := TextureRect.new()
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	icon.set_anchors_preset(Control.PRESET_FULL_RECT)
+	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon.texture = _load_common_texture(_icon_tile_name(icon_name))
+	button.add_child(icon)
 	return button
+
+
+func _load_common_texture(name: String) -> Texture2D:
+	var image := Image.load_from_file(ProjectSettings.globalize_path(COMMON_UI_ROOT + name))
+	if image != null:
+		return ImageTexture.create_from_image(image)
+	if ResourceLoader.exists(COMMON_UI_ROOT + name):
+		return load(COMMON_UI_ROOT + name)
+	var fallback := name.replace("icon_tile_", "icon_")
+	return _load_texture(fallback)
+
+
+func _icon_tile_name(icon_name: String) -> String:
+	return "icon_tile_%s" % icon_name.trim_prefix("icon_")
 
 
 func _make_text_button(text: String) -> Button:

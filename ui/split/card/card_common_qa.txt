@@ -1,0 +1,24 @@
+button_primary_gold_normal.png	360x86	RGBA	transparent_corners=[0, 0, 0, 0]	green_residue_px=0	OK
+button_primary_gold_hover.png	360x86	RGBA	transparent_corners=[0, 0, 0, 0]	green_residue_px=0	OK
+button_primary_gold_pressed.png	360x86	RGBA	transparent_corners=[0, 0, 0, 0]	green_residue_px=0	OK
+button_disabled_dark.png	360x86	RGBA	transparent_corners=[0, 0, 0, 0]	green_residue_px=0	OK
+item_row_dark.png	330x64	RGBA	transparent_corners=[0, 0, 0, 0]	green_residue_px=0	OK
+item_row_red.png	330x64	RGBA	transparent_corners=[0, 0, 0, 0]	green_residue_px=0	OK
+item_row_teal.png	330x64	RGBA	transparent_corners=[0, 0, 0, 0]	green_residue_px=0	OK
+item_row_purple.png	330x64	RGBA	transparent_corners=[0, 0, 0, 0]	green_residue_px=0	OK
+label_red.png	260x64	RGBA	transparent_corners=[0, 0, 0, 0]	green_residue_px=0	OK
+label_teal.png	260x64	RGBA	transparent_corners=[0, 0, 0, 0]	green_residue_px=0	OK
+label_purple.png	260x64	RGBA	transparent_corners=[0, 0, 0, 0]	green_residue_px=0	OK
+label_gold.png	260x64	RGBA	transparent_corners=[0, 0, 0, 0]	green_residue_px=0	OK
+title_banner_red_large.png	820x185	RGBA	transparent_corners=[0, 0, 0, 0]	green_residue_px=0	OK
+title_banner_dark_small.png	520x90	RGBA	transparent_corners=[0, 0, 0, 0]	green_residue_px=0	OK
+title_banner_teal_medium.png	520x70	RGBA	transparent_corners=[0, 0, 0, 0]	green_residue_px=0	OK
+panel_player_red.png	470x780	RGBA	transparent_corners=[0, 0, 0, 0]	green_residue_px=0	OK
+panel_option_red.png	365x620	RGBA	transparent_corners=[0, 0, 0, 0]	green_residue_px=0	OK
+panel_option_teal.png	365x620	RGBA	transparent_corners=[0, 0, 0, 0]	green_residue_px=0	OK
+panel_option_purple.png	365x620	RGBA	transparent_corners=[0, 0, 0, 0]	green_residue_px=0	OK
+panel_large_dark.png	620x720	RGBA	transparent_corners=[0, 0, 0, 0]	green_residue_px=0	OK
+panel_large_teal.png	620x720	RGBA	transparent_corners=[0, 0, 0, 0]	green_residue_px=0	OK
+panel_requirement_red.png	560x260	RGBA	transparent_corners=[0, 0, 0, 0]	green_residue_px=0	OK
+panel_requirement_purple.png	560x260	RGBA	transparent_corners=[0, 0, 0, 0]	green_residue_px=0	OK
+OVERALL	OK

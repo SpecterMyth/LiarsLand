@@ -1,0 +1,159 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/generated/ui/card/page_ascension_v5.png" id="1_bg"]
+
+[node name="AscensionPage" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("1_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="StatControls" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HpMinusButton" type="Button" parent="StatControls"]
+layout_mode = 1
+anchor_left = 0.335
+anchor_top = 0.25
+anchor_right = 0.375
+anchor_bottom = 0.32
+focus_mode = 0
+text = "−"
+
+[node name="HpPlusButton" type="Button" parent="StatControls"]
+layout_mode = 1
+anchor_left = 0.595
+anchor_top = 0.25
+anchor_right = 0.635
+anchor_bottom = 0.32
+focus_mode = 0
+text = "+"
+
+[node name="FrontalAttackMinusButton" type="Button" parent="StatControls"]
+layout_mode = 1
+anchor_left = 0.335
+anchor_top = 0.338
+anchor_right = 0.375
+anchor_bottom = 0.408
+focus_mode = 0
+text = "−"
+
+[node name="FrontalAttackPlusButton" type="Button" parent="StatControls"]
+layout_mode = 1
+anchor_left = 0.595
+anchor_top = 0.338
+anchor_right = 0.635
+anchor_bottom = 0.408
+focus_mode = 0
+text = "+"
+
+[node name="FrontalDefenseMinusButton" type="Button" parent="StatControls"]
+layout_mode = 1
+anchor_left = 0.335
+anchor_top = 0.426
+anchor_right = 0.375
+anchor_bottom = 0.496
+focus_mode = 0
+text = "−"
+
+[node name="FrontalDefensePlusButton" type="Button" parent="StatControls"]
+layout_mode = 1
+anchor_left = 0.595
+anchor_top = 0.426
+anchor_right = 0.635
+anchor_bottom = 0.496
+focus_mode = 0
+text = "+"
+
+[node name="AssassinationAttackMinusButton" type="Button" parent="StatControls"]
+layout_mode = 1
+anchor_left = 0.335
+anchor_top = 0.514
+anchor_right = 0.375
+anchor_bottom = 0.584
+focus_mode = 0
+text = "−"
+
+[node name="AssassinationAttackPlusButton" type="Button" parent="StatControls"]
+layout_mode = 1
+anchor_left = 0.595
+anchor_top = 0.514
+anchor_right = 0.635
+anchor_bottom = 0.584
+focus_mode = 0
+text = "+"
+
+[node name="AssassinationDefenseMinusButton" type="Button" parent="StatControls"]
+layout_mode = 1
+anchor_left = 0.335
+anchor_top = 0.602
+anchor_right = 0.375
+anchor_bottom = 0.672
+focus_mode = 0
+text = "−"
+
+[node name="AssassinationDefensePlusButton" type="Button" parent="StatControls"]
+layout_mode = 1
+anchor_left = 0.595
+anchor_top = 0.602
+anchor_right = 0.635
+anchor_bottom = 0.672
+focus_mode = 0
+text = "+"
+
+[node name="CharmMinusButton" type="Button" parent="StatControls"]
+layout_mode = 1
+anchor_left = 0.335
+anchor_top = 0.69
+anchor_right = 0.375
+anchor_bottom = 0.76
+focus_mode = 0
+text = "−"
+
+[node name="CharmPlusButton" type="Button" parent="StatControls"]
+layout_mode = 1
+anchor_left = 0.595
+anchor_top = 0.69
+anchor_right = 0.635
+anchor_bottom = 0.76
+focus_mode = 0
+text = "+"
+
+[node name="AscendConfirmButton" type="Button" parent="."]
+layout_mode = 1
+anchor_left = 0.342
+anchor_top = 0.79
+anchor_right = 0.634
+anchor_bottom = 0.895
+focus_mode = 0
+theme_override_font_sizes/font_size = 24
+text = "确认升华"
+
+[node name="DominionButton" type="Button" parent="."]
+layout_mode = 1
+anchor_left = 0.696
+anchor_top = 0.805
+anchor_right = 0.951
+anchor_bottom = 0.9
+focus_mode = 0
+theme_override_font_sizes/font_size = 24
+text = "选择统治"

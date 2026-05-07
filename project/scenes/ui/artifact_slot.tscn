@@ -1,0 +1,46 @@
+[gd_scene format=3]
+
+[node name="ArtifactSlot" type="PanelContainer"]
+custom_minimum_size = Vector2(58, 58)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Root" type="Control" parent="."]
+custom_minimum_size = Vector2(58, 58)
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 7.0
+offset_top = 7.0
+offset_right = -7.0
+offset_bottom = -7.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Badge" type="PanelContainer" parent="Root"]
+visible = false
+layout_mode = 1
+anchor_left = 0.58
+anchor_top = 0.58
+anchor_right = 1.0
+anchor_bottom = 0.92
+
+[node name="CountLabel" type="Label" parent="Root/Badge"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 15
+text = "1"
+horizontal_alignment = 1
+vertical_alignment = 1
