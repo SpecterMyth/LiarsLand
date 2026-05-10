@@ -1,0 +1,273 @@
+{
+  "created_at": "2026-05-07T17:47:59",
+  "reference": "ui/concepts/gameplay/dialogue_overlay_bag_ai_final_hades_flat_square_close_imagegen_v2.png",
+  "notes": "Transparent PNG UI sprites generated with Imagegen sheets and local chroma-key removal. No Chinese text baked into sprites except X close-button glyph.",
+  "assets": [
+    {
+      "file": "bag_title_banner_red.png",
+      "size": [
+        479,
+        185
+      ]
+    },
+    {
+      "file": "bag_panel_right_teal.png",
+      "size": [
+        944,
+        618
+      ]
+    },
+    {
+      "file": "bag_panel_left_dark.png",
+      "size": [
+        470,
+        517
+      ]
+    },
+    {
+      "file": "bag_overlay_dark.png",
+      "size": [
+        494,
+        187
+      ]
+    },
+    {
+      "file": "bag_top_resource_bar.png",
+      "size": [
+        477,
+        102
+      ]
+    },
+    {
+      "file": "bag_header_teal.png",
+      "size": [
+        428,
+        103
+      ]
+    },
+    {
+      "file": "bag_group_header_red.png",
+      "size": [
+        337,
+        80
+      ]
+    },
+    {
+      "file": "bag_group_header_purple.png",
+      "size": [
+        304,
+        74
+      ]
+    },
+    {
+      "file": "bag_req_tile_red.png",
+      "size": [
+        144,
+        145
+      ]
+    },
+    {
+      "file": "bag_req_tile_teal.png",
+      "size": [
+        144,
+        145
+      ]
+    },
+    {
+      "file": "bag_req_tile_purple.png",
+      "size": [
+        143,
+        145
+      ]
+    },
+    {
+      "file": "bag_req_tile_gold.png",
+      "size": [
+        143,
+        145
+      ]
+    },
+    {
+      "file": "bag_card_red.png",
+      "size": [
+        217,
+        218
+      ]
+    },
+    {
+      "file": "bag_card_teal.png",
+      "size": [
+        227,
+        217
+      ]
+    },
+    {
+      "file": "bag_card_purple.png",
+      "size": [
+        213,
+        209
+      ]
+    },
+    {
+      "file": "bag_card_gold.png",
+      "size": [
+        211,
+        209
+      ]
+    },
+    {
+      "file": "bag_card_blue.png",
+      "size": [
+        207,
+        209
+      ]
+    },
+    {
+      "file": "bag_card_orange.png",
+      "size": [
+        208,
+        209
+      ]
+    },
+    {
+      "file": "bag_card_dark.png",
+      "size": [
+        208,
+        209
+      ]
+    },
+    {
+      "file": "bag_icon_frame_square.png",
+      "size": [
+        197,
+        195
+      ]
+    },
+    {
+      "file": "bag_quantity_badge.png",
+      "size": [
+        114,
+        113
+      ]
+    },
+    {
+      "file": "bag_quantity_badge_large.png",
+      "size": [
+        117,
+        120
+      ]
+    },
+    {
+      "file": "bag_card_selected_outline.png",
+      "size": [
+        137,
+        135
+      ]
+    },
+    {
+      "file": "bag_card_selected_outline_thin.png",
+      "size": [
+        163,
+        150
+      ]
+    },
+    {
+      "file": "bag_disabled_overlay.png",
+      "size": [
+        169,
+        155
+      ]
+    },
+    {
+      "file": "bag_resource_backplate_red.png",
+      "size": [
+        267,
+        263
+      ]
+    },
+    {
+      "file": "bag_resource_backplate_gold.png",
+      "size": [
+        266,
+        263
+      ]
+    },
+    {
+      "file": "bag_resource_backplate_purple.png",
+      "size": [
+        266,
+        263
+      ]
+    },
+    {
+      "file": "bag_resource_backplate_teal.png",
+      "size": [
+        266,
+        263
+      ]
+    },
+    {
+      "file": "bag_resource_icon_energy.png",
+      "size": [
+        267,
+        264
+      ]
+    },
+    {
+      "file": "bag_resource_icon_bag.png",
+      "size": [
+        266,
+        264
+      ]
+    },
+    {
+      "file": "bag_resource_icon_spirit.png",
+      "size": [
+        266,
+        264
+      ]
+    },
+    {
+      "file": "bag_resource_icon_seal.png",
+      "size": [
+        265,
+        264
+      ]
+    },
+    {
+      "file": "bag_close_normal.png",
+      "size": [
+        252,
+        240
+      ]
+    },
+    {
+      "file": "bag_close_hover.png",
+      "size": [
+        252,
+        240
+      ]
+    },
+    {
+      "file": "bag_close_pressed.png",
+      "size": [
+        252,
+        240
+      ]
+    },
+    {
+      "file": "bag_close_base_blank.png",
+      "size": [
+        252,
+        240
+      ]
+    },
+    {
+      "file": "inventory_split_preview.png",
+      "size": [
+        1080,
+        980
+      ]
+    }
+  ]
+}

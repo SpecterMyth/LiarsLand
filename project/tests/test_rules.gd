@@ -1,54 +1,135 @@
-extends SceneTree
+﻿extends SceneTree
 
 const GameStateScript := preload("res://scripts/core/game_state.gd")
 const ChapterLoaderScript := preload("res://scripts/core/chapter_loader.gd")
 const RulesEngineScript := preload("res://scripts/core/rules_engine.gd")
 const LlmClientScript := preload("res://scripts/llm/llm_client.gd")
 
+var test_failed := false
+
 
 func _init() -> void:
-	call_deferred("_run")
+	_run()
 
 
 func _run() -> void:
 	var data := ChapterLoaderScript.load_chapter("res://data/chapter_01.json")
-	assert(not data.is_empty())
-	assert(data.get("artifacts", []).size() == 10)
+	_must(not data.is_empty())
+	_must(data.get("artifacts", []).size() == 10)
 
 	var state = GameStateScript.new()
 	state.load_chapter(data)
-	assert(state.world_intel_questions.size() == 6)
-	assert(state.world_intel_answers.size() == 6)
-	assert(state.player.get("dominion_requirement", []).size() == 3)
-	assert(state.player.get("ascension_requirement", []).size() == 1)
-	assert(state.npc_choices.size() > 0)
+	_must(state.world_intel_questions.size() == 6)
+	_must(state.world_intel_answers.size() == 6)
+	_must(state.player.get("dominion_requirement", []).size() == 3)
+	_must(state.player.get("ascension_requirement", []).size() == 1)
+	_must(state.npc_choices.size() == 1)
+	_must(String(state.npcs[state.npc_choices[0]].get("id", "")) == "npc_wolf")
+	_assert_tutorial_loadouts(state)
 
+	var expected_tutorial_ids := ["npc_wolf", "npc_fox", "npc_snake", "npc_crow", "npc_deer"]
+	for i in range(expected_tutorial_ids.size()):
+		state.chapter_round = i
+		state.refresh_npc_choices()
+		_must(state.npc_choices.size() == 1)
+		_must(String(state.npcs[state.npc_choices[0]].get("id", "")) == expected_tutorial_ids[i])
+	state.chapter_round = 5
+	state.refresh_npc_choices()
+	_must(state.npc_choices.size() <= 3)
+	_must(state.npc_choices.size() > 1)
+	state.chapter_round = 0
+	state.refresh_npc_choices()
+
+	state.choose_npc(0)
+	var exposed_name := state.artifact_name(String(state.player.get("dominion_requirement", [])[0]))
+	var events := RulesEngineScript.apply_dialogue_turn(state, "我登记%s。" % exposed_name, "登记完成。")
+	_must(state.ended)
+	_must(not state.victory)
+	_must(state.end_reason.contains("保密失败"))
+
+	state.load_chapter(data)
+	state.chapter_round = 1
+	state.refresh_npc_choices()
+	state.choose_npc(0)
+	events = RulesEngineScript.resolve_player_action(state, "invite")
+	_must(state.ended)
+	_must(state.end_reason.contains("邀请陷阱"))
+
+	state.load_chapter(data)
+	state.chapter_round = 2
+	state.refresh_npc_choices()
+	state.choose_npc(0)
+	state.turn = 3
+	events = RulesEngineScript.apply_dialogue_turn(state, "我再观察一下。", "再靠近一点。")
+	_must(state.ended)
+	_must(state.end_reason.contains("暗杀玩家"))
+
+	state.load_chapter(data)
+	state.chapter_round = 2
+	state.refresh_npc_choices()
+	state.choose_npc(0)
+	var snake_loot: Array = state.current_npc().get("inventory", []).duplicate()
+	events = RulesEngineScript.resolve_player_action(state, "duel")
+	_must(not state.ended)
+	for artifact_id in snake_loot:
+		_must(state.has_artifact(state.player, String(artifact_id)))
+
+	state.load_chapter(data)
+	state.chapter_round = 3
+	state.refresh_npc_choices()
+	state.choose_npc(0)
+	state.turn = 3
+	events = RulesEngineScript.apply_dialogue_turn(state, "我不接受挑衅。", "那就当面分胜负。")
+	_must(state.ended)
+	_must(state.end_reason.contains("决斗"))
+
+	state.load_chapter(data)
+	state.chapter_round = 3
+	state.refresh_npc_choices()
+	state.choose_npc(0)
+	var crow_loot: Array = state.current_npc().get("inventory", []).duplicate()
+	events = RulesEngineScript.resolve_player_action(state, "assassinate")
+	_must(not state.ended)
+	for artifact_id in crow_loot:
+		_must(state.has_artifact(state.player, String(artifact_id)))
+
+	state.load_chapter(data)
+	state.chapter_round = 4
+	state.refresh_npc_choices()
+	state.choose_npc(0)
+	state.turn = 3
+	state.add_dialogue("player", "这是一个很长的解释，关于我的身份、目的、法器需求、情报来源，以及为什么我来到这里。我还想继续补充更多细节，让对方完全理解我的处境。")
+	events = RulesEngineScript.apply_dialogue_turn(state, "再补一句。", "请继续。")
+	_must(state.ended)
+	_must(state.end_reason.contains("撤离时机失败"))
+
+	state.load_chapter(data)
 	state.choose_npc(0)
 	var npc := state.current_npc()
 	var before_player_energy := int(state.player.get("energy", 0))
 	var before_npc_energy := int(npc.get("energy", 0))
-	RulesEngineScript.apply_dialogue_turn(state, "abcde", "abcdefg")
+	events = RulesEngineScript.apply_dialogue_turn(state, "abcde", "abcdefg")
 	npc = state.current_npc()
-	assert(int(state.player.get("energy", 0)) == before_player_energy + 7)
-	assert(int(npc.get("energy", 0)) == before_npc_energy + 5)
-	assert(state.player.get("memory", []).size() > 0)
-	assert(npc.get("memory", []).size() > 0)
+	_must(int(state.player.get("energy", 0)) == before_player_energy + 7)
+	_must(int(npc.get("energy", 0)) == before_npc_energy + 5)
+	_must(state.player.get("memory", []).size() > 0)
+	_must(npc.get("memory", []).size() > 0)
 
 	var artifact_id := String(state.artifacts[0].get("id", ""))
 	state.shop_items = [artifact_id]
 	state.player["energy"] = int(state.get_artifact(artifact_id).get("price", 0))
-	var events := RulesEngineScript.buy_player_artifact(state, artifact_id)
-	assert(not events.is_empty())
-	assert(state.has_artifact(state.player, artifact_id))
-	assert(artifact_id in state.player.get("artifact_history", []))
+	events = RulesEngineScript.buy_player_artifact(state, artifact_id)
+	_must(not events.is_empty())
+	_must(state.has_artifact(state.player, artifact_id))
+	_must(artifact_id in state.player.get("artifact_history", []))
 
 	state.player["ascension_requirement"] = [artifact_id]
 	var old_level := int(state.player.get("level", 1))
 	events = RulesEngineScript.ascend_player(state, {"charm": 2, "hp": 1})
-	assert(not events.is_empty())
-	assert(int(state.player.get("level", 1)) == old_level + 1)
-	assert(not state.has_artifact(state.player, artifact_id))
-	assert(artifact_id in state.player.get("artifact_history", []))
+	_must(not events.is_empty())
+	_must(int(state.player.get("level", 1)) == old_level + 1)
+	_must(not state.has_artifact(state.player, artifact_id))
+	_must(artifact_id in state.player.get("artifact_history", []))
 
 	state.load_chapter(data)
 	state.choose_npc(0)
@@ -58,8 +139,8 @@ func _run() -> void:
 	npc["affinity"] = 8
 	state.set_current_npc(npc)
 	events = RulesEngineScript.apply_dialogue_turn(state, "gift", "accept", {"gift_offer": {"artifact_id": gift_id, "affinity_required": 6}})
-	assert(state.has_artifact(state.player, gift_id))
-	assert(not events.is_empty())
+	_must(state.has_artifact(state.player, gift_id))
+	_must(not events.is_empty())
 
 	state.load_chapter(data)
 	state.choose_npc(0)
@@ -72,8 +153,8 @@ func _run() -> void:
 	state.set_current_npc(npc)
 	events = RulesEngineScript.apply_dialogue_turn(state, "trade", "deal", {"exchange_offer": {"npc_artifact_id": npc_trade_id, "player_artifact_id": player_trade_id, "affinity_required": 4}})
 	npc = state.current_npc()
-	assert(state.has_artifact(state.player, npc_trade_id))
-	assert(state.has_artifact(npc, player_trade_id))
+	_must(state.has_artifact(state.player, npc_trade_id))
+	_must(state.has_artifact(npc, player_trade_id))
 
 	state.load_chapter(data)
 	state.choose_npc(0)
@@ -84,8 +165,8 @@ func _run() -> void:
 	var correct_option := String(state.world_intel_answers.get(question_id, ""))
 	state.set_current_npc(npc)
 	events = RulesEngineScript.apply_dialogue_turn(state, "hello", "reply")
-	assert(state.intel_testimonies.has(question_id))
-	assert(state.intel_testimonies[question_id].has(correct_option))
+	_must(state.intel_testimonies.has(question_id))
+	_must(state.intel_testimonies[question_id].has(correct_option))
 
 	state.load_chapter(data)
 	state.choose_npc(0)
@@ -93,11 +174,14 @@ func _run() -> void:
 	npc["true_stance"] = "enemy"
 	npc["affinity"] = 10
 	question_id = String(npc.get("intel", [])[0].get("question_id", ""))
+	correct_option = String(state.world_intel_answers.get(question_id, ""))
 	var wrong_option := String(npc.get("intel", [])[0].get("wrong_option_id", ""))
+	if wrong_option == correct_option or wrong_option.is_empty():
+		wrong_option = state.first_other_world_intel_option(question_id, correct_option)
 	state.set_current_npc(npc)
 	events = RulesEngineScript.apply_dialogue_turn(state, "hello", "reply")
-	assert(state.intel_testimonies.has(question_id))
-	assert(state.intel_testimonies[question_id].has(wrong_option))
+	_must(state.intel_testimonies.has(question_id))
+	_must(state.intel_testimonies[question_id].has(wrong_option))
 
 	state.load_chapter(data)
 	var carried_id := String(state.artifacts[0].get("id", ""))
@@ -105,14 +189,14 @@ func _run() -> void:
 	state.player["level"] = 4
 	state.player["dominion_requirement"] = [carried_id]
 	RulesEngineScript.check_chapter_resolution(state)
-	assert(not state.ended)
-	assert(not state.victory)
-	assert(state.chapter_index == 0)
-	assert(state.has_artifact(state.player, carried_id))
+	_must(not state.ended)
+	_must(not state.victory)
+	_must(state.chapter_index == 0)
+	_must(state.has_artifact(state.player, carried_id))
 	state.player_declared_dominion = true
 	RulesEngineScript.check_chapter_resolution(state)
-	assert(state.chapter_index == 1)
-	assert(not state.ended)
+	_must(state.chapter_index == 1)
+	_must(not state.ended)
 
 	state.load_chapter(data)
 	state.choose_npc(0)
@@ -122,46 +206,232 @@ func _run() -> void:
 	state.set_current_npc(npc)
 	state.player["stats"]["assassination_attack"] = 99
 	events = RulesEngineScript.resolve_player_action(state, "assassinate")
-	assert(state.ended)
-	assert(not state.victory)
+	_must(state.ended)
+	_must(not state.victory)
+
+	state.load_chapter(data)
+	state.choose_npc(0)
+	npc = state.current_npc()
+	var duel_win_loot := String(state.artifacts[4].get("id", ""))
+	state.add_artifact(npc, duel_win_loot)
+	npc["stats"]["hp"] = 1
+	npc["stats"]["frontal_attack"] = 1
+	npc["stats"]["frontal_defense"] = 0
+	question_id = String(npc.get("intel", [])[0].get("question_id", ""))
+	state.set_current_npc(npc)
+	state.player["stats"]["hp"] = 10
+	state.player["stats"]["frontal_attack"] = 99
+	state.player["stats"]["frontal_defense"] = 99
+	events = RulesEngineScript.resolve_player_action(state, "duel")
+	npc = state.current_npc()
+	_must(not state.ended)
+	_must(bool(npc.get("alive", true)))
+	_must(state.has_artifact(state.player, duel_win_loot))
+	_must(not state.intel_testimonies.has(question_id))
+
+	state.load_chapter(data)
+	state.choose_npc(0)
+	npc = state.current_npc()
+	var duel_loss_loot := String(state.artifacts[5].get("id", ""))
+	state.add_artifact(state.player, duel_loss_loot)
+	npc["stats"]["hp"] = 10
+	npc["stats"]["frontal_attack"] = 99
+	npc["stats"]["frontal_defense"] = 99
+	state.set_current_npc(npc)
+	state.player["stats"]["hp"] = 1
+	state.player["stats"]["frontal_attack"] = 1
+	state.player["stats"]["frontal_defense"] = 0
+	events = RulesEngineScript.resolve_player_action(state, "duel")
+	npc = state.current_npc()
+	_must(not state.ended)
+	_must(state.has_artifact(npc, duel_loss_loot))
+	_must(not state.has_artifact(state.player, duel_loss_loot))
+
+	state.load_chapter(data)
+	state.choose_npc(0)
+	npc = state.current_npc()
+	var lethal_win_loot := String(state.artifacts[6].get("id", ""))
+	var exposed_artifact := String(state.player.get("dominion_requirement", [])[0])
+	state.add_artifact(npc, lethal_win_loot)
+	npc["true_stance"] = "enemy"
+	npc["stats"]["hp"] = 1
+	npc["stats"]["frontal_attack"] = 1
+	npc["stats"]["frontal_defense"] = 0
+	npc["stats"]["assassination_defense"] = 99
+	question_id = String(npc.get("intel", [])[0].get("question_id", ""))
+	state.set_current_npc(npc)
+	state.player["stats"]["hp"] = 10
+	state.player["stats"]["frontal_attack"] = 99
+	state.player["stats"]["frontal_defense"] = 99
+	state.player["stats"]["assassination_attack"] = 0
+	events = RulesEngineScript.resolve_player_action(state, "assassinate")
+	npc = state.current_npc()
+	_must(not state.ended)
+	_must(not bool(npc.get("alive", true)))
+	_must(state.has_artifact(state.player, lethal_win_loot))
+	_must(exposed_artifact in state.exposed_dominion_artifact_ids)
+	_must(not state.intel_testimonies.has(question_id))
+
+	state.load_chapter(data)
+	state.choose_npc(0)
+	npc = state.current_npc()
+	var lethal_loss_loot := String(state.artifacts[7].get("id", ""))
+	exposed_artifact = String(state.player.get("dominion_requirement", [])[0])
+	state.add_artifact(state.player, lethal_loss_loot)
+	npc["true_stance"] = "enemy"
+	npc["stats"]["hp"] = 10
+	npc["stats"]["frontal_attack"] = 99
+	npc["stats"]["frontal_defense"] = 99
+	npc["stats"]["assassination_defense"] = 99
+	state.set_current_npc(npc)
+	state.player["stats"]["hp"] = 1
+	state.player["stats"]["frontal_attack"] = 1
+	state.player["stats"]["frontal_defense"] = 0
+	state.player["stats"]["assassination_attack"] = 0
+	events = RulesEngineScript.resolve_player_action(state, "assassinate")
+	npc = state.current_npc()
+	_must(state.ended)
+	_must(not state.victory)
+	_must(state.has_artifact(npc, lethal_loss_loot))
+	_must(exposed_artifact in state.exposed_dominion_artifact_ids)
+
+	state.load_chapter(data)
+	state.choose_npc(0)
+	npc = state.current_npc()
+	var player_gift_id := String(state.artifacts[8].get("id", ""))
+	state.add_artifact(state.player, player_gift_id)
+	npc["affinity"] = 3
+	state.set_current_npc(npc)
+	events = RulesEngineScript.resolve_player_action(state, "gift", {"artifact_id": player_gift_id})
+	npc = state.current_npc()
+	_must(int(npc.get("affinity", 0)) == 8)
+
+	state.load_chapter(data)
+	state.choose_npc(0)
+	npc = state.current_npc()
+	player_gift_id = String(state.artifacts[8].get("id", ""))
+	state.add_artifact(state.player, player_gift_id)
+	npc["affinity"] = 8
+	state.set_current_npc(npc)
+	events = RulesEngineScript.resolve_player_action(state, "gift", {"artifact_id": player_gift_id})
+	npc = state.current_npc()
+	_must(int(npc.get("affinity", 0)) == 10)
+
+	state.load_chapter(data)
+	state.choose_npc(0)
+	npc = state.current_npc()
+	var cast_miss_id := String(state.artifacts[9].get("id", ""))
+	state.add_artifact(state.player, cast_miss_id)
+	npc["dominion_requirement"] = [String(state.artifacts[0].get("id", ""))]
+	state.set_current_npc(npc)
+	events = RulesEngineScript.resolve_player_action(state, "cast", {"artifact_id": cast_miss_id})
+	npc = state.current_npc()
+	_must(state.has_artifact(npc, cast_miss_id))
+	_must(not state.has_artifact(state.player, cast_miss_id))
+
+	state.load_chapter(data)
+	state.choose_npc(0)
+	npc = state.current_npc()
+	var cast_kill_id := String(state.artifacts[0].get("id", ""))
+	state.add_artifact(state.player, cast_kill_id)
+	npc["true_stance"] = "friend"
+	npc["inventory"] = []
+	npc["dominion_requirement"] = [cast_kill_id]
+	state.set_current_npc(npc)
+	events = RulesEngineScript.resolve_player_action(state, "cast", {"artifact_id": cast_kill_id})
+	_must(state.ended)
+	_must(not state.victory)
 
 	state.load_chapter(data)
 	state.chapter_round = state.max_rounds - 1
 	events = RulesEngineScript.finish_round(state)
-	assert(state.ended)
-	assert(not state.victory)
+	_must(state.ended)
+	_must(not state.victory)
 
 	state.load_chapter(data)
 	var answers: Dictionary = state.world_intel_answers.duplicate(true)
-	events = RulesEngineScript.submit_world_intel(state, answers)
-	assert(state.ended)
-	assert(state.victory)
+	events = RulesEngineScript.submit_world_intel(state, answers, true)
+	_must(state.ended)
+	_must(state.victory)
 
 	state.load_chapter(data)
 	answers = state.world_intel_answers.duplicate(true)
 	var first_question := String(state.world_intel_questions[0].get("id", ""))
 	answers[first_question] = state.first_other_world_intel_option(first_question, String(state.world_intel_answers.get(first_question, "")))
+	events = RulesEngineScript.submit_world_intel(state, answers, true)
+	_must(state.ended)
+	_must(not state.victory)
+
+	state.load_chapter(data)
+	answers = state.world_intel_answers.duplicate(true)
 	events = RulesEngineScript.submit_world_intel(state, answers)
-	assert(state.ended)
-	assert(not state.victory)
+	_must(not state.ended)
+	_must(not state.intel_submitted)
+	_must(events.size() > 0 and String(events[0]).contains("只能由真人用户提交"))
 
 	state.load_chapter(data)
 	state.max_player_chars = 1
 	state.choose_npc(0)
 	events = RulesEngineScript.apply_dialogue_turn(state, "too long", "reply")
-	assert(state.ended)
-	assert(not state.victory)
-	assert(state.intel_submitted)
+	_must(state.ended)
+	_must(not state.victory)
+	_must(not state.intel_submitted)
+
+	state.load_chapter(data)
+	state.chapter_round = 5
+	state.refresh_npc_choices()
+	state.choose_npc(0)
+	var action_npc: Dictionary = state.current_npc()
+	var action_stats: Dictionary = action_npc.get("stats", {})
+	action_stats["assassination_attack"] = 99
+	action_npc["stats"] = action_stats
+	state.set_current_npc(action_npc)
+	events = RulesEngineScript.apply_dialogue_turn(state, "随便。", "你没有回答我的问题。", {"action": "assassinate"})
+	_must(state.ended)
+	_must(state.end_reason.contains("对方发动暗杀"))
 
 	var client := LlmClientScript.new()
 	root.add_child(client)
 	var parsed := client.parse_json_response("```json\n{\"thinking\":\"think\",\"speech\":\"hello\",\"action\":\"gift\",\"artifact_id\":\"moon_lantern\",\"end_dialogue\":true}\n```", {})
-	assert(parsed.get("thinking") == "think")
-	assert(parsed.get("action") == "gift")
-	assert(parsed.get("artifact_id") == "moon_lantern")
-	assert(parsed.get("end_dialogue") == true)
+	_must(parsed.get("thinking") == "think")
+	_must(parsed.get("action") == "gift")
+	_must(parsed.get("artifact_id") == "moon_lantern")
+	_must(parsed.get("end_dialogue") == true)
 	client.queue_free()
-	await process_frame
 
-	print("LiarsLand world intel and chapter flow rule tests passed.")
-	quit(0)
+	if test_failed:
+		quit(1)
+	else:
+		print("LiarsLand world intel and chapter flow rule tests passed.")
+		quit(0)
+
+
+func _assert_tutorial_loadouts(state) -> void:
+	var player_dominion: Array = state.player.get("dominion_requirement", [])
+	var first_index: int = state.npc_index_by_id("npc_wolf")
+	_must(first_index >= 0)
+	var first: Dictionary = state.npcs[first_index]
+	_must(first.get("inventory", []).size() == 2)
+	var carries_player_dominion := false
+	for artifact_id in first.get("inventory", []):
+		if String(artifact_id) in player_dominion:
+			carries_player_dominion = true
+	_must(carries_player_dominion)
+	for artifact_id in first.get("inventory", []):
+		_must(not (String(artifact_id) in first.get("dominion_requirement", [])))
+	for npc_id in ["npc_fox", "npc_snake", "npc_crow", "npc_deer"]:
+		var index: int = state.npc_index_by_id(npc_id)
+		_must(index >= 0)
+		var npc: Dictionary = state.npcs[index]
+		_must(npc.get("inventory", []).size() == 2)
+		for artifact_id in npc.get("inventory", []):
+			_must(not (String(artifact_id) in player_dominion))
+			_must(not (String(artifact_id) in npc.get("dominion_requirement", [])))
+
+
+func _must(condition: bool) -> void:
+	if condition:
+		return
+	test_failed = true
+	push_error("test_rules assertion failed")
+

@@ -6,4 +6,4 @@
 - 卡面干净：红黑/角色主题色边框，少量几何背景和细纹理；不要脏乱刮痕。
 - 不生成任何文字、数字、按钮、图标、姓名条、属性框或底部 UI 框。
 - 生成时让卡片外侧为纯 `#00ff00` 色键背景；生成后用 `remove_chroma_key.py` 把边框外转透明。
-- 最终资产为 RGBA PNG，四角透明，保存到 `project/assets/generated/ui/card/characters/`。
+- 最终资产为 RGBA PNG，四角透明，保存到 `project/assets/ui/characters/cards/`，文件名为 `<npc_id>_select_card.png` 或 `player_select_card.png`。

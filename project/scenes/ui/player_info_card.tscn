@@ -1,0 +1,209 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/ui/characters/cards/player_select_card.png" id="1_card"]
+[ext_resource type="Script" path="res://scripts/ui/player_info_card.gd" id="1_player_info_card"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/item_row_dark.png" id="2_stat_row"]
+
+[node name="PlayerCard" type="Control"]
+custom_minimum_size = Vector2(326.4, 558)
+layout_mode = 0
+anchors_preset = 0
+offset_right = 326.4
+offset_bottom = 558.0
+mouse_filter = 2
+script = ExtResource("1_player_info_card")
+
+[node name="CardTexture" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("1_card")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="NameLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.115
+anchor_top = 0.620
+anchor_right = 0.885
+anchor_bottom = 0.725
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.015, 0.012, 0.014, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 30
+text = "玩家角色"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+
+[node name="Stats" type="Control" parent="."]
+layout_mode = 1
+anchor_left = 0.245
+anchor_top = 0.735
+anchor_right = 0.755
+anchor_bottom = 0.935
+mouse_filter = 2
+
+[node name="StatRow1" type="TextureRect" parent="Stats"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 0.22
+mouse_filter = 2
+texture = ExtResource("2_stat_row")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="NameLabel" type="Label" parent="Stats/StatRow1"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.5
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.96, 0.92, 0.82, 1)
+theme_override_font_sizes/font_size = 16
+text = "暗杀"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ValueLabel" type="Label" parent="Stats/StatRow1"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.015, 0.012, 0.014, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 18
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StatRow2" type="TextureRect" parent="Stats"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.25
+anchor_right = 1.0
+anchor_bottom = 0.47
+mouse_filter = 2
+texture = ExtResource("2_stat_row")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="NameLabel" type="Label" parent="Stats/StatRow2"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.5
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.96, 0.92, 0.82, 1)
+theme_override_font_sizes/font_size = 16
+text = "防御"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ValueLabel" type="Label" parent="Stats/StatRow2"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.015, 0.012, 0.014, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 18
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StatRow3" type="TextureRect" parent="Stats"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.72
+mouse_filter = 2
+texture = ExtResource("2_stat_row")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="NameLabel" type="Label" parent="Stats/StatRow3"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.5
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.96, 0.92, 0.82, 1)
+theme_override_font_sizes/font_size = 16
+text = "决斗"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ValueLabel" type="Label" parent="Stats/StatRow3"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.015, 0.012, 0.014, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 18
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StatRow4" type="TextureRect" parent="Stats"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.75
+anchor_right = 1.0
+anchor_bottom = 0.97
+mouse_filter = 2
+texture = ExtResource("2_stat_row")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="NameLabel" type="Label" parent="Stats/StatRow4"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.5
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.96, 0.92, 0.82, 1)
+theme_override_font_sizes/font_size = 16
+text = "能量"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ValueLabel" type="Label" parent="Stats/StatRow4"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.015, 0.012, 0.014, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 18
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1

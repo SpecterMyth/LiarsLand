@@ -1,0 +1,101 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/ui/common/icon_tile_info.png" id="1_info"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/icon_tile_bag.png" id="2_bag"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/icon_tile_history.png" id="3_history"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/icon_tile_rules.png" id="4_rules"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/icon_tile_status.png" id="5_status"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/icon_tile_settings.png" id="6_settings"]
+
+[node name="RightUtilityButtons" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="InfoButton" type="TextureButton" parent="."]
+layout_mode = 1
+anchor_left = 0.935
+anchor_top = 0.245
+anchor_right = 0.986
+anchor_bottom = 0.337
+focus_mode = 0
+tooltip_text = "情报"
+texture_normal = ExtResource("1_info")
+texture_hover = ExtResource("1_info")
+texture_pressed = ExtResource("1_info")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="BagButton" type="TextureButton" parent="."]
+layout_mode = 1
+anchor_left = 0.935
+anchor_top = 0.357
+anchor_right = 0.986
+anchor_bottom = 0.449
+focus_mode = 0
+tooltip_text = "背包"
+texture_normal = ExtResource("2_bag")
+texture_hover = ExtResource("2_bag")
+texture_pressed = ExtResource("2_bag")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="HistoryButton" type="TextureButton" parent="."]
+layout_mode = 1
+anchor_left = 0.935
+anchor_top = 0.469
+anchor_right = 0.986
+anchor_bottom = 0.561
+focus_mode = 0
+tooltip_text = "历史"
+texture_normal = ExtResource("3_history")
+texture_hover = ExtResource("3_history")
+texture_pressed = ExtResource("3_history")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="RulesButton" type="TextureButton" parent="."]
+layout_mode = 1
+anchor_left = 0.935
+anchor_top = 0.581
+anchor_right = 0.986
+anchor_bottom = 0.673
+focus_mode = 0
+tooltip_text = "准则"
+texture_normal = ExtResource("4_rules")
+texture_hover = ExtResource("4_rules")
+texture_pressed = ExtResource("4_rules")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="StatusButton" type="TextureButton" parent="."]
+layout_mode = 1
+anchor_left = 0.935
+anchor_top = 0.693
+anchor_right = 0.986
+anchor_bottom = 0.785
+focus_mode = 0
+tooltip_text = "状态"
+texture_normal = ExtResource("5_status")
+texture_hover = ExtResource("5_status")
+texture_pressed = ExtResource("5_status")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="SettingsButton" type="TextureButton" parent="."]
+layout_mode = 1
+anchor_left = 0.935
+anchor_top = 0.805
+anchor_right = 0.986
+anchor_bottom = 0.897
+focus_mode = 0
+tooltip_text = "设置"
+texture_normal = ExtResource("6_settings")
+texture_hover = ExtResource("6_settings")
+texture_pressed = ExtResource("6_settings")
+ignore_texture_size = true
+stretch_mode = 5

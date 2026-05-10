@@ -1,8 +1,24 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=17 format=3]
 
-[ext_resource type="Texture2D" path="res://assets/generated/ui/card/page_ascension_v5.png" id="1_bg"]
+[ext_resource type="Texture2D" path="res://assets/generated/bg_moon_market.png" id="1_bg"]
+[ext_resource type="PackedScene" path="res://scenes/ui/right_utility_buttons.tscn" id="2_utility"]
+[ext_resource type="Script" path="res://scripts/ui/standard_button.gd" id="3_standard_button"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/title_banner_red.png" id="4_title"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/bag_close_normal.png" id="5_close_normal"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/bag_close_hover.png" id="6_close_hover"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/bag_close_pressed.png" id="7_close_pressed"]
+[ext_resource type="PackedScene" path="res://scenes/ui/player_info_card.tscn" id="8_player"]
+[ext_resource type="PackedScene" path="res://scenes/ui/requirement_panel.tscn" id="9_requirement"]
+[ext_resource type="PackedScene" path="res://scenes/ui/common_background_panel.tscn" id="10_panel"]
+[ext_resource type="Texture2D" path="res://assets/ui/shop/shop_section_title_teal.png" id="11_title_teal"]
+[ext_resource type="Texture2D" path="res://assets/ui/shop/shop_backpack_title_purple.png" id="12_title_purple"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/item_row_dark.png" id="13_stat_row"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/shop_texture_scratches_dark.png" id="14_scratches"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/shop_divider_red_teal.png" id="15_divider"]
+[ext_resource type="FontFile" path="res://assets/fonts/AlibabaPuHuiTi-3-105-Heavy.ttf" id="16_title_font"]
 
 [node name="AscensionPage" type="Control"]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -22,138 +38,592 @@ texture = ExtResource("1_bg")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="StatControls" type="Control" parent="."]
+[node name="Veil" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+color = Color(0.016, 0.012, 0.02, 0.66)
+
+[node name="Scratches" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+modulate = Color(1, 1, 1, 0.16)
+texture = ExtResource("14_scratches")
+expand_mode = 1
+stretch_mode = 2
+
+[node name="TitleBanner" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -0.018
+anchor_top = 0.024
+anchor_right = 0.31
+anchor_bottom = 0.149
+mouse_filter = 2
+texture = ExtResource("4_title")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="TitleLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.028
+anchor_top = 0.036
+anchor_right = 0.255
+anchor_bottom = 0.112
+theme_override_colors/font_color = Color(0.964706, 0.913725, 0.796078, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("16_title_font")
+theme_override_font_sizes/font_size = 35
+text = "升华祭坛"
+vertical_alignment = 1
+clip_text = true
+
+[node name="CloseButton" type="TextureButton" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.925
+anchor_top = 0.039
+anchor_right = 0.974
+anchor_bottom = 0.124
+tooltip_text = "关闭"
+focus_mode = 0
+texture_normal = ExtResource("5_close_normal")
+texture_pressed = ExtResource("7_close_pressed")
+texture_hover = ExtResource("6_close_hover")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="PlayerCard" parent="." instance=ExtResource("8_player")]
+layout_mode = 0
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 38.4
+offset_top = 118.8
+offset_right = 364.8
+offset_bottom = 676.8
+
+[node name="AscensionPanel" parent="." instance=ExtResource("10_panel")]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.305
+anchor_top = 0.155
+anchor_right = 0.655
+anchor_bottom = 0.94
+frame_color = "dark_purple"
+
+[node name="AscensionTitleBack" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.345
+anchor_top = 0.18
+anchor_right = 0.615
+anchor_bottom = 0.252
+mouse_filter = 2
+texture = ExtResource("12_title_purple")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="AscensionTitle" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.345
+anchor_top = 0.18
+anchor_right = 0.615
+anchor_bottom = 0.252
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("16_title_font")
+theme_override_font_sizes/font_size = 26
+text = "升华属性"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AscensionDivider" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.335
+anchor_top = 0.27
+anchor_right = 0.624
+anchor_bottom = 0.286
+mouse_filter = 2
+modulate = Color(1, 1, 1, 0.68)
+texture = ExtResource("15_divider")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="PendingPointsLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.36
+anchor_top = 0.292
+anchor_right = 0.6
+anchor_bottom = 0.342
+theme_override_colors/font_color = Color(0.96, 0.84, 0.48, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 22
+text = "剩余属性点：3"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+
+[node name="StatControls" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.335
+anchor_top = 0.36
+anchor_right = 0.625
+anchor_bottom = 0.765
+
+[node name="HpRow" type="TextureRect" parent="StatControls"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 0.14
+mouse_filter = 2
+texture = ExtResource("13_stat_row")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="HpNameLabel" type="Label" parent="StatControls"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.0
+anchor_right = 0.34
+anchor_bottom = 0.14
+theme_override_colors/font_color = Color(0.96, 0.92, 0.82, 1)
+theme_override_font_sizes/font_size = 17
+text = "生命"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HpValueLabel" type="Label" parent="StatControls"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.36
+anchor_top = 0.0
+anchor_right = 0.64
+anchor_bottom = 0.14
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 18
+text = "0 -> 0"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="HpMinusButton" type="Button" parent="StatControls"]
 layout_mode = 1
-anchor_left = 0.335
-anchor_top = 0.25
-anchor_right = 0.375
-anchor_bottom = 0.32
+anchor_left = 0.68
+anchor_top = 0.015
+anchor_right = 0.81
+anchor_bottom = 0.125
 focus_mode = 0
-text = "−"
+text = "-"
+script = ExtResource("3_standard_button")
 
 [node name="HpPlusButton" type="Button" parent="StatControls"]
 layout_mode = 1
-anchor_left = 0.595
-anchor_top = 0.25
-anchor_right = 0.635
-anchor_bottom = 0.32
+anchor_left = 0.84
+anchor_top = 0.015
+anchor_right = 0.97
+anchor_bottom = 0.125
 focus_mode = 0
 text = "+"
+script = ExtResource("3_standard_button")
+
+[node name="FrontalAttackRow" type="TextureRect" parent="StatControls"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.172
+anchor_right = 1.0
+anchor_bottom = 0.312
+mouse_filter = 2
+texture = ExtResource("13_stat_row")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="FrontalAttackNameLabel" type="Label" parent="StatControls"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.172
+anchor_right = 0.34
+anchor_bottom = 0.312
+theme_override_colors/font_color = Color(0.96, 0.92, 0.82, 1)
+theme_override_font_sizes/font_size = 17
+text = "正攻"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="FrontalAttackValueLabel" type="Label" parent="StatControls"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.36
+anchor_top = 0.172
+anchor_right = 0.64
+anchor_bottom = 0.312
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 18
+text = "0 -> 0"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="FrontalAttackMinusButton" type="Button" parent="StatControls"]
 layout_mode = 1
-anchor_left = 0.335
-anchor_top = 0.338
-anchor_right = 0.375
-anchor_bottom = 0.408
+anchor_left = 0.68
+anchor_top = 0.187
+anchor_right = 0.81
+anchor_bottom = 0.297
 focus_mode = 0
-text = "−"
+text = "-"
+script = ExtResource("3_standard_button")
 
 [node name="FrontalAttackPlusButton" type="Button" parent="StatControls"]
 layout_mode = 1
-anchor_left = 0.595
-anchor_top = 0.338
-anchor_right = 0.635
-anchor_bottom = 0.408
+anchor_left = 0.84
+anchor_top = 0.187
+anchor_right = 0.97
+anchor_bottom = 0.297
 focus_mode = 0
 text = "+"
+script = ExtResource("3_standard_button")
+
+[node name="FrontalDefenseRow" type="TextureRect" parent="StatControls"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.344
+anchor_right = 1.0
+anchor_bottom = 0.484
+mouse_filter = 2
+texture = ExtResource("13_stat_row")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="FrontalDefenseNameLabel" type="Label" parent="StatControls"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.344
+anchor_right = 0.34
+anchor_bottom = 0.484
+theme_override_colors/font_color = Color(0.96, 0.92, 0.82, 1)
+theme_override_font_sizes/font_size = 17
+text = "正防"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="FrontalDefenseValueLabel" type="Label" parent="StatControls"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.36
+anchor_top = 0.344
+anchor_right = 0.64
+anchor_bottom = 0.484
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 18
+text = "0 -> 0"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="FrontalDefenseMinusButton" type="Button" parent="StatControls"]
 layout_mode = 1
-anchor_left = 0.335
-anchor_top = 0.426
-anchor_right = 0.375
-anchor_bottom = 0.496
+anchor_left = 0.68
+anchor_top = 0.359
+anchor_right = 0.81
+anchor_bottom = 0.469
 focus_mode = 0
-text = "−"
+text = "-"
+script = ExtResource("3_standard_button")
 
 [node name="FrontalDefensePlusButton" type="Button" parent="StatControls"]
 layout_mode = 1
-anchor_left = 0.595
-anchor_top = 0.426
-anchor_right = 0.635
-anchor_bottom = 0.496
+anchor_left = 0.84
+anchor_top = 0.359
+anchor_right = 0.97
+anchor_bottom = 0.469
 focus_mode = 0
 text = "+"
+script = ExtResource("3_standard_button")
+
+[node name="AssassinationAttackRow" type="TextureRect" parent="StatControls"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.516
+anchor_right = 1.0
+anchor_bottom = 0.656
+mouse_filter = 2
+texture = ExtResource("13_stat_row")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="AssassinationAttackNameLabel" type="Label" parent="StatControls"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.516
+anchor_right = 0.34
+anchor_bottom = 0.656
+theme_override_colors/font_color = Color(0.96, 0.92, 0.82, 1)
+theme_override_font_sizes/font_size = 17
+text = "暗攻"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AssassinationAttackValueLabel" type="Label" parent="StatControls"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.36
+anchor_top = 0.516
+anchor_right = 0.64
+anchor_bottom = 0.656
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 18
+text = "0 -> 0"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="AssassinationAttackMinusButton" type="Button" parent="StatControls"]
 layout_mode = 1
-anchor_left = 0.335
-anchor_top = 0.514
-anchor_right = 0.375
-anchor_bottom = 0.584
+anchor_left = 0.68
+anchor_top = 0.531
+anchor_right = 0.81
+anchor_bottom = 0.641
 focus_mode = 0
-text = "−"
+text = "-"
+script = ExtResource("3_standard_button")
 
 [node name="AssassinationAttackPlusButton" type="Button" parent="StatControls"]
 layout_mode = 1
-anchor_left = 0.595
-anchor_top = 0.514
-anchor_right = 0.635
-anchor_bottom = 0.584
+anchor_left = 0.84
+anchor_top = 0.531
+anchor_right = 0.97
+anchor_bottom = 0.641
 focus_mode = 0
 text = "+"
+script = ExtResource("3_standard_button")
+
+[node name="AssassinationDefenseRow" type="TextureRect" parent="StatControls"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.688
+anchor_right = 1.0
+anchor_bottom = 0.828
+mouse_filter = 2
+texture = ExtResource("13_stat_row")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="AssassinationDefenseNameLabel" type="Label" parent="StatControls"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.688
+anchor_right = 0.34
+anchor_bottom = 0.828
+theme_override_colors/font_color = Color(0.96, 0.92, 0.82, 1)
+theme_override_font_sizes/font_size = 17
+text = "暗防"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AssassinationDefenseValueLabel" type="Label" parent="StatControls"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.36
+anchor_top = 0.688
+anchor_right = 0.64
+anchor_bottom = 0.828
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 18
+text = "0 -> 0"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="AssassinationDefenseMinusButton" type="Button" parent="StatControls"]
 layout_mode = 1
-anchor_left = 0.335
-anchor_top = 0.602
-anchor_right = 0.375
-anchor_bottom = 0.672
+anchor_left = 0.68
+anchor_top = 0.703
+anchor_right = 0.81
+anchor_bottom = 0.813
 focus_mode = 0
-text = "−"
+text = "-"
+script = ExtResource("3_standard_button")
 
 [node name="AssassinationDefensePlusButton" type="Button" parent="StatControls"]
 layout_mode = 1
-anchor_left = 0.595
-anchor_top = 0.602
-anchor_right = 0.635
-anchor_bottom = 0.672
+anchor_left = 0.84
+anchor_top = 0.703
+anchor_right = 0.97
+anchor_bottom = 0.813
 focus_mode = 0
 text = "+"
+script = ExtResource("3_standard_button")
+
+[node name="CharmRow" type="TextureRect" parent="StatControls"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.86
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = ExtResource("13_stat_row")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="CharmNameLabel" type="Label" parent="StatControls"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.86
+anchor_right = 0.34
+anchor_bottom = 1.0
+theme_override_colors/font_color = Color(0.96, 0.92, 0.82, 1)
+theme_override_font_sizes/font_size = 17
+text = "魅力"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CharmValueLabel" type="Label" parent="StatControls"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.36
+anchor_top = 0.86
+anchor_right = 0.64
+anchor_bottom = 1.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 18
+text = "0 -> 0"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="CharmMinusButton" type="Button" parent="StatControls"]
 layout_mode = 1
-anchor_left = 0.335
-anchor_top = 0.69
-anchor_right = 0.375
-anchor_bottom = 0.76
+anchor_left = 0.68
+anchor_top = 0.875
+anchor_right = 0.81
+anchor_bottom = 0.985
 focus_mode = 0
-text = "−"
+text = "-"
+script = ExtResource("3_standard_button")
 
 [node name="CharmPlusButton" type="Button" parent="StatControls"]
 layout_mode = 1
-anchor_left = 0.595
-anchor_top = 0.69
-anchor_right = 0.635
-anchor_bottom = 0.76
+anchor_left = 0.84
+anchor_top = 0.875
+anchor_right = 0.97
+anchor_bottom = 0.985
 focus_mode = 0
 text = "+"
+script = ExtResource("3_standard_button")
 
 [node name="AscendConfirmButton" type="Button" parent="."]
 layout_mode = 1
-anchor_left = 0.342
-anchor_top = 0.79
-anchor_right = 0.634
-anchor_bottom = 0.895
+anchor_left = 0.385
+anchor_top = 0.82
+anchor_right = 0.575
+anchor_bottom = 0.905
 focus_mode = 0
 theme_override_font_sizes/font_size = 24
 text = "确认升华"
+script = ExtResource("3_standard_button")
+
+[node name="DominionPanel" parent="." instance=ExtResource("10_panel")]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.68
+anchor_top = 0.155
+anchor_right = 0.925
+anchor_bottom = 0.94
+frame_color = "dark_red"
+
+[node name="DominionTitleBack" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.705
+anchor_top = 0.18
+anchor_right = 0.9
+anchor_bottom = 0.252
+mouse_filter = 2
+texture = ExtResource("11_title_teal")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="DominionTitle" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.705
+anchor_top = 0.18
+anchor_right = 0.9
+anchor_bottom = 0.252
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("16_title_font")
+theme_override_font_sizes/font_size = 25
+text = "统治条件"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RequirementPanel" parent="." instance=ExtResource("9_requirement")]
+layout_mode = 0
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 784.0
+offset_top = 118.8
+offset_right = 1184.0
+offset_bottom = 700.8
+
+[node name="DominionHintLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.705
+anchor_top = 0.742
+anchor_right = 0.902
+anchor_bottom = 0.79
+theme_override_colors/font_color = Color(0.96, 0.84, 0.48, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 18
+text = "集齐统治法器即可宣告统治"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
 
 [node name="DominionButton" type="Button" parent="."]
 layout_mode = 1
-anchor_left = 0.696
-anchor_top = 0.805
-anchor_right = 0.951
-anchor_bottom = 0.9
+anchor_left = 0.71
+anchor_top = 0.82
+anchor_right = 0.895
+anchor_bottom = 0.905
 focus_mode = 0
 theme_override_font_sizes/font_size = 24
 text = "选择统治"
+script = ExtResource("3_standard_button")
+
+[node name="RightUtilityButtons" parent="." instance=ExtResource("2_utility")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2

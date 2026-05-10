@@ -1,0 +1,182 @@
+[gd_scene format=3 uid="uid://dm3coh2g631qo"]
+
+[ext_resource type="Script" uid="uid://ca1vv1nitfhm0" path="res://scripts/ui/world_intel_archive.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://rptijfmikpm4" path="res://assets/ui/common/bg_round_start_city.png" id="2_bg"]
+[ext_resource type="Texture2D" uid="uid://wkrok03laijs" path="res://assets/ui/common/title_banner_red.png" id="4_8356s"]
+[ext_resource type="Texture2D" uid="uid://bidl2ce3t3lwo" path="res://assets/ui/common/tag_teal_blank.png" id="5_8356s"]
+[ext_resource type="Texture2D" uid="uid://tgccwcpfl7dv" path="res://assets/ui/common/panel_large_dark.png" id="5_panel"]
+[ext_resource type="Texture2D" uid="uid://b40kt44vq3ox7" path="res://assets/generated/card_clue_back.png" id="9_fallback"]
+[ext_resource type="Texture2D" uid="uid://x2t7p2e58gtc" path="res://assets/ui/common/bag_close_normal.png" id="10_close_normal"]
+[ext_resource type="Texture2D" uid="uid://bxxe7ugcm6h4n" path="res://assets/ui/common/bag_close_hover.png" id="11_close_hover"]
+[ext_resource type="Texture2D" uid="uid://dgnmp72mo6xm0" path="res://assets/ui/common/bag_close_pressed.png" id="12_close_pressed"]
+[ext_resource type="Script" path="res://scripts/ui/standard_button.gd" id="13_standard_button"]
+
+[node name="WorldIntelArchive" type="Control" unique_id=584374480]
+z_index = 1000
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+fallback_option_image = ExtResource("9_fallback")
+
+[node name="Background" type="TextureRect" parent="." unique_id=1116665314]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="TitleBanner" type="TextureRect" parent="." unique_id=779396618]
+layout_mode = 0
+offset_left = -23.0
+offset_top = 17.333
+offset_right = 396.667
+offset_bottom = 107.333
+mouse_filter = 2
+texture = ExtResource("4_8356s")
+expand_mode = 1
+
+[node name="ProgressPlate" type="TextureRect" parent="." unique_id=1507616373]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.68
+anchor_top = 0.03
+anchor_right = 0.94
+anchor_bottom = 0.12
+offset_right = -92.79993
+mouse_filter = 2
+texture = ExtResource("5_8356s")
+expand_mode = 1
+
+[node name="ProgressLabel" type="Label" parent="." unique_id=373800953]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.7
+anchor_top = 0.045
+anchor_right = 0.92
+anchor_bottom = 0.105
+offset_left = -55.0
+offset_top = -2.4000015
+offset_right = -55.0
+offset_bottom = -2.4000015
+theme_override_colors/font_color = Color(0.96, 0.94, 0.9, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 26
+text = "已选择 0 / 6"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CloseButton" type="TextureButton" parent="." unique_id=1777591532]
+layout_mode = 0
+offset_left = 1192.0
+offset_top = 28.0
+offset_right = 1249.333
+offset_bottom = 85.333
+tooltip_text = "关闭"
+focus_mode = 0
+texture_normal = ExtResource("10_close_normal")
+texture_pressed = ExtResource("12_close_pressed")
+texture_hover = ExtResource("11_close_hover")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Scroll" type="ScrollContainer" parent="." unique_id=953435053]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.045
+anchor_top = 0.18
+anchor_right = 0.955
+anchor_bottom = 0.88
+horizontal_scroll_mode = 0
+
+[node name="QuestionGrid" type="GridContainer" parent="Scroll" unique_id=1966917611]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 14
+columns = 2
+
+[node name="Footer" type="HBoxContainer" parent="." unique_id=744186691]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.045
+anchor_top = 0.895
+anchor_right = 0.955
+anchor_bottom = 0.975
+theme_override_constants/separation = 12
+alignment = 2
+
+[node name="SubmitButton" type="Button" parent="Footer" unique_id=1129864868]
+custom_minimum_size = Vector2(300, 72)
+layout_mode = 2
+text = "提交世界设定档案"
+script = ExtResource("13_standard_button")
+
+[node name="Templates" type="Control" parent="." unique_id=1312003093]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="QuestionTemplate" type="PanelContainer" parent="Templates" unique_id=1543217024]
+custom_minimum_size = Vector2(548, 276)
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.5
+anchor_bottom = 0.34
+size_flags_horizontal = 3
+
+[node name="Background" type="TextureRect" parent="Templates/QuestionTemplate" unique_id=1093195285]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("5_panel")
+expand_mode = 1
+
+[node name="Body" type="VBoxContainer" parent="Templates/QuestionTemplate" unique_id=1241722704]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TitleLabel" type="Label" parent="Templates/QuestionTemplate/Body" unique_id=373275039]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.88, 0.46, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 18
+text = "档案标题"
+autowrap_mode = 2
+
+[node name="OptionsRow" type="HBoxContainer" parent="Templates/QuestionTemplate/Body" unique_id=1293591074]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 4
+
+[node name="Container" type="Container" parent="." unique_id=1619259119]
+layout_mode = 0
+offset_left = 1221.6
+offset_top = 644.39996
+offset_right = 1221.6
+offset_bottom = 702.39996
+
+[node name="TitleLabel" type="Label" parent="." unique_id=1787978583]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 26.0
+offset_right = 236.0
+offset_bottom = 80.666
+theme_override_colors/font_color = Color(0.964706, 0.913725, 0.796078, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 35
+text = "世界设定档案"
+vertical_alignment = 1

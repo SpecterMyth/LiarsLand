@@ -1,0 +1,165 @@
+[gd_scene load_steps=12 format=3 uid="uid://hrcl1icx2olb"]
+
+[ext_resource type="Script" uid="uid://ksgwoaeqdqex" path="res://scripts/ui/inventory_overlay.gd" id="1_inventory_overlay"]
+[ext_resource type="Texture2D" uid="uid://dhx4f5lgt7ym4" path="res://assets/ui/inventory/inventory_background_cartoon.png" id="2_inventory_bg"]
+[ext_resource type="Texture2D" uid="uid://wkrok03laijs" path="res://assets/ui/common/title_banner_red.png" id="3_title_banner"]
+[ext_resource type="Texture2D" uid="uid://x2t7p2e58gtc" path="res://assets/ui/common/bag_close_normal.png" id="4_close_normal"]
+[ext_resource type="Texture2D" uid="uid://bxxe7ugcm6h4n" path="res://assets/ui/common/bag_close_hover.png" id="5_close_hover"]
+[ext_resource type="Texture2D" uid="uid://dgnmp72mo6xm0" path="res://assets/ui/common/bag_close_pressed.png" id="6_close_pressed"]
+[ext_resource type="Texture2D" uid="uid://caflyeml6n7hm" path="res://assets/ui/common/bag_overlay_dark.png" id="7_overlay_panel"]
+[ext_resource type="Texture2D" uid="uid://bq1fty63uxsj3" path="res://assets/ui/common/bag_panel_right_teal.png" id="8_right_panel"]
+[ext_resource type="Texture2D" uid="uid://b1mjvq5xomge3" path="res://assets/ui/common/bag_header_teal.png" id="9_header_teal"]
+[ext_resource type="PackedScene" uid="uid://cj66isaqy0mgh" path="res://scenes/ui/bag_resource_bar.tscn" id="10_resource_component"]
+[ext_resource type="PackedScene" uid="uid://b2hflfnj0d6xq" path="res://scenes/ui/requirement_panel.tscn" id="11_requirement_panel"]
+
+[node name="InventoryOverlay" type="Control" unique_id=973266963]
+z_index = 3900
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1280.0
+offset_bottom = 720.0
+script = ExtResource("1_inventory_overlay")
+
+[node name="Backdrop" type="Button" parent="." unique_id=1006197227]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="Dim" type="ColorRect" parent="Backdrop" unique_id=1975161631]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.025, 0.019, 0.021, 0.92)
+
+[node name="InventoryBackground" type="TextureRect" parent="." unique_id=40042168]
+modulate = Color(0.48, 0.48, 0.48, 1)
+layout_mode = 0
+offset_right = 1280.0
+offset_bottom = 720.0
+mouse_filter = 2
+texture = ExtResource("2_inventory_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="MainPanel" type="TextureRect" parent="." unique_id=2023171208]
+modulate = Color(1, 1, 1, 0.42)
+layout_mode = 0
+offset_right = 1280.0
+offset_bottom = 720.0
+mouse_filter = 2
+texture = ExtResource("7_overlay_panel")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="TitleBanner" type="TextureRect" parent="." unique_id=314580083]
+layout_mode = 0
+offset_left = -23.0
+offset_top = 17.333
+offset_right = 396.667
+offset_bottom = 107.333
+mouse_filter = 2
+texture = ExtResource("3_title_banner")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="TitleLabel" type="Label" parent="." unique_id=1511815812]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 26.0
+offset_right = 236.0
+offset_bottom = 80.666
+theme_override_colors/font_color = Color(0.964706, 0.913725, 0.796078, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 35
+text = "背包"
+vertical_alignment = 1
+
+[node name="BagResourceBar" parent="." unique_id=2113206494 instance=ExtResource("10_resource_component")]
+layout_mode = 0
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 583.333
+offset_top = 20.0
+offset_right = 1133.333
+offset_bottom = 120.0
+
+[node name="CloseButton" type="TextureButton" parent="." unique_id=2047121896]
+layout_mode = 0
+offset_left = 1192.0
+offset_top = 28.0
+offset_right = 1249.333
+offset_bottom = 85.333
+tooltip_text = "关闭"
+focus_mode = 0
+texture_normal = ExtResource("4_close_normal")
+texture_pressed = ExtResource("6_close_pressed")
+texture_hover = ExtResource("5_close_hover")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="RequirementPanel" parent="." instance=ExtResource("11_requirement_panel")]
+layout_mode = 0
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 32.0
+offset_top = 100.667
+offset_right = 432.0
+offset_bottom = 682.667
+
+[node name="BagPanel" type="TextureRect" parent="." unique_id=1301673138]
+layout_mode = 0
+offset_left = 434.0
+offset_top = 128.667
+offset_right = 1248.0
+offset_bottom = 682.667
+mouse_filter = 2
+texture = ExtResource("8_right_panel")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="BagHeader" type="TextureRect" parent="." unique_id=187273536]
+layout_mode = 0
+offset_left = 492.667
+offset_top = 103.333
+offset_right = 663.333
+offset_bottom = 162.0
+mouse_filter = 2
+texture = ExtResource("9_header_teal")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="BagTitle" type="Label" parent="." unique_id=1528724145]
+layout_mode = 0
+offset_left = 519.333
+offset_top = 111.333
+offset_right = 692.667
+offset_bottom = 151.333
+theme_override_colors/font_color = Color(0.964706, 0.913725, 0.796078, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 23
+text = "当前持有"
+vertical_alignment = 1
+
+[node name="InventoryItemGrid" type="GridContainer" parent="." unique_id=1579283488]
+layout_mode = 0
+offset_left = 466.0
+offset_top = 184.0
+offset_right = 1187.333
+offset_bottom = 634.667
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 0
+columns = 8

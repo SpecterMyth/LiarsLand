@@ -1,0 +1,344 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/status_page.gd" id="1_qw58k"]
+[ext_resource type="Texture2D" path="res://assets/ui/status/status_page_bg.png" id="2_ood68"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/shop_texture_scratches_dark.png" id="3_aatyy"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/title_banner_red.png" id="4_ilx3u"]
+[ext_resource type="FontFile" path="res://assets/fonts/AlibabaPuHuiTi-3-105-Heavy.ttf" id="5_0q1eg"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/bag_close_normal.png" id="6_m50lx"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/bag_close_pressed.png" id="7_negrc"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/bag_close_hover.png" id="8_r1xe6"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/common_background_panel_dark_teal.png" id="9_xk2s5"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/common_background_panel_gold.png" id="10_w3g1t"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/common_background_panel_dark_purple.png" id="11_mg6p1"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/common_background_panel_dark_red.png" id="12_fmv8d"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/common_background_panel_gray.png" id="13_gray"]
+
+[node name="StatusPage" type="Control" unique_id=1278424354]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_qw58k")
+page_title = "状态"
+background_path = "res://assets/ui/status/status_page_bg.png"
+panel_color = "dark_teal"
+
+[node name="Background" type="TextureRect" parent="." unique_id=966027816]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = ExtResource("2_ood68")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Veil" type="ColorRect" parent="." unique_id=116178672]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.015, 0.01, 0.012, 0.68)
+
+[node name="TextureScratches" type="TextureRect" parent="." unique_id=919141786]
+modulate = Color(1, 1, 1, 0.12)
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = ExtResource("3_aatyy")
+expand_mode = 1
+
+[node name="TitleBanner" type="TextureRect" parent="." unique_id=92112492]
+layout_mode = 0
+offset_left = -23.0
+offset_top = 17.333
+offset_right = 396.667
+offset_bottom = 107.333
+mouse_filter = 2
+texture = ExtResource("4_ilx3u")
+expand_mode = 1
+
+[node name="TitleLabel" type="Label" parent="." unique_id=1077266376]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 26.0
+offset_right = 296.0
+offset_bottom = 80.666
+theme_override_colors/font_color = Color(0.964706, 0.913725, 0.796078, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("5_0q1eg")
+theme_override_font_sizes/font_size = 35
+text = "状态"
+vertical_alignment = 1
+
+[node name="CloseButton" type="TextureButton" parent="." unique_id=1176197310]
+layout_mode = 0
+offset_left = 1192.0
+offset_top = 28.0
+offset_right = 1249.333
+offset_bottom = 85.333
+tooltip_text = "关闭"
+focus_mode = 0
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("6_m50lx")
+texture_pressed = ExtResource("7_negrc")
+texture_hover = ExtResource("8_r1xe6")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="MainPanel" type="NinePatchRect" parent="." unique_id=1811665879]
+texture_filter = 1
+layout_mode = 0
+offset_left = 82.0
+offset_top = 118.0
+offset_right = 1198.0
+offset_bottom = 662.0
+texture = ExtResource("9_xk2s5")
+patch_margin_left = 70
+patch_margin_top = 70
+patch_margin_right = 70
+patch_margin_bottom = 70
+
+[node name="ContentMargin" type="MarginContainer" parent="MainPanel" unique_id=538983922]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 52
+theme_override_constants/margin_top = 52
+theme_override_constants/margin_right = 52
+theme_override_constants/margin_bottom = 52
+
+[node name="Content" type="VBoxContainer" parent="MainPanel/ContentMargin" unique_id=1024047712]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 14
+
+[node name="StatusCardGrid" type="GridContainer" parent="MainPanel/ContentMargin/Content" unique_id=1774932260]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 16
+theme_override_constants/v_separation = 16
+columns = 3
+
+[node name="StatusCard" type="NinePatchRect" parent="MainPanel/ContentMargin/Content/StatusCardGrid" unique_id=1103058114]
+texture_filter = 1
+custom_minimum_size = Vector2(0, 156)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("13_gray")
+patch_margin_left = 70
+patch_margin_top = 70
+patch_margin_right = 70
+patch_margin_bottom = 70
+
+[node name="MarginContainer" type="MarginContainer" parent="MainPanel/ContentMargin/Content/StatusCardGrid/StatusCard" unique_id=1944409479]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 42
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 42
+theme_override_constants/margin_bottom = 30
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/ContentMargin/Content/StatusCardGrid/StatusCard/MarginContainer" unique_id=256711096]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="@Label@16" type="Label" parent="MainPanel/ContentMargin/Content/StatusCardGrid/StatusCard/MarginContainer/VBoxContainer" unique_id=2021171927]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94, 0.9, 0.78, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("5_0q1eg")
+theme_override_font_sizes/font_size = 18
+text = "章节 / 回合"
+
+[node name="@Label@17" type="Label" parent="MainPanel/ContentMargin/Content/StatusCardGrid/StatusCard/MarginContainer/VBoxContainer" unique_id=497384869]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0.38, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("5_0q1eg")
+theme_override_font_sizes/font_size = 28
+text = "等待开始"
+clip_text = true
+
+[node name="@Label@18" type="Label" parent="MainPanel/ContentMargin/Content/StatusCardGrid/StatusCard/MarginContainer/VBoxContainer" unique_id=2098065790]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.86, 0.72, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("5_0q1eg")
+theme_override_font_sizes/font_size = 16
+text = "点击开始后进入章节"
+autowrap_mode = 3
+
+[node name="@NinePatchRect@22" type="NinePatchRect" parent="MainPanel/ContentMargin/Content/StatusCardGrid" unique_id=2053062713]
+texture_filter = 1
+custom_minimum_size = Vector2(0, 156)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("13_gray")
+patch_margin_left = 70
+patch_margin_top = 70
+patch_margin_right = 70
+patch_margin_bottom = 70
+
+[node name="MarginContainer" type="MarginContainer" parent="MainPanel/ContentMargin/Content/StatusCardGrid/@NinePatchRect@22" unique_id=416532991]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 42
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 42
+theme_override_constants/margin_bottom = 30
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/ContentMargin/Content/StatusCardGrid/@NinePatchRect@22/MarginContainer" unique_id=859388777]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="@Label@19" type="Label" parent="MainPanel/ContentMargin/Content/StatusCardGrid/@NinePatchRect@22/MarginContainer/VBoxContainer" unique_id=867075900]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94, 0.9, 0.78, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("5_0q1eg")
+theme_override_font_sizes/font_size = 18
+text = "字符与能量"
+
+[node name="@Label@20" type="Label" parent="MainPanel/ContentMargin/Content/StatusCardGrid/@NinePatchRect@22/MarginContainer/VBoxContainer" unique_id=463758860]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0.38, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("5_0q1eg")
+theme_override_font_sizes/font_size = 28
+text = "0 / 0"
+clip_text = true
+
+[node name="@Label@21" type="Label" parent="MainPanel/ContentMargin/Content/StatusCardGrid/@NinePatchRect@22/MarginContainer/VBoxContainer" unique_id=636925164]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.86, 0.72, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("5_0q1eg")
+theme_override_font_sizes/font_size = 16
+text = "能量：0  等级：1"
+autowrap_mode = 3
+
+[node name="@NinePatchRect@26" type="NinePatchRect" parent="MainPanel/ContentMargin/Content/StatusCardGrid" unique_id=1497994415]
+texture_filter = 1
+custom_minimum_size = Vector2(0, 156)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("13_gray")
+patch_margin_left = 70
+patch_margin_top = 70
+patch_margin_right = 70
+patch_margin_bottom = 70
+
+[node name="MarginContainer" type="MarginContainer" parent="MainPanel/ContentMargin/Content/StatusCardGrid/@NinePatchRect@26" unique_id=1540628817]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 42
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 42
+theme_override_constants/margin_bottom = 30
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/ContentMargin/Content/StatusCardGrid/@NinePatchRect@26/MarginContainer" unique_id=1833346397]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="@Label@23" type="Label" parent="MainPanel/ContentMargin/Content/StatusCardGrid/@NinePatchRect@26/MarginContainer/VBoxContainer" unique_id=1321113658]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94, 0.9, 0.78, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("5_0q1eg")
+theme_override_font_sizes/font_size = 18
+text = "当前对手"
+
+[node name="@Label@24" type="Label" parent="MainPanel/ContentMargin/Content/StatusCardGrid/@NinePatchRect@26/MarginContainer/VBoxContainer" unique_id=1794013648]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0.38, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("5_0q1eg")
+theme_override_font_sizes/font_size = 28
+text = "未选择"
+clip_text = true
+
+[node name="@Label@25" type="Label" parent="MainPanel/ContentMargin/Content/StatusCardGrid/@NinePatchRect@26/MarginContainer/VBoxContainer" unique_id=689909239]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.86, 0.72, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("5_0q1eg")
+theme_override_font_sizes/font_size = 16
+text = "等待候选对手"
+autowrap_mode = 3
+
+[node name="StatusLower" type="HBoxContainer" parent="MainPanel/ContentMargin/Content" unique_id=1369313492]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 18
+
+[node name="RelationPanel" type="NinePatchRect" parent="MainPanel/ContentMargin/Content/StatusLower" unique_id=952169200]
+texture_filter = 1
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("13_gray")
+patch_margin_left = 70
+patch_margin_top = 70
+patch_margin_right = 70
+patch_margin_bottom = 70
+
+[node name="MarginContainer" type="MarginContainer" parent="MainPanel/ContentMargin/Content/StatusLower/RelationPanel" unique_id=1364053906]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 46
+theme_override_constants/margin_top = 34
+theme_override_constants/margin_right = 46
+theme_override_constants/margin_bottom = 34
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/ContentMargin/Content/StatusLower/RelationPanel/MarginContainer" unique_id=1362654004]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="@Label@13" type="Label" parent="MainPanel/ContentMargin/Content/StatusLower/RelationPanel/MarginContainer/VBoxContainer" unique_id=614025024]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0.38, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("5_0q1eg")
+theme_override_font_sizes/font_size = 22
+text = "关系与风险"
+
+[node name="StatusDetailView" type="RichTextLabel" parent="MainPanel/ContentMargin/Content/StatusLower/RelationPanel/MarginContainer/VBoxContainer" unique_id=879767282]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 2
+theme_override_colors/default_color = Color(1, 0.91, 0.74, 1)
+theme_override_fonts/normal_font = ExtResource("5_0q1eg")
+theme_override_font_sizes/normal_font_size = 17
+bbcode_enabled = true
+selection_enabled = true

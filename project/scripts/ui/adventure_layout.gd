@@ -2,6 +2,15 @@ extends RefCounted
 class_name AdventureLayout
 
 const CardUiKitScript := preload("res://scripts/ui/card_ui_kit.gd")
+const WorldIntelArchiveScene := preload("res://scenes/ui/world_intel_archive.tscn")
+const InventoryOverlayScene := preload("res://scenes/ui/inventory_overlay.tscn")
+const RightUtilityButtonsScene := preload("res://scenes/ui/right_utility_buttons.tscn")
+const LeftActionButtonsScene := preload("res://scenes/ui/left_action_buttons.tscn")
+const StandardButtonScript := preload("res://scripts/ui/standard_button.gd")
+const GuidelinesPageScene := preload("res://scenes/ui/guidelines_page.tscn")
+const HistoryPageScene := preload("res://scenes/ui/history_page.tscn")
+const StatusPageScene := preload("res://scenes/ui/status_page.tscn")
+const SettingsPageScene := preload("res://scenes/ui/settings_page.tscn")
 const UI_ROOT := "res://assets/generated/ui/dialogue/"
 const COMMON_UI_ROOT := "res://assets/ui/common/"
 const DIALOGUE_FONT_PATH := "res://assets/fonts/AlibabaPuHuiTi-3-105-Heavy.ttf"
@@ -93,9 +102,18 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 	result_banner.add_theme_color_override("font_color", Color(1.0, 0.87, 0.42, 1.0))
 	hud.add_child(result_banner)
 
-	var recent_view := _make_log(17, Color(0.08, 0.04, 0.03, 1.0))
+	var llm_retry_button := _make_text_button("重试")
+	llm_retry_button.name = "LlmRetryButton"
+	llm_retry_button.visible = false
+	llm_retry_button.z_index = 64
+	llm_retry_button.focus_mode = Control.FOCUS_NONE
+	_place_by_source_rect(llm_retry_button, Rect2(742, 664, 188, 52))
+	hud.add_child(llm_retry_button)
+
+	var recent_view := _make_log(17, Color(0.08, 0.04, 0.03, 1.0), -4)
 	recent_view.name = "PreviousDialogue"
-	_place_relative(recent_view, Rect2(0.08, 0.09, 0.80, 0.80))
+	recent_view.scroll_following = false
+	_place_relative(recent_view, Rect2(0.08, 0.12, 0.80, 0.78))
 	upper_box.add_child(recent_view)
 
 	var lower_box := _make_exact_texture("dialogue_lower_gold_full.png", Rect2(176, 728, 1339, 194))
@@ -116,7 +134,7 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 	player_label.visible = false
 	hud.add_child(player_label)
 
-	var npc_label := _make_plain_name_label("绯尾侯爵")
+	var npc_label := _make_plain_name_label("维尾侯爵")
 	npc_label.visible = false
 	hud.add_child(npc_label)
 
@@ -125,30 +143,18 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 	_place_relative(dialogue_view, Rect2(0.08, 0.14, 0.82, 0.70))
 	lower_box.add_child(dialogue_view)
 
-	var side_buttons := Control.new()
+	var side_buttons := RightUtilityButtonsScene.instantiate() as Control
+	side_buttons.name = "RightUtilityButtons"
 	side_buttons.z_index = 46
 	side_buttons.set_anchors_preset(Control.PRESET_FULL_RECT)
 	hud.add_child(side_buttons)
 
-	var info_button := _make_icon_button("情报", "icon_info.png")
-	var bag_button := _make_icon_button("背包", "icon_bag.png")
-	var history_button := _make_icon_button("历史", "icon_history.png")
-	var rules_button := _make_icon_button("规则", "icon_rules.png")
-	var status_button := _make_icon_button("状态", "icon_status.png")
-	var settings_button := _make_icon_button("设置", "icon_settings.png")
-	var hot_zones := [
-		Rect2(1563, 91, 94, 95),
-		Rect2(1563, 213, 94, 96),
-		Rect2(1563, 339, 94, 96),
-		Rect2(1563, 462, 94, 96),
-		Rect2(1563, 586, 94, 96),
-		Rect2(1563, 710, 94, 96)
-	]
-	var side_button_list := [info_button, bag_button, history_button, rules_button, status_button, settings_button]
-	for i in range(side_button_list.size()):
-		var button: Button = side_button_list[i]
-		_place_by_source_rect(button, hot_zones[i])
-		side_buttons.add_child(button)
+	var info_button := side_buttons.get_node_or_null("InfoButton") as BaseButton
+	var bag_button := side_buttons.get_node_or_null("BagButton") as BaseButton
+	var history_button := side_buttons.get_node_or_null("HistoryButton") as BaseButton
+	var rules_button := side_buttons.get_node_or_null("RulesButton") as BaseButton
+	var status_button := side_buttons.get_node_or_null("StatusButton") as BaseButton
+	var settings_button := side_buttons.get_node_or_null("SettingsButton") as BaseButton
 
 	var drawer := _make_modal_panel(Vector2(430, 650), "情报")
 	var action_buttons_root := Control.new()
@@ -157,47 +163,17 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 	action_buttons_root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	hud.add_child(action_buttons_root)
 
-	var auto_decide_check := CheckBox.new()
-	auto_decide_check.text = "自行决定"
-	auto_decide_check.button_pressed = false
-	auto_decide_check.focus_mode = Control.FOCUS_NONE
-	auto_decide_check.tooltip_text = "勾选后你方角色会自动执行自己的行动决策"
-	auto_decide_check.add_theme_font_size_override("font_size", 19)
-	auto_decide_check.add_theme_color_override("font_color", Color(1.0, 0.82, 0.42, 1.0))
-	auto_decide_check.add_theme_constant_override("h_separation", 10)
-	auto_decide_check.add_theme_icon_override("unchecked", _make_checkbox_icon(false))
-	auto_decide_check.add_theme_icon_override("checked", _make_checkbox_icon(true))
-	auto_decide_check.add_theme_icon_override("unchecked_disabled", _make_checkbox_icon(false))
-	auto_decide_check.add_theme_icon_override("checked_disabled", _make_checkbox_icon(true))
-	var dialogue_font := _load_dialogue_font()
-	if dialogue_font != null:
-		auto_decide_check.add_theme_font_override("font", dialogue_font)
-	_place_by_source_rect(auto_decide_check, Rect2(12, 36, 174, 52))
-	action_buttons_root.add_child(auto_decide_check)
-
-	var action_button_specs := [
-		["leave", "撤离", "icon_action_leave.png"],
-		["gift", "赠送", "icon_action_gift.png"],
-		["cast", "施法", "icon_action_cast.png"],
-		["invite", "邀请", "icon_action_invite.png"],
-		["duel", "决斗", "icon_action_duel.png"],
-		["assassinate", "暗杀", "icon_action_assassinate.png"]
-	]
+	var left_action_buttons := LeftActionButtonsScene.instantiate() as Control
+	left_action_buttons.name = "LeftActionButtons"
+	left_action_buttons.set_anchors_preset(Control.PRESET_FULL_RECT)
+	action_buttons_root.add_child(left_action_buttons)
 	var action_buttons := {}
-	var left_hot_zones := [
-		Rect2(15, 91, 94, 95),
-		Rect2(15, 213, 94, 96),
-		Rect2(15, 339, 94, 96),
-		Rect2(15, 462, 94, 96),
-		Rect2(15, 586, 94, 96),
-		Rect2(15, 710, 94, 96)
-	]
-	for i in range(action_button_specs.size()):
-		var spec: Array = action_button_specs[i]
-		var action_button := _make_icon_button(String(spec[1]), String(spec[2]))
-		_place_by_source_rect(action_button, left_hot_zones[i])
-		action_buttons_root.add_child(action_button)
-		action_buttons[String(spec[0])] = action_button
+	action_buttons["leave"] = left_action_buttons.get_node_or_null("LeaveButton")
+	action_buttons["gift"] = left_action_buttons.get_node_or_null("GiftButton")
+	action_buttons["cast"] = left_action_buttons.get_node_or_null("CastButton")
+	action_buttons["invite"] = left_action_buttons.get_node_or_null("InviteButton")
+	action_buttons["duel"] = left_action_buttons.get_node_or_null("DuelButton")
+	action_buttons["assassinate"] = left_action_buttons.get_node_or_null("AssassinateButton")
 
 	drawer.visible = false
 	owner.add_child(drawer)
@@ -224,90 +200,56 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 	card_grid.add_theme_constant_override("v_separation", 10)
 	card_scroll.add_child(card_grid)
 
-	var card_kit = CardUiKitScript.new()
-	var intel_panel := card_kit.make_page("世界设定档案", "")
+	var intel_panel := WorldIntelArchiveScene.instantiate() as Control
 	intel_panel.name = "IntelPanel"
 	intel_panel.visible = false
 	owner.add_child(intel_panel)
 
-	var intel_progress_label := Label.new()
-	intel_progress_label.anchor_left = 0.70
-	intel_progress_label.anchor_top = 0.045
-	intel_progress_label.anchor_right = 0.91
-	intel_progress_label.anchor_bottom = 0.13
-	intel_progress_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	intel_progress_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	intel_progress_label.add_theme_font_size_override("font_size", 26)
-	intel_progress_label.add_theme_constant_override("outline_size", 4)
-	intel_progress_label.add_theme_color_override("font_outline_color", Color(0.015, 0.018, 0.025, 1.0))
-	intel_progress_label.add_theme_color_override("font_color", Color(0.96, 0.94, 0.90, 1.0))
-	intel_panel.add_child(intel_progress_label)
+	var intel_progress_label := intel_panel.get_node_or_null("ProgressLabel") as Label
+	var intel_content_root := intel_panel.get_node_or_null("Scroll/QuestionGrid") as GridContainer
+	var intel_footer := intel_panel.get_node_or_null("Footer") as HBoxContainer
 
-	var intel_scroll := ScrollContainer.new()
-	intel_scroll.anchor_left = 0.045
-	intel_scroll.anchor_top = 0.18
-	intel_scroll.anchor_right = 0.955
-	intel_scroll.anchor_bottom = 0.88
-	intel_scroll.offset_left = 0
-	intel_scroll.offset_top = 0
-	intel_scroll.offset_right = 0
-	intel_scroll.offset_bottom = 0
-	intel_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	intel_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	intel_panel.add_child(intel_scroll)
+	var inventory_controls := _build_inventory_overlay(owner)
+	var inventory_overlay := inventory_controls.get("inventory_overlay") as Control
+	var inventory_backdrop := inventory_controls.get("inventory_backdrop") as BaseButton
+	var inventory_close_button := inventory_controls.get("inventory_close_button") as BaseButton
+	var inventory_energy_label := inventory_controls.get("inventory_energy_label") as Label
+	var inventory_capacity_label := inventory_controls.get("inventory_capacity_label") as Label
+	var inventory_dominion_grid := inventory_controls.get("inventory_dominion_grid") as GridContainer
+	var inventory_ascension_grid := inventory_controls.get("inventory_ascension_grid") as GridContainer
+	var inventory_item_grid := inventory_controls.get("inventory_item_grid") as GridContainer
 
-	var intel_content_root := VBoxContainer.new()
-	intel_content_root.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	intel_content_root.add_theme_constant_override("separation", 18)
-	intel_scroll.add_child(intel_content_root)
-
-	var intel_footer := HBoxContainer.new()
-	intel_footer.anchor_left = 0.045
-	intel_footer.anchor_top = 0.895
-	intel_footer.anchor_right = 0.955
-	intel_footer.anchor_bottom = 0.975
-	intel_footer.offset_left = 0
-	intel_footer.offset_top = 0
-	intel_footer.offset_right = 0
-	intel_footer.offset_bottom = 0
-	intel_footer.alignment = BoxContainer.ALIGNMENT_END
-	intel_footer.add_theme_constant_override("separation", 12)
-	intel_panel.add_child(intel_footer)
-
-	var rules_panel := _make_modal_panel(Vector2(560, 650), "行为文件")
+	var rules_panel := GuidelinesPageScene.instantiate() as Control
 	rules_panel.visible = false
 	owner.add_child(rules_panel)
-	var rules_box: VBoxContainer = rules_panel.get_meta("body")
+	var guideline_controls: Dictionary = {}
+	if rules_panel.has_method("get_controls"):
+		guideline_controls = rules_panel.call("get_controls")
+	var rules_edit := guideline_controls.get("rules_edit") as TextEdit
+	var auto_decide_check := guideline_controls.get("auto_decide_check") as CheckBox
+	var auto_growth_check := guideline_controls.get("auto_growth_check") as CheckBox
+	if rules_panel.has_method("set_guidelines"):
+		rules_panel.call("set_guidelines", "", default_rules, "")
 
-	var rules_edit := TextEdit.new()
-	rules_edit.text = default_rules
-	rules_edit.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
-	rules_edit.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	rules_edit.add_theme_font_size_override("font_size", 16)
-	rules_edit.add_theme_color_override("font_color", Color(1.0, 0.91, 0.74, 1.0))
-	rules_edit.add_theme_color_override("font_placeholder_color", Color(0.72, 0.58, 0.42, 1.0))
-	rules_box.add_child(rules_edit)
-
-	var settings_panel := _make_modal_panel(Vector2(340, 270), "设置")
+	var settings_panel := SettingsPageScene.instantiate() as Control
 	settings_panel.visible = false
 	owner.add_child(settings_panel)
-	var settings_box: VBoxContainer = settings_panel.get_meta("body")
+	var settings_controls: Dictionary = {}
+	if settings_panel.has_method("get_controls"):
+		settings_controls = settings_panel.call("get_controls")
+	var start_button := settings_controls.get("start_button") as Button
+	var reset_button := settings_controls.get("reset_button") as Button
+	var settings_auto_decide_check := settings_controls.get("auto_decide_check") as CheckBox
+	var settings_auto_growth_check := settings_controls.get("auto_growth_check") as CheckBox
 
-	var start_button := _make_text_button("开始")
-	var reset_button := _make_text_button("重置")
-	var close_settings_button := _make_text_button("关闭")
-	settings_box.add_child(start_button)
-	settings_box.add_child(reset_button)
-	settings_box.add_child(close_settings_button)
-	close_settings_button.pressed.connect(func(): settings_panel.visible = false)
-
-	var history_dialog := _make_modal_panel(Vector2(880, 620), "历史对话")
+	var history_dialog := HistoryPageScene.instantiate() as Control
 	history_dialog.visible = false
 	owner.add_child(history_dialog)
-	var history_box: VBoxContainer = history_dialog.get_meta("body")
-	var history_view := _make_log(17, Color(1.0, 0.91, 0.72, 1.0))
-	history_view.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	history_box.add_child(history_view)
+	var history_view := history_dialog.get("history_view") as RichTextLabel
+
+	var status_page := StatusPageScene.instantiate() as Control
+	status_page.visible = false
+	owner.add_child(status_page)
 
 	var upgrade_panel := _make_modal_panel(Vector2(600, 330), "升华")
 	upgrade_panel.visible = false
@@ -341,13 +283,13 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 	var side_shadow_left := _make_side_shadow(false)
 	side_shadow_left.z_index = 6
 	side_shadow_left.visible = false
-	_place_by_source_rect(side_shadow_left, Rect2(0, 0, 735, 941))
+	_place_by_source_rect(side_shadow_left, Rect2(0, 0, 860, 941))
 	hud.add_child(side_shadow_left)
 
 	var side_shadow_right := _make_side_shadow(true)
 	side_shadow_right.z_index = 6
 	side_shadow_right.visible = false
-	_place_by_source_rect(side_shadow_right, Rect2(937, 0, 735, 941))
+	_place_by_source_rect(side_shadow_right, Rect2(812, 0, 860, 941))
 	hud.add_child(side_shadow_right)
 
 	var player_portrait := TextureRect.new()
@@ -397,10 +339,12 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 	modal_backdrop.add_theme_stylebox_override("pressed", StyleBoxEmpty.new())
 	owner.add_child(modal_backdrop)
 	intel_panel.move_to_front()
+	inventory_overlay.move_to_front()
 	drawer.move_to_front()
 	rules_panel.move_to_front()
 	settings_panel.move_to_front()
 	history_dialog.move_to_front()
+	status_page.move_to_front()
 	upgrade_panel.move_to_front()
 
 	return {
@@ -419,8 +363,11 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 		"npc_public_label": npc_public_label,
 		"stats_label": stats_label,
 		"rules_edit": rules_edit,
+		"guidelines_panel": rules_panel,
+		"guideline_controls": guideline_controls,
 		"dialogue_title": dialogue_title,
 		"result_banner": result_banner,
+		"llm_retry_button": llm_retry_button,
 		"dialogue_view": dialogue_view,
 		"state_view": state_view,
 		"card_grid": card_grid,
@@ -428,6 +375,14 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 		"intel_progress_label": intel_progress_label,
 		"intel_content_root": intel_content_root,
 		"intel_footer": intel_footer,
+		"inventory_overlay": inventory_overlay,
+		"inventory_backdrop": inventory_backdrop,
+		"inventory_close_button": inventory_close_button,
+		"inventory_energy_label": inventory_energy_label,
+		"inventory_capacity_label": inventory_capacity_label,
+		"inventory_dominion_grid": inventory_dominion_grid,
+		"inventory_ascension_grid": inventory_ascension_grid,
+		"inventory_item_grid": inventory_item_grid,
 		"pulse_overlay": pulse_overlay,
 		"ambience": ambience,
 		"start_button": start_button,
@@ -440,9 +395,13 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 		"settings_button": settings_button,
 		"action_buttons": action_buttons,
 		"auto_decide_check": auto_decide_check,
+		"auto_growth_check": auto_growth_check,
+		"settings_auto_decide_check": settings_auto_decide_check,
+		"settings_auto_growth_check": settings_auto_growth_check,
 		"drawer": drawer,
 		"rules_panel": rules_panel,
 		"settings_panel": settings_panel,
+		"status_page": status_page,
 		"modal_backdrop": modal_backdrop,
 		"history_dialog": history_dialog,
 		"history_view": history_view,
@@ -456,6 +415,68 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 		"player_portrait": player_portrait,
 		"npc_portrait": npc_portrait
 	}
+
+
+func _build_inventory_overlay(owner: Control) -> Dictionary:
+	var overlay := InventoryOverlayScene.instantiate() as Control
+	owner.add_child(overlay)
+	overlay.visible = false
+	if overlay.has_method("get_controls"):
+		return overlay.call("get_controls")
+	return {
+		"inventory_overlay": overlay,
+		"inventory_close_button": overlay.get_node_or_null("CloseButton"),
+		"inventory_backdrop": overlay.get_node_or_null("Backdrop"),
+		"inventory_energy_label": overlay.get_node_or_null("BagResourceBar/EnergyPlate/EnergyValue"),
+		"inventory_capacity_label": overlay.get_node_or_null("BagResourceBar/CapacityPlate/CapacityValue"),
+		"inventory_dominion_grid": overlay.get_node_or_null("RequirementPanel/DominionRequirementGrid"),
+		"inventory_ascension_grid": overlay.get_node_or_null("RequirementPanel/AscensionRequirementGrid"),
+		"inventory_item_grid": overlay.get_node_or_null("InventoryItemGrid")
+	}
+
+
+
+func _make_common_exact_texture(texture_name: String, source_rect: Rect2) -> TextureRect:
+	var rect := TextureRect.new()
+	rect.texture = _load_common_texture(texture_name)
+	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	rect.stretch_mode = TextureRect.STRETCH_SCALE
+	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_place_by_source_rect(rect, source_rect)
+	return rect
+
+
+func _add_inventory_resource(parent: Control, source_rect: Rect2, icon_name: String, value: String, tone: String) -> Label:
+	var backplate := _make_common_exact_texture("bag_resource_backplate_%s.png" % tone, source_rect)
+	parent.add_child(backplate)
+	var icon := TextureRect.new()
+	icon.texture = _load_common_texture(icon_name)
+	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_place_relative(icon, Rect2(0.04, 0.06, 0.29, 0.88))
+	backplate.add_child(icon)
+	var label := _make_inventory_label(value, 29, Color.WHITE)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_place_relative(label, Rect2(0.31, 0.08, 0.64, 0.84))
+	backplate.add_child(label)
+	return label
+
+
+func _make_inventory_label(text: String, size: int, color: Color) -> Label:
+	var label := Label.new()
+	label.text = text
+	label.add_theme_font_size_override("font_size", size)
+	var font := _load_dialogue_font()
+	if font != null:
+		label.add_theme_font_override("font", font)
+	label.add_theme_color_override("font_color", color)
+	label.add_theme_constant_override("outline_size", 4)
+	label.add_theme_color_override("font_outline_color", Color(0.02, 0.01, 0.01, 0.96))
+	label.clip_text = true
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return label
 
 
 func _load_texture(name: String) -> Texture2D:
@@ -499,11 +520,12 @@ func _make_side_shadow(reverse: bool) -> Control:
 	shader.code = """
 shader_type canvas_item;
 uniform bool reverse = false;
-uniform float max_alpha = 0.58;
+uniform float max_alpha = 0.76;
 
 void fragment() {
 	float t = reverse ? UV.x : 1.0 - UV.x;
-	float alpha = smoothstep(0.0, 1.0, clamp(t, 0.0, 1.0)) * max_alpha;
+	t = pow(clamp(t, 0.0, 1.0), 0.72);
+	float alpha = smoothstep(0.0, 1.0, t) * max_alpha;
 	COLOR = vec4(0.0, 0.0, 0.0, alpha);
 }
 """
@@ -572,6 +594,25 @@ func _make_stylebox(texture_name: String, margin: int, fallback: Color) -> Style
 	return style
 
 
+func _make_common_stylebox(texture_name: String, margin: int, fallback: Color) -> StyleBox:
+	var texture := _load_common_texture(texture_name)
+	if texture == null:
+		var flat := StyleBoxFlat.new()
+		flat.bg_color = fallback
+		return flat
+	var style := StyleBoxTexture.new()
+	style.texture = texture
+	style.texture_margin_left = margin
+	style.texture_margin_right = margin
+	style.texture_margin_top = margin
+	style.texture_margin_bottom = margin
+	style.content_margin_left = max(10, margin / 2)
+	style.content_margin_right = max(10, margin / 2)
+	style.content_margin_top = max(8, margin / 3)
+	style.content_margin_bottom = max(8, margin / 3)
+	return style
+
+
 func _make_plain_name_label(text: String) -> Label:
 	var label := Label.new()
 	label.text = text
@@ -588,7 +629,7 @@ func _make_plain_name_label(text: String) -> Label:
 	return label
 
 
-func _make_log(size: int, color: Color) -> RichTextLabel:
+func _make_log(size: int, color: Color, line_separation: int = 0) -> RichTextLabel:
 	var view := RichTextLabel.new()
 	view.bbcode_enabled = true
 	view.scroll_active = false
@@ -598,7 +639,7 @@ func _make_log(size: int, color: Color) -> RichTextLabel:
 	view.add_theme_font_size_override("normal_font_size", size)
 	view.add_theme_font_size_override("bold_font_size", size)
 	view.add_theme_font_size_override("italics_font_size", size)
-	view.add_theme_constant_override("line_separation", 0)
+	view.add_theme_constant_override("line_separation", line_separation)
 	var font := _load_dialogue_font()
 	if font != null:
 		view.add_theme_font_override("normal_font", font)
@@ -652,13 +693,7 @@ func _icon_tile_name(icon_name: String) -> String:
 
 func _make_text_button(text: String) -> Button:
 	var button := Button.new()
-	button.text = text
-	button.custom_minimum_size = Vector2(0, 46)
-	button.add_theme_font_size_override("font_size", 18)
-	button.add_theme_color_override("font_color", Color(1.0, 0.82, 0.34, 1.0))
-	button.add_theme_stylebox_override("normal", _make_stylebox("button_square.png", 18, Color(0.06, 0.05, 0.06, 1.0)))
-	button.add_theme_stylebox_override("hover", _make_stylebox("button_square_hover.png", 18, Color(0.10, 0.05, 0.12, 1.0)))
-	button.add_theme_stylebox_override("pressed", _make_stylebox("button_square_pressed.png", 18, Color(0.03, 0.02, 0.03, 1.0)))
+	StandardButtonScript.apply(button, StandardButtonScript.PRIMARY, text, 18, Vector2(0, 46))
 	return button
 
 
@@ -670,7 +705,7 @@ func _make_modal_panel(size: Vector2, title: String) -> PanelContainer:
 	panel.offset_top = -size.y / 2.0
 	panel.offset_right = size.x / 2.0
 	panel.offset_bottom = size.y / 2.0
-	panel.add_theme_stylebox_override("panel", _make_stylebox("modal_frame_9.png", 36, Color(0.05, 0.04, 0.05, 0.96)))
+	panel.add_theme_stylebox_override("panel", _make_common_stylebox("panel_large_dark.png", 36, Color(0.05, 0.04, 0.05, 0.96)))
 
 	var outer := VBoxContainer.new()
 	outer.add_theme_constant_override("separation", 10)
@@ -680,6 +715,10 @@ func _make_modal_panel(size: Vector2, title: String) -> PanelContainer:
 	title_label.text = title
 	title_label.add_theme_font_size_override("font_size", 22)
 	title_label.add_theme_color_override("font_color", Color(1.0, 0.79, 0.25, 1.0))
+	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	title_label.custom_minimum_size = Vector2(0, 42)
+	title_label.add_theme_stylebox_override("normal", _make_common_stylebox("title_banner_dark_small.png", 24, Color(0.08, 0.05, 0.05, 0.92)))
 	outer.add_child(title_label)
 
 	var body := VBoxContainer.new()

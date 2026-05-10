@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#062526"/>
+  <rect width="1280" height="720" fill="#050306" opacity="0.56"/>
+  <polygon points="-24,18 396,18 372,108 -24,108" fill="#7a2e35" stroke="#050403" stroke-width="5"/>
+  <text x="36" y="72" fill="#f6e9cb" font-size="35" font-family="sans-serif" font-weight="700">状态</text>
+  <rect x="1192" y="28" width="58" height="58" fill="#241014" stroke="#d99018" stroke-width="4"/>
+  <text x="1211" y="68" fill="#f6e9cb" font-size="30" font-family="sans-serif">X</text>
+  <rect x="82" y="118" width="1116" height="544" rx="4" fill="#071f20" opacity="0.96" stroke="#0e6a66" stroke-width="4"/>
+  <text x="116" y="164" fill="#ffd77a" font-size="24" font-family="sans-serif" font-weight="700">当前进度仪表盘</text>
+  <rect x="112" y="194" width="330" height="150" rx="4" fill="#0e6a66" stroke="#050403" stroke-width="4"/>
+  <text x="138" y="236" fill="#f6e9cb" font-size="22" font-family="sans-serif">章节 / 回合</text>
+  <text x="138" y="288" fill="#ffd77a" font-size="34" font-family="sans-serif" font-weight="700">第 X / Y 章</text>
+  <rect x="476" y="194" width="330" height="150" rx="4" fill="#2c2411" stroke="#050403" stroke-width="4"/>
+  <text x="502" y="236" fill="#f6e9cb" font-size="22" font-family="sans-serif">字符与能量</text>
+  <text x="502" y="288" fill="#ffd77a" font-size="34" font-family="sans-serif" font-weight="700">N / M</text>
+  <rect x="840" y="194" width="328" height="150" rx="4" fill="#4a315f" stroke="#050403" stroke-width="4"/>
+  <text x="866" y="236" fill="#f6e9cb" font-size="22" font-family="sans-serif">当前对手</text>
+  <text x="866" y="288" fill="#ffd77a" font-size="34" font-family="sans-serif" font-weight="700">公开身份</text>
+  <rect x="112" y="382" width="514" height="208" rx="4" fill="#071416" stroke="#0e6a66" stroke-width="3"/>
+  <text x="138" y="426" fill="#ffd77a" font-size="22" font-family="sans-serif" font-weight="700">关系与风险</text>
+  <rect x="138" y="456" width="462" height="42" fill="#102a2b" stroke="#d99018" stroke-width="2"/>
+  <rect x="138" y="518" width="462" height="42" fill="#2b1418" stroke="#7a2e35" stroke-width="2"/>
+  <rect x="654" y="382" width="514" height="208" rx="4" fill="#071416" stroke="#0e6a66" stroke-width="3"/>
+  <text x="680" y="426" fill="#ffd77a" font-size="22" font-family="sans-serif" font-weight="700">公开信息长文本区</text>
+  <text x="680" y="474" fill="#f6e9cb" font-size="18" font-family="sans-serif">地盘、判断、阶段提示，超出时滚动</text>
+</svg>

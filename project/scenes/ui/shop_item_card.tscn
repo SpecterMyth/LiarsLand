@@ -1,62 +1,84 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=4 format=3 uid="uid://fhme6sms88pw"]
 
-[ext_resource type="Texture2D" path="res://assets/generated/ui/shop_v2/shop_item_card_red.png" id="1_card"]
+[ext_resource type="Script" uid="uid://c64k16amjfwlf" path="res://scripts/ui/shop_item_card.gd" id="1_shop_item_card"]
+[ext_resource type="PackedScene" uid="uid://bdfjnaaegscpk" path="res://scenes/ui/artifact_slot.tscn" id="2_artifact_slot"]
+[ext_resource type="Script" uid="uid://bp7thsl2ofpbf" path="res://scripts/ui/standard_button.gd" id="3_standard_button"]
+[ext_resource type="Texture2D" uid="uid://cmcfe6hk4owlt" path="res://assets/ui/common/bag_resource_icon_energy.png" id="4_energy_icon"]
 
-[node name="ShopItemCard" type="PanelContainer"]
+[node name="ShopItemCard" type="Control" unique_id=1644655870]
+custom_minimum_size = Vector2(115.2, 342)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 160.0
+offset_bottom = 342.0
+script = ExtResource("1_shop_item_card")
+
+[node name="Content" type="VBoxContainer" parent="." unique_id=1978279416]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 16.0
+offset_right = -8.0
+offset_bottom = -16.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 8
+alignment = 1
 
-[node name="CardTexture" type="TextureRect" parent="."]
-layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("1_card")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="Content" type="VBoxContainer" parent="."]
-layout_mode = 2
-theme_override_constants/separation = 6
-
-[node name="ArtifactFrame" type="PanelContainer" parent="Content"]
-custom_minimum_size = Vector2(0, 106)
+[node name="ArtifactFrame" type="CenterContainer" parent="Content" unique_id=771754641]
+custom_minimum_size = Vector2(0, 118)
 layout_mode = 2
 
-[node name="ArtifactIcon" type="TextureRect" parent="Content/ArtifactFrame"]
+[node name="ArtifactSlot" parent="Content/ArtifactFrame" instance=ExtResource("2_artifact_slot")]
+custom_minimum_size = Vector2(118, 118)
 layout_mode = 2
-mouse_filter = 2
-expand_mode = 1
-stretch_mode = 5
 
-[node name="NameLabel" type="Label" parent="Content"]
-custom_minimum_size = Vector2(0, 34)
+[node name="NameLabel" type="Label" parent="Content" unique_id=843123974]
+custom_minimum_size = Vector2(0, 42)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
 theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 21
-text = "法器"
+theme_override_font_sizes/font_size = 20
+text = "Artifact"
 horizontal_alignment = 1
 vertical_alignment = 1
 clip_text = true
 
-[node name="PriceLabel" type="Label" parent="Content"]
-custom_minimum_size = Vector2(0, 40)
+[node name="PriceRow" type="HBoxContainer" parent="Content" unique_id=1643144496]
+custom_minimum_size = Vector2(0, 42)
 layout_mode = 2
+theme_override_constants/separation = 2
+alignment = 1
+
+[node name="EnergyIcon" type="TextureRect" parent="Content/PriceRow" unique_id=1833467335]
+custom_minimum_size = Vector2(22, 22)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("4_energy_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PriceLabel" type="Label" parent="Content/PriceRow" unique_id=253930193]
+custom_minimum_size = Vector2(70, 42)
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 0.74, 0.18, 1)
 theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
 theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 23
-text = "◇ 0"
+theme_override_font_sizes/font_size = 22
+text = "0"
 horizontal_alignment = 1
 vertical_alignment = 1
 clip_text = true
 
-[node name="BuyButton" type="Button" parent="Content"]
-custom_minimum_size = Vector2(0, 44)
+[node name="BuyButton" type="Button" parent="Content" unique_id=1064253612]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 focus_mode = 0
-theme_override_font_sizes/font_size = 23
+theme_override_font_sizes/font_size = 22
 text = "购买"
+script = ExtResource("3_standard_button")
+standard_font_size = 22

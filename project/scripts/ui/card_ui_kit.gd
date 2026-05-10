@@ -1,7 +1,8 @@
 extends RefCounted
 class_name CardUiKit
 
-const UI_ROOT := "res://assets/generated/ui/card/"
+const UI_ROOT := "res://assets/ui/common/"
+const StandardButtonScript := preload("res://scripts/ui/standard_button.gd")
 
 const COLOR_TEXT := Color(0.96, 0.93, 0.84, 1.0)
 const COLOR_MUTED := Color(0.70, 0.68, 0.62, 1.0)
@@ -24,7 +25,7 @@ func make_page(title: String, meta_text: String) -> Control:
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	bg.texture = _texture("bg_card_city.png")
+	bg.texture = _texture("bg_round_start_city.png")
 	page.add_child(bg)
 
 	var veil := ColorRect.new()
@@ -70,7 +71,7 @@ func make_title_banner(title: String, meta_text: String) -> Control:
 	title_bg.anchor_bottom = 1.0
 	title_bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	title_bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	title_bg.texture = _texture("ui_title_banner_red.png")
+	title_bg.texture = _texture("title_banner_red_large.png")
 	root.add_child(title_bg)
 
 	var title_label := _label(title, 48, Color.WHITE, true)
@@ -91,7 +92,7 @@ func make_title_banner(title: String, meta_text: String) -> Control:
 	meta_bg.anchor_bottom = 0.78
 	meta_bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	meta_bg.stretch_mode = TextureRect.STRETCH_SCALE
-	meta_bg.texture = _texture("ui_meta_plate_dark.png")
+	meta_bg.texture = _texture("meta_plate_dark_blank.png")
 	root.add_child(meta_bg)
 
 	var meta := _label(meta_text, 28, COLOR_TEXT, true)
@@ -107,7 +108,7 @@ func make_title_banner(title: String, meta_text: String) -> Control:
 
 
 func make_character_card(title: String, avatar: String, stats: Array, tone := "red") -> PanelContainer:
-	var card := _panel("ui_card_player_red.png", 30, Vector2(320, 550))
+	var card := _panel("panel_player_red.png", 30, Vector2(320, 550))
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 8)
 	card.add_child(box)
@@ -170,16 +171,16 @@ func make_item_card(title: String, icon_name: String, price: String, tone := "pu
 
 
 func make_card(tone := "dark") -> PanelContainer:
-	var asset := "ui_panel_teal_large.png" if tone == "teal" else "ui_panel_dark_large.png"
+	var asset := "panel_large_teal.png" if tone == "teal" else "panel_large_dark.png"
 	return _panel(asset, 30, Vector2(380, 560))
 
 
 func make_requirement_panel(title: String, tone := "red") -> PanelContainer:
-	return _panel("ui_panel_req_purple.png" if tone == "purple" else "ui_panel_req_red.png", 26, Vector2(260, 145))
+	return _panel("panel_requirement_purple.png" if tone == "purple" else "panel_requirement_red.png", 26, Vector2(260, 145))
 
 
 func make_backpack_panel() -> PanelContainer:
-	return _panel("ui_panel_bag_purple.png", 26, Vector2(220, 560))
+	return _panel("panel_option_purple.png", 26, Vector2(220, 560))
 
 
 func make_primary_button(text: String) -> Button:
@@ -195,9 +196,9 @@ func make_utility_button(label: String, icon_name: String, color: Color) -> Butt
 	button.text = ""
 	button.tooltip_text = label
 	button.custom_minimum_size = Vector2(96, 74)
-	button.add_theme_stylebox_override("normal", _texture_style("ui_meta_plate_dark.png", 24))
-	button.add_theme_stylebox_override("hover", _texture_style("ui_label_teal.png", 22))
-	button.add_theme_stylebox_override("pressed", _texture_style("ui_label_red.png", 22))
+	button.add_theme_stylebox_override("normal", _texture_style("meta_plate_dark_blank.png", 24))
+	button.add_theme_stylebox_override("hover", _texture_style("label_teal.png", 22))
+	button.add_theme_stylebox_override("pressed", _texture_style("label_red.png", 22))
 
 	var row := HBoxContainer.new()
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -225,7 +226,7 @@ func make_tag(text: String, color: Color) -> Label:
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	label.custom_minimum_size = Vector2(0, 38)
-	label.add_theme_stylebox_override("normal", _texture_style("ui_label_teal.png", 20))
+	label.add_theme_stylebox_override("normal", _texture_style("label_teal.png", 20))
 	return label
 
 
@@ -242,7 +243,7 @@ func make_price_plate(price: String) -> Control:
 	var row := HBoxContainer.new()
 	row.custom_minimum_size = Vector2(0, 64)
 	row.add_theme_constant_override("separation", 8)
-	row.add_theme_stylebox_override("panel", _texture_style("ui_stat_row_dark.png", 18))
+	row.add_theme_stylebox_override("panel", _texture_style("item_row_dark.png", 18))
 	var icon := TextureRect.new()
 	icon.custom_minimum_size = Vector2(58, 0)
 	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -261,7 +262,7 @@ func make_stat_chip(label: String, value: String) -> Control:
 	var row := HBoxContainer.new()
 	row.custom_minimum_size = Vector2(0, 48)
 	row.add_theme_constant_override("separation", 8)
-	row.add_theme_stylebox_override("panel", _texture_style("ui_stat_row_dark.png", 18))
+	row.add_theme_stylebox_override("panel", _texture_style("item_row_dark.png", 18))
 	var icon_label := _label(_stat_icon(label), 20, COLOR_YELLOW, true)
 	icon_label.custom_minimum_size = Vector2(56, 0)
 	icon_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -280,9 +281,9 @@ func make_stat_chip(label: String, value: String) -> Control:
 
 
 func make_item_tile(icon_name: String, count: int, satisfied := true, label := "") -> PanelContainer:
-	var tone_asset := "ui_item_tile_dark.png"
+	var tone_asset := "shop_slot_requirement_unmet_dark.png"
 	if satisfied:
-		tone_asset = "ui_item_tile_red.png"
+		tone_asset = "shop_slot_requirement_fulfilled_gold.png"
 	var panel := _panel(tone_asset, 18, Vector2(86, 86))
 	var root := Control.new()
 	root.custom_minimum_size = Vector2(86, 86)
@@ -305,7 +306,7 @@ func make_item_tile(icon_name: String, count: int, satisfied := true, label := "
 	badge.anchor_bottom = 1.02
 	badge.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	badge.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	badge.add_theme_stylebox_override("normal", _texture_style("ui_meta_plate_dark.png", 18))
+	badge.add_theme_stylebox_override("normal", _texture_style("meta_plate_dark_blank.png", 18))
 	root.add_child(badge)
 	if not label.is_empty():
 		panel.tooltip_text = label
@@ -324,7 +325,7 @@ func make_stat_stepper(text: String, minus: Callable, plus: Callable) -> Control
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.add_theme_stylebox_override("normal", _texture_style("ui_stat_row_dark.png", 22))
+	label.add_theme_stylebox_override("normal", _texture_style("item_row_dark.png", 22))
 	row.add_child(label)
 	var plus_button := make_secondary_button("+")
 	plus_button.custom_minimum_size = Vector2(64, 64)
@@ -339,17 +340,9 @@ func artifact_icon_name(artifact_id: String) -> String:
 
 func _button(text: String, primary: bool) -> Button:
 	var button := Button.new()
-	button.text = text
 	button.custom_minimum_size = Vector2(0, 58 if primary else 50)
-	button.add_theme_font_size_override("font_size", 26 if primary else 20)
-	button.add_theme_color_override("font_color", COLOR_INK if primary else COLOR_TEXT)
-	button.add_theme_constant_override("outline_size", 2)
-	button.add_theme_color_override("font_outline_color", Color(1, 0.86, 0.25, 0.35) if primary else COLOR_INK)
-	var asset := "ui_button_primary.png" if primary else "ui_button_secondary.png"
-	button.add_theme_stylebox_override("normal", _texture_style(asset, 26))
-	button.add_theme_stylebox_override("hover", _texture_style(asset, 26))
-	button.add_theme_stylebox_override("pressed", _texture_style(asset, 26))
-	button.add_theme_stylebox_override("disabled", _texture_style("ui_button_secondary.png", 26))
+	var style := StandardButtonScript.PRIMARY if primary else StandardButtonScript.SECONDARY
+	StandardButtonScript.apply(button, style, text, 26 if primary else 20, button.custom_minimum_size)
 	return button
 
 
@@ -392,33 +385,33 @@ func _texture_style(name: String, margin: int) -> StyleBoxTexture:
 func _option_asset(tone: String) -> String:
 	match tone:
 		"red":
-			return "ui_card_option_red.png"
+			return "panel_option_red.png"
 		"teal":
-			return "ui_card_option_teal.png"
+			return "panel_option_teal.png"
 		_:
-			return "ui_card_option_purple.png"
+			return "panel_option_purple.png"
 
 
 func _item_card_asset(tone: String) -> String:
 	match tone:
 		"red":
-			return "ui_card_item_red.png"
+			return "shop_card_item_red.png"
 		"teal":
-			return "ui_card_item_teal.png"
+			return "shop_card_item_teal.png"
 		_:
-			return "ui_card_item_purple.png"
+			return "shop_card_item_purple.png"
 
 
 func _label_asset(tone: String) -> String:
 	match tone:
 		"red":
-			return "ui_label_red.png"
+			return "label_red.png"
 		"teal":
-			return "ui_label_teal.png"
+			return "label_teal.png"
 		"purple":
-			return "ui_label_purple.png"
+			return "label_purple.png"
 		_:
-			return "ui_meta_plate_dark.png"
+			return "meta_plate_dark_blank.png"
 
 
 func _stat_icon(label: String) -> String:
@@ -436,10 +429,13 @@ func _stat_icon(label: String) -> String:
 
 
 func _texture(name: String) -> Texture2D:
-	var path := UI_ROOT + name
-	if ResourceLoader.exists(path):
-		return load(path)
-	var image := Image.load_from_file(ProjectSettings.globalize_path(path))
-	if image != null:
-		return ImageTexture.create_from_image(image)
+	for root in [UI_ROOT, "res://assets/generated/ui/card/", "res://assets/generated/"]:
+		var path: String = String(root) + name
+		if ResourceLoader.exists(path):
+			return load(path)
+		if OS.has_feature("web"):
+			continue
+		var image := Image.load_from_file(ProjectSettings.globalize_path(path))
+		if image != null:
+			return ImageTexture.create_from_image(image)
 	return null

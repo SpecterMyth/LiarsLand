@@ -76,34 +76,7 @@
       "assassination_defense": 3,
       "assassination_attack": 5,
       "charm": 5
-    },
-    "identity_cards": [
-      {
-        "id": "blood_oath",
-        "title": "旧血誓约",
-        "description": "玩家曾向鸦塔密探宣誓，不能公开真正效忠对象。"
-      },
-      {
-        "id": "silver_needle",
-        "title": "银针袖扣",
-        "description": "袖扣里藏着能验证密信火漆的银针。"
-      },
-      {
-        "id": "lost_name",
-        "title": "失落本名",
-        "description": "玩家真实姓氏与一支被驱逐的狐族有关。"
-      },
-      {
-        "id": "market_debt",
-        "title": "夜市旧债",
-        "description": "玩家欠赤金夜市一笔不能写进账本的债。"
-      },
-      {
-        "id": "hidden_map",
-        "title": "皮下地图",
-        "description": "玩家记住了通往档案馆密室的完整路线。"
-      }
-    ]
+    }
   },
   "world_intel_questions": [
     {
@@ -387,14 +360,14 @@
       "true_stance": "neutral",
       "affinity": 2,
       "friend_judgement": "unknown",
-      "territory": "月灯夜市",
+      "territory": "债契拍卖台",
       "liked_topics": [
         "礼节",
         "债契",
         "夜市"
       ],
       "portrait": "npc_fox_portrait.png",
-      "background": "bg_moon_market.png",
+      "background": "bg_debt_auction_stage.png",
       "join_threshold": 9,
       "ally_bonus_chars": 80,
       "stats": {
@@ -425,14 +398,14 @@
       "true_stance": "enemy",
       "affinity": 1,
       "friend_judgement": "unknown",
-      "territory": "旧档案馆",
+      "territory": "焚目录室",
       "liked_topics": [
         "档案",
         "墨水",
         "规矩"
       ],
       "portrait": "npc_crow_portrait.png",
-      "background": "bg_archive_hall.png",
+      "background": "bg_burned_catalog_room.png",
       "join_threshold": 99,
       "ally_bonus_chars": 0,
       "stats": {
@@ -463,14 +436,14 @@
       "true_stance": "friend",
       "affinity": 3,
       "friend_judgement": "unknown",
-      "territory": "使馆花园",
+      "territory": "誓约花圃",
       "liked_topics": [
         "礼节",
         "和平",
         "花园"
       ],
       "portrait": "npc_deer_portrait.png",
-      "background": "bg_embassy_garden.png",
+      "background": "bg_treaty_flower_bed.png",
       "join_threshold": 8,
       "ally_bonus_chars": 120,
       "stats": {
@@ -501,14 +474,14 @@
       "true_stance": "neutral",
       "affinity": 2,
       "friend_judgement": "unknown",
-      "territory": "暗巷药铺",
+      "territory": "毒瓶橱窗",
       "liked_topics": [
         "药价",
         "毒理",
         "交换"
       ],
       "portrait": "npc_snake_portrait.png",
-      "background": "bg_duel_alley.png",
+      "background": "bg_poison_vial_window.png",
       "join_threshold": 8,
       "ally_bonus_chars": 70,
       "stats": {
@@ -529,7 +502,7 @@
           "wrong_option_id": "fair_trade"
         }
       ],
-      "passive": "降低一次身份暴露风险。"
+      "passive": "降低一次统治法器暴露风险。"
     },
     {
       "id": "npc_wolf",
@@ -539,14 +512,14 @@
       "true_stance": "friend",
       "affinity": 1,
       "friend_judgement": "unknown",
-      "territory": "边境关门",
+      "territory": "誓刃检查口",
       "liked_topics": [
         "军纪",
         "边门",
         "名单"
       ],
       "portrait": "npc_wolf_portrait.png",
-      "background": "bg_border_gate.png",
+      "background": "bg_oath_blade_checkpoint.png",
       "join_threshold": 7,
       "ally_bonus_chars": 90,
       "stats": {
@@ -568,6 +541,576 @@
         }
       ],
       "passive": "队伍中有军官时正面防御力提高。"
+    },
+    {
+      "id": "npc_moth_lamplighter",
+      "public_name": "月蛾点灯人",
+      "animal_species": "蛾",
+      "public_identity": "夜市灯队的修灯工，负责在谎言交易开始前点亮月骨灯。",
+      "true_stance": "friend",
+      "affinity": 2,
+      "friend_judgement": "unknown",
+      "territory": "月灯屋脊",
+      "liked_topics": [
+        "月光",
+        "灯火",
+        "屋顶"
+      ],
+      "portrait": "npc_moth_lamplighter_portrait.png",
+      "background": "bg_lantern_roofwalk.png",
+      "join_threshold": 7,
+      "ally_bonus_chars": 100,
+      "stats": {
+        "hp": 8,
+        "frontal_defense": 2,
+        "frontal_attack": 2,
+        "assassination_defense": 4,
+        "assassination_attack": 2,
+        "charm": 6
+      },
+      "identity_info": [
+        "月蛾点灯人记得某盏月骨灯熄灭时离开的身影。"
+      ],
+      "intel": [
+        {
+          "question_id": "lie_origin",
+          "affinity_required": 3,
+          "wrong_option_id": "name"
+        }
+      ],
+      "passive": "加入后每章首次证言好感门槛降低 1。"
+    },
+    {
+      "id": "npc_rat_debt_runner",
+      "public_name": "碎齿债跑",
+      "animal_species": "鼠",
+      "public_identity": "替贵族递送债券和抵押物的夜市跑腿。",
+      "true_stance": "neutral",
+      "affinity": 1,
+      "friend_judgement": "unknown",
+      "territory": "默契铜币摊",
+      "liked_topics": [
+        "债券",
+        "跑腿",
+        "价码"
+      ],
+      "portrait": "npc_rat_debt_runner_portrait.png",
+      "background": "bg_silent_coin_booth.png",
+      "join_threshold": 8,
+      "ally_bonus_chars": 60,
+      "stats": {
+        "hp": 6,
+        "frontal_defense": 1,
+        "frontal_attack": 2,
+        "assassination_defense": 3,
+        "assassination_attack": 3,
+        "charm": 5
+      },
+      "identity_info": [
+        "碎齿债跑知道哪张债券被换成了假名。"
+      ],
+      "intel": [
+        {
+          "question_id": "market_respect",
+          "affinity_required": 3,
+          "wrong_option_id": "beautiful_lies"
+        }
+      ],
+      "passive": "加入后商店首次购买价格降低。"
+    },
+    {
+      "id": "npc_lynx_mask_tailor",
+      "public_name": "猞猁面具裁缝",
+      "animal_species": "猞猁",
+      "public_identity": "制作假面和伪装衣饰的裁缝。",
+      "true_stance": "neutral",
+      "affinity": 2,
+      "friend_judgement": "unknown",
+      "territory": "假面裁缝铺",
+      "liked_topics": [
+        "假面",
+        "裁剪",
+        "体面"
+      ],
+      "portrait": "npc_lynx_mask_tailor_portrait.png",
+      "background": "bg_mask_tailor_shop.png",
+      "join_threshold": 8,
+      "ally_bonus_chars": 70,
+      "stats": {
+        "hp": 9,
+        "frontal_defense": 3,
+        "frontal_attack": 3,
+        "assassination_defense": 4,
+        "assassination_attack": 3,
+        "charm": 6
+      },
+      "identity_info": [
+        "猞猁面具裁缝能指出一张身份卡的缝线破绽。"
+      ],
+      "intel": [
+        {
+          "question_id": "betrayal_shape",
+          "affinity_required": 4,
+          "wrong_option_id": "purge"
+        }
+      ],
+      "passive": "加入后身份误认类证言可信度提高。"
+    },
+    {
+      "id": "npc_owl_court_astrologer",
+      "public_name": "夜枭宫廷星卜师",
+      "animal_species": "猫头鹰",
+      "public_identity": "旧王族留下的星象顾问。",
+      "true_stance": "enemy",
+      "affinity": 1,
+      "friend_judgement": "unknown",
+      "territory": "封印阅览桌",
+      "liked_topics": [
+        "星图",
+        "概率",
+        "旧礼"
+      ],
+      "portrait": "npc_owl_court_astrologer_portrait.png",
+      "background": "bg_sealed_reading_desk.png",
+      "join_threshold": 99,
+      "ally_bonus_chars": 0,
+      "stats": {
+        "hp": 8,
+        "frontal_defense": 2,
+        "frontal_attack": 4,
+        "assassination_defense": 5,
+        "assassination_attack": 4,
+        "charm": 5
+      },
+      "identity_info": [
+        "夜枭宫廷星卜师故意把旧王族线索写成概率谜语。"
+      ],
+      "intel": [
+        {
+          "question_id": "old_dynasty_fate",
+          "affinity_required": 4,
+          "wrong_option_id": "hidden_royals"
+        }
+      ],
+      "passive": "无。"
+    },
+    {
+      "id": "npc_boar_gate_supplier",
+      "public_name": "铁鬃军需商",
+      "animal_species": "野猪",
+      "public_identity": "为边境守军供给食物、皮革和短刃。",
+      "true_stance": "neutral",
+      "affinity": 2,
+      "friend_judgement": "unknown",
+      "territory": "关门军需院",
+      "liked_topics": [
+        "货箱",
+        "军需",
+        "清算"
+      ],
+      "portrait": "npc_boar_gate_supplier_portrait.png",
+      "background": "bg_gate_supply_yard.png",
+      "join_threshold": 8,
+      "ally_bonus_chars": 80,
+      "stats": {
+        "hp": 13,
+        "frontal_defense": 4,
+        "frontal_attack": 4,
+        "assassination_defense": 3,
+        "assassination_attack": 2,
+        "charm": 3
+      },
+      "identity_info": [
+        "铁鬃军需商见过一批不该送往边门的短刃。"
+      ],
+      "intel": [
+        {
+          "question_id": "artifact_nature",
+          "affinity_required": 4,
+          "wrong_option_id": "living_creditor"
+        }
+      ],
+      "passive": "加入后正面攻击力提高。"
+    },
+    {
+      "id": "npc_gecko_wall_listener",
+      "public_name": "壁纹听者",
+      "animal_species": "壁虎",
+      "public_identity": "修补墙缝和屋顶瓦片的工匠。",
+      "true_stance": "friend",
+      "affinity": 2,
+      "friend_judgement": "unknown",
+      "territory": "雨槽暗巷",
+      "liked_topics": [
+        "墙缝",
+        "雨声",
+        "玩笑"
+      ],
+      "portrait": "npc_gecko_wall_listener_portrait.png",
+      "background": "bg_rain_gutter_alley.png",
+      "join_threshold": 7,
+      "ally_bonus_chars": 90,
+      "stats": {
+        "hp": 7,
+        "frontal_defense": 2,
+        "frontal_attack": 2,
+        "assassination_defense": 6,
+        "assassination_attack": 3,
+        "charm": 5
+      },
+      "identity_info": [
+        "壁纹听者听见过暗巷里被截断的半句话。"
+      ],
+      "intel": [
+        {
+          "question_id": "common_taboo",
+          "affinity_required": 3,
+          "wrong_option_id": "first_gift"
+        }
+      ],
+      "passive": "加入后一次不明判断可保留为待验证。"
+    },
+    {
+      "id": "npc_swan_embassy_duelist",
+      "public_name": "白羽礼剑士",
+      "animal_species": "天鹅",
+      "public_identity": "使馆花园的仪式剑术教师。",
+      "true_stance": "enemy",
+      "affinity": 1,
+      "friend_judgement": "unknown",
+      "territory": "礼剑庭",
+      "liked_topics": [
+        "礼剑",
+        "荣誉",
+        "决斗"
+      ],
+      "portrait": "npc_swan_embassy_duelist_portrait.png",
+      "background": "bg_duelist_courtyard.png",
+      "join_threshold": 99,
+      "ally_bonus_chars": 0,
+      "stats": {
+        "hp": 10,
+        "frontal_defense": 4,
+        "frontal_attack": 6,
+        "assassination_defense": 4,
+        "assassination_attack": 2,
+        "charm": 6
+      },
+      "identity_info": [
+        "白羽礼剑士知道某场公开决斗其实是处刑。"
+      ],
+      "intel": [
+        {
+          "question_id": "betrayal_shape",
+          "affinity_required": 5,
+          "wrong_option_id": "mistaken_identity"
+        }
+      ],
+      "passive": "无。"
+    },
+    {
+      "id": "npc_panther_silent_guard",
+      "public_name": "黑豹静卫",
+      "animal_species": "黑豹",
+      "public_identity": "旧档案馆夜间守卫。",
+      "true_stance": "friend",
+      "affinity": 1,
+      "friend_judgement": "unknown",
+      "territory": "墨井阶梯",
+      "liked_topics": [
+        "证据",
+        "巡逻",
+        "出入记录"
+      ],
+      "portrait": "npc_panther_silent_guard_portrait.png",
+      "background": "bg_ink_well_stair.png",
+      "join_threshold": 7,
+      "ally_bonus_chars": 90,
+      "stats": {
+        "hp": 12,
+        "frontal_defense": 5,
+        "frontal_attack": 4,
+        "assassination_defense": 5,
+        "assassination_attack": 4,
+        "charm": 2
+      },
+      "identity_info": [
+        "黑豹静卫见过谁在封馆后走进墨井阶梯。"
+      ],
+      "intel": [
+        {
+          "question_id": "old_dynasty_fate",
+          "affinity_required": 3,
+          "wrong_option_id": "devoured_by_artifacts"
+        }
+      ],
+      "passive": "加入后暗杀防御力提高。"
+    },
+    {
+      "id": "npc_frog_poison_taster",
+      "public_name": "金喉试毒师",
+      "animal_species": "蛙",
+      "public_identity": "药铺雇佣的试毒与试药专家。",
+      "true_stance": "neutral",
+      "affinity": 3,
+      "friend_judgement": "unknown",
+      "territory": "解药后室",
+      "liked_topics": [
+        "试药",
+        "毒理",
+        "解药"
+      ],
+      "portrait": "npc_frog_poison_taster_portrait.png",
+      "background": "bg_antidote_backroom.png",
+      "join_threshold": 7,
+      "ally_bonus_chars": 75,
+      "stats": {
+        "hp": 9,
+        "frontal_defense": 3,
+        "frontal_attack": 2,
+        "assassination_defense": 5,
+        "assassination_attack": 2,
+        "charm": 5
+      },
+      "identity_info": [
+        "金喉试毒师能分辨消字药和解药的残味。"
+      ],
+      "intel": [
+        {
+          "question_id": "market_respect",
+          "affinity_required": 4,
+          "wrong_option_id": "kept_secrets"
+        }
+      ],
+      "passive": "加入后一次药剂相关风险降低。"
+    },
+    {
+      "id": "npc_hare_false_messenger",
+      "public_name": "裂耳假信使",
+      "animal_species": "野兔",
+      "public_identity": "在夜市、边门、使馆之间传递急信。",
+      "true_stance": "enemy",
+      "affinity": 1,
+      "friend_judgement": "unknown",
+      "territory": "使馆铃桥",
+      "liked_topics": [
+        "急信",
+        "路线",
+        "桥"
+      ],
+      "portrait": "npc_hare_false_messenger_portrait.png",
+      "background": "bg_embassy_bell_bridge.png",
+      "join_threshold": 99,
+      "ally_bonus_chars": 0,
+      "stats": {
+        "hp": 7,
+        "frontal_defense": 2,
+        "frontal_attack": 3,
+        "assassination_defense": 4,
+        "assassination_attack": 5,
+        "charm": 4
+      },
+      "identity_info": [
+        "裂耳假信使调包过一封写给使馆的急信。"
+      ],
+      "intel": [
+        {
+          "question_id": "common_taboo",
+          "affinity_required": 4,
+          "wrong_option_id": "threshold_truth"
+        }
+      ],
+      "passive": "无。"
+    },
+    {
+      "id": "npc_bat_roof_informant",
+      "public_name": "夜翼檐探",
+      "animal_species": "蝙蝠",
+      "public_identity": "替夜市屋顶商贩巡视风向和灯号的檐探。",
+      "true_stance": "friend",
+      "affinity": 2,
+      "friend_judgement": "unknown",
+      "territory": "灰烬地图露台",
+      "liked_topics": [
+        "屋檐",
+        "风向",
+        "灰烬地图"
+      ],
+      "portrait": "npc_bat_roof_informant_portrait.png",
+      "background": "bg_ash_map_balcony.png",
+      "join_threshold": 7,
+      "ally_bonus_chars": 95,
+      "stats": {
+        "hp": 7,
+        "frontal_defense": 2,
+        "frontal_attack": 2,
+        "assassination_defense": 5,
+        "assassination_attack": 4,
+        "charm": 5
+      },
+      "identity_info": [
+        "夜翼檐探在露台上看见灰烬地图亮起的方向。"
+      ],
+      "intel": [
+        {
+          "question_id": "lie_origin",
+          "affinity_required": 4,
+          "wrong_option_id": "debt"
+        }
+      ],
+      "passive": "加入后地点类证言更容易被记录。"
+    },
+    {
+      "id": "npc_badger_oath_notary",
+      "public_name": "獾纹誓约公证人",
+      "animal_species": "獾",
+      "public_identity": "地下交易柜台的誓约公证人。",
+      "true_stance": "neutral",
+      "affinity": 2,
+      "friend_judgement": "unknown",
+      "territory": "骨秤柜台",
+      "liked_topics": [
+        "誓约",
+        "称量",
+        "代价"
+      ],
+      "portrait": "npc_badger_oath_notary_portrait.png",
+      "background": "bg_bone_scale_counter.png",
+      "join_threshold": 8,
+      "ally_bonus_chars": 80,
+      "stats": {
+        "hp": 11,
+        "frontal_defense": 4,
+        "frontal_attack": 3,
+        "assassination_defense": 4,
+        "assassination_attack": 2,
+        "charm": 4
+      },
+      "identity_info": [
+        "獾纹誓约公证人称过一件过轻的旧王族法器。"
+      ],
+      "intel": [
+        {
+          "question_id": "artifact_nature",
+          "affinity_required": 5,
+          "wrong_option_id": "memory_vessel"
+        }
+      ],
+      "passive": "加入后赠送法器获得额外好感。"
+    },
+    {
+      "id": "npc_eel_drain_smuggler",
+      "public_name": "暗渠鳗走私客",
+      "animal_species": "鳗",
+      "public_identity": "边境排水门的秘密通行掮客。",
+      "true_stance": "enemy",
+      "affinity": 1,
+      "friend_judgement": "unknown",
+      "territory": "走私排水门",
+      "liked_topics": [
+        "暗渠",
+        "通行费",
+        "红绳结"
+      ],
+      "portrait": "npc_eel_drain_smuggler_portrait.png",
+      "background": "bg_smuggler_drain_gate.png",
+      "join_threshold": 99,
+      "ally_bonus_chars": 0,
+      "stats": {
+        "hp": 8,
+        "frontal_defense": 2,
+        "frontal_attack": 3,
+        "assassination_defense": 6,
+        "assassination_attack": 5,
+        "charm": 4
+      },
+      "identity_info": [
+        "暗渠鳗走私客知道同盟名单被送出边门的暗渠路线。"
+      ],
+      "intel": [
+        {
+          "question_id": "betrayal_shape",
+          "affinity_required": 3,
+          "wrong_option_id": "ritual"
+        }
+      ],
+      "passive": "无。"
+    },
+    {
+      "id": "npc_goat_bell_keeper",
+      "public_name": "角铃桥守",
+      "animal_species": "山羊",
+      "public_identity": "看守使馆铃桥与回声镜亭的礼仪守桥人。",
+      "true_stance": "neutral",
+      "affinity": 2,
+      "friend_judgement": "unknown",
+      "territory": "回声镜亭",
+      "liked_topics": [
+        "铃声",
+        "桥",
+        "回声"
+      ],
+      "portrait": "npc_goat_bell_keeper_portrait.png",
+      "background": "bg_mirror_pavilion.png",
+      "join_threshold": 8,
+      "ally_bonus_chars": 85,
+      "stats": {
+        "hp": 10,
+        "frontal_defense": 3,
+        "frontal_attack": 3,
+        "assassination_defense": 4,
+        "assassination_attack": 2,
+        "charm": 5
+      },
+      "identity_info": [
+        "角铃桥守能听出一句话是否被别人转述过。"
+      ],
+      "intel": [
+        {
+          "question_id": "common_taboo",
+          "affinity_required": 5,
+          "wrong_option_id": "dead_relic"
+        }
+      ],
+      "passive": "加入后转述类证言更容易验证。"
+    },
+    {
+      "id": "npc_mantis_knife_judge",
+      "public_name": "螳臂刀审",
+      "animal_species": "螳螂",
+      "public_identity": "边门瞭望塔上的临时审判官。",
+      "true_stance": "enemy",
+      "affinity": 1,
+      "friend_judgement": "unknown",
+      "territory": "边门瞭望塔",
+      "liked_topics": [
+        "审判",
+        "名单",
+        "瞭望"
+      ],
+      "portrait": "npc_mantis_knife_judge_portrait.png",
+      "background": "bg_border_watchtower.png",
+      "join_threshold": 99,
+      "ally_bonus_chars": 0,
+      "stats": {
+        "hp": 9,
+        "frontal_defense": 3,
+        "frontal_attack": 6,
+        "assassination_defense": 3,
+        "assassination_attack": 6,
+        "charm": 2
+      },
+      "identity_info": [
+        "螳臂刀审保存着一份即将清算的牺牲名单。"
+      ],
+      "intel": [
+        {
+          "question_id": "old_dynasty_fate",
+          "affinity_required": 5,
+          "wrong_option_id": "betrayed"
+        }
+      ],
+      "passive": "无。"
     }
   ]
 }

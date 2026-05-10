@@ -25,7 +25,7 @@ static func validate(data: Dictionary) -> Array[String]:
 	if data.get("world_intel_questions", data.get("clue_cards", [])).size() == 0:
 		errors.append("Chapter needs at least one world intel question.")
 	if data.get("npcs", []).size() == 0:
-		errors.append("Chapter needs at least one NPC.")
+		errors.append("Chapter needs at least one opponent.")
 	if data.get("artifacts", []).size() < 10:
 		errors.append("Chapter needs at least ten artifacts.")
 	for question in data.get("world_intel_questions", []):

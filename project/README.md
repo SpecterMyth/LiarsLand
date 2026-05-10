@@ -8,7 +8,11 @@ The current main mode is a rules-judged LLM narrative adventure slice. The older
 
 Open `project.godot` with:
 
-`D:\AIProjects\CodexProjects\Tools\godot\Godot_v4.6.2-stable_win64.exe`
+`D:\AIProjects\Tools\godot\Godot_v4.6.2-stable_win64.exe`
+
+From the repository root (`D:\AIProjects\CodexProjects\LiarsLand`), the verified relative Godot engine folder is:
+
+`..\..\Tools\godot`
 
 The web build uses a local proxy server so API keys are never bundled into the browser package.
 

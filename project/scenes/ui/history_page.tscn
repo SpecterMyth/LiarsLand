@@ -1,0 +1,253 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/history_page.gd" id="1_13dtr"]
+[ext_resource type="Texture2D" path="res://assets/ui/history/history_page_bg.png" id="2_tkmso"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/shop_texture_scratches_dark.png" id="3_fekka"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/title_banner_red.png" id="4_yx7ht"]
+[ext_resource type="FontFile" path="res://assets/fonts/AlibabaPuHuiTi-3-105-Heavy.ttf" id="5_7opgq"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/bag_close_normal.png" id="6_pt77f"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/bag_close_pressed.png" id="7_ookbg"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/bag_close_hover.png" id="8_33084"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/common_background_panel_dark_purple.png" id="9_aj83l"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/common_background_panel_dark_red.png" id="10_c37br"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/common_background_panel_gray.png" id="11_gray"]
+
+[node name="HistoryPage" type="Control" unique_id=739562299]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_13dtr")
+page_title = "历史对话"
+background_path = "res://assets/ui/history/history_page_bg.png"
+panel_color = "dark_purple"
+
+[node name="Background" type="TextureRect" parent="." unique_id=1497290922]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = ExtResource("2_tkmso")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Veil" type="ColorRect" parent="." unique_id=1893996136]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.015, 0.01, 0.012, 0.68)
+
+[node name="TextureScratches" type="TextureRect" parent="." unique_id=723103221]
+modulate = Color(1, 1, 1, 0.12)
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = ExtResource("3_fekka")
+expand_mode = 1
+
+[node name="TitleBanner" type="TextureRect" parent="." unique_id=1662007456]
+layout_mode = 0
+offset_left = -23.0
+offset_top = 17.333
+offset_right = 396.667
+offset_bottom = 107.333
+mouse_filter = 2
+texture = ExtResource("4_yx7ht")
+expand_mode = 1
+
+[node name="TitleLabel" type="Label" parent="." unique_id=456088106]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 26.0
+offset_right = 296.0
+offset_bottom = 80.666
+theme_override_colors/font_color = Color(0.964706, 0.913725, 0.796078, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("5_7opgq")
+theme_override_font_sizes/font_size = 35
+text = "历史对话"
+vertical_alignment = 1
+
+[node name="CloseButton" type="TextureButton" parent="." unique_id=681725207]
+layout_mode = 0
+offset_left = 1192.0
+offset_top = 28.0
+offset_right = 1249.333
+offset_bottom = 85.333
+tooltip_text = "关闭"
+focus_mode = 0
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("6_pt77f")
+texture_pressed = ExtResource("7_ookbg")
+texture_hover = ExtResource("8_33084")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="MainPanel" type="NinePatchRect" parent="." unique_id=708883764]
+texture_filter = 1
+layout_mode = 0
+offset_left = 82.0
+offset_top = 118.0
+offset_right = 1198.0
+offset_bottom = 662.0
+texture = ExtResource("9_aj83l")
+patch_margin_left = 70
+patch_margin_top = 70
+patch_margin_right = 70
+patch_margin_bottom = 70
+
+[node name="ContentMargin" type="MarginContainer" parent="MainPanel" unique_id=1337444795]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 52
+theme_override_constants/margin_top = 52
+theme_override_constants/margin_right = 52
+theme_override_constants/margin_bottom = 52
+
+[node name="Content" type="VBoxContainer" parent="MainPanel/ContentMargin" unique_id=1843570044]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 14
+
+[node name="HistoryColumns" type="HBoxContainer" parent="MainPanel/ContentMargin/Content" unique_id=446390840]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 18
+
+[node name="HistorySummaryPanel" type="NinePatchRect" parent="MainPanel/ContentMargin/Content/HistoryColumns" unique_id=2092985486]
+texture_filter = 1
+custom_minimum_size = Vector2(270, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 3
+texture = ExtResource("11_gray")
+patch_margin_left = 70
+patch_margin_top = 70
+patch_margin_right = 70
+patch_margin_bottom = 70
+
+[node name="MarginContainer" type="MarginContainer" parent="MainPanel/ContentMargin/Content/HistoryColumns/HistorySummaryPanel" unique_id=1228124126]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 46
+theme_override_constants/margin_top = 34
+theme_override_constants/margin_right = 46
+theme_override_constants/margin_bottom = 34
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/ContentMargin/Content/HistoryColumns/HistorySummaryPanel/MarginContainer" unique_id=1570318583]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="@Label@6" type="Label" parent="MainPanel/ContentMargin/Content/HistoryColumns/HistorySummaryPanel/MarginContainer/VBoxContainer" unique_id=1677157126]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0.38, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("5_7opgq")
+theme_override_font_sizes/font_size = 22
+text = "章节与筛选"
+
+[node name="@Label@7" type="Label" parent="MainPanel/ContentMargin/Content/HistoryColumns/HistorySummaryPanel/MarginContainer/VBoxContainer" unique_id=1331059297]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94, 0.9, 0.78, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("5_7opgq")
+theme_override_font_sizes/font_size = 17
+text = "等待开始"
+autowrap_mode = 3
+
+[node name="@Label@8" type="Label" parent="MainPanel/ContentMargin/Content/HistoryColumns/HistorySummaryPanel/MarginContainer/VBoxContainer" unique_id=102516464]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94, 0.9, 0.78, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("5_7opgq")
+theme_override_font_sizes/font_size = 17
+text = "对话条目：0"
+autowrap_mode = 3
+
+[node name="@Label@9" type="Label" parent="MainPanel/ContentMargin/Content/HistoryColumns/HistorySummaryPanel/MarginContainer/VBoxContainer" unique_id=1281682377]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94, 0.9, 0.78, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("5_7opgq")
+theme_override_font_sizes/font_size = 17
+text = "行动发现：0"
+autowrap_mode = 3
+
+[node name="@Label@10" type="Label" parent="MainPanel/ContentMargin/Content/HistoryColumns/HistorySummaryPanel/MarginContainer/VBoxContainer" unique_id=496982328]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94, 0.9, 0.78, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("5_7opgq")
+theme_override_font_sizes/font_size = 17
+text = "显示：玩家 / 对手 / 系统事件"
+autowrap_mode = 3
+
+[node name="HistoryLogPanel" type="NinePatchRect" parent="MainPanel/ContentMargin/Content/HistoryColumns" unique_id=89792751]
+texture_filter = 1
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("11_gray")
+patch_margin_left = 70
+patch_margin_top = 70
+patch_margin_right = 70
+patch_margin_bottom = 70
+
+[node name="MarginContainer" type="MarginContainer" parent="MainPanel/ContentMargin/Content/HistoryColumns/HistoryLogPanel" unique_id=561424631]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 46
+theme_override_constants/margin_top = 34
+theme_override_constants/margin_right = 46
+theme_override_constants/margin_bottom = 34
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/ContentMargin/Content/HistoryColumns/HistoryLogPanel/MarginContainer" unique_id=169973136]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="@Label@3" type="Label" parent="MainPanel/ContentMargin/Content/HistoryColumns/HistoryLogPanel/MarginContainer/VBoxContainer" unique_id=1504155923]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0.38, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("5_7opgq")
+theme_override_font_sizes/font_size = 22
+text = "完整记录"
+
+[node name="HistoryView" type="RichTextLabel" parent="MainPanel/ContentMargin/Content/HistoryColumns/HistoryLogPanel/MarginContainer/VBoxContainer" unique_id=1907003390]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 2
+theme_override_colors/default_color = Color(1, 0.91, 0.74, 1)
+theme_override_fonts/normal_font = ExtResource("5_7opgq")
+theme_override_font_sizes/normal_font_size = 17
+bbcode_enabled = true
+selection_enabled = true
+
+[node name="FooterLabel" type="Label" parent="MainPanel/ContentMargin/Content" unique_id=1371484203]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0.38, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("5_7opgq")
+theme_override_font_sizes/font_size = 16
+text = "共 0 条记录 / 等待开始"
+horizontal_alignment = 2

@@ -1,0 +1,235 @@
+{
+  "page": "shop",
+  "generated_at": "2026-05-07T19:54:43",
+  "resolution_order": [
+    "res://assets/ui/shop/",
+    "res://assets/ui/common/",
+    "res://assets/generated/ui/shop_v2/"
+  ],
+  "assets": {
+    "shop_title_banner_red": {
+      "file_name": "shop_title_banner_red.png",
+      "scope": "page",
+      "path": "project/assets/ui/shop/shop_title_banner_red.png",
+      "res_path": "res://assets/ui/shop/shop_title_banner_red.png",
+      "nine_patch_margin": 28,
+      "states": {}
+    },
+    "shop_status_bar_dark": {
+      "file_name": "shop_status_bar_dark.png",
+      "scope": "page",
+      "path": "project/assets/ui/shop/shop_status_bar_dark.png",
+      "res_path": "res://assets/ui/shop/shop_status_bar_dark.png",
+      "nine_patch_margin": 26,
+      "states": {}
+    },
+    "shop_player_card_red": {
+      "file_name": "shop_player_card_red.png",
+      "scope": "page",
+      "path": "project/assets/ui/shop/shop_player_card_red.png",
+      "res_path": "res://assets/ui/shop/shop_player_card_red.png",
+      "nine_patch_margin": 34,
+      "states": {}
+    },
+    "shop_requirement_panel_red": {
+      "file_name": "shop_requirement_panel_red.png",
+      "scope": "page",
+      "path": "project/assets/ui/shop/shop_requirement_panel_red.png",
+      "res_path": "res://assets/ui/shop/shop_requirement_panel_red.png",
+      "nine_patch_margin": 24,
+      "states": {}
+    },
+    "shop_requirement_panel_teal": {
+      "file_name": "shop_requirement_panel_teal.png",
+      "scope": "page",
+      "path": "project/assets/ui/shop/shop_requirement_panel_teal.png",
+      "res_path": "res://assets/ui/shop/shop_requirement_panel_teal.png",
+      "nine_patch_margin": 24,
+      "states": {}
+    },
+    "shop_requirement_title_red": {
+      "file_name": "shop_requirement_title_red.png",
+      "scope": "page",
+      "path": "project/assets/ui/shop/shop_requirement_title_red.png",
+      "res_path": "res://assets/ui/shop/shop_requirement_title_red.png",
+      "nine_patch_margin": 18,
+      "states": {}
+    },
+    "shop_requirement_title_teal": {
+      "file_name": "shop_requirement_title_teal.png",
+      "scope": "page",
+      "path": "project/assets/ui/shop/shop_requirement_title_teal.png",
+      "res_path": "res://assets/ui/shop/shop_requirement_title_teal.png",
+      "nine_patch_margin": 18,
+      "states": {}
+    },
+    "shop_section_title_teal": {
+      "file_name": "shop_section_title_teal.png",
+      "scope": "page",
+      "path": "project/assets/ui/shop/shop_section_title_teal.png",
+      "res_path": "res://assets/ui/shop/shop_section_title_teal.png",
+      "nine_patch_margin": 18,
+      "states": {}
+    },
+    "shop_item_card_red": {
+      "file_name": "shop_item_card_red.png",
+      "scope": "page",
+      "path": "project/assets/ui/shop/shop_item_card_red.png",
+      "res_path": "res://assets/ui/shop/shop_item_card_red.png",
+      "nine_patch_margin": 20,
+      "states": {}
+    },
+    "shop_item_card_teal": {
+      "file_name": "shop_item_card_teal.png",
+      "scope": "page",
+      "path": "project/assets/ui/shop/shop_item_card_teal.png",
+      "res_path": "res://assets/ui/shop/shop_item_card_teal.png",
+      "nine_patch_margin": 20,
+      "states": {}
+    },
+    "shop_item_card_purple": {
+      "file_name": "shop_item_card_purple.png",
+      "scope": "page",
+      "path": "project/assets/ui/shop/shop_item_card_purple.png",
+      "res_path": "res://assets/ui/shop/shop_item_card_purple.png",
+      "nine_patch_margin": 20,
+      "states": {}
+    },
+    "shop_artifact_frame_red": {
+      "file_name": "shop_artifact_frame_red.png",
+      "scope": "page",
+      "path": "project/assets/ui/shop/shop_artifact_frame_red.png",
+      "res_path": "res://assets/ui/shop/shop_artifact_frame_red.png",
+      "nine_patch_margin": 18,
+      "states": {}
+    },
+    "shop_artifact_frame_teal": {
+      "file_name": "shop_artifact_frame_teal.png",
+      "scope": "page",
+      "path": "project/assets/ui/shop/shop_artifact_frame_teal.png",
+      "res_path": "res://assets/ui/shop/shop_artifact_frame_teal.png",
+      "nine_patch_margin": 18,
+      "states": {}
+    },
+    "shop_artifact_frame_purple": {
+      "file_name": "shop_artifact_frame_purple.png",
+      "scope": "page",
+      "path": "project/assets/ui/shop/shop_artifact_frame_purple.png",
+      "res_path": "res://assets/ui/shop/shop_artifact_frame_purple.png",
+      "nine_patch_margin": 18,
+      "states": {}
+    },
+    "shop_price_plate_dark": {
+      "file_name": "shop_price_plate_dark.png",
+      "scope": "page",
+      "path": "project/assets/ui/shop/shop_price_plate_dark.png",
+      "res_path": "res://assets/ui/shop/shop_price_plate_dark.png",
+      "nine_patch_margin": 18,
+      "states": {}
+    },
+    "shop_button_gold_normal": {
+      "file_name": "shop_button_gold_normal.png",
+      "scope": "page",
+      "path": "project/assets/ui/shop/shop_button_gold_normal.png",
+      "res_path": "res://assets/ui/shop/shop_button_gold_normal.png",
+      "nine_patch_margin": 24,
+      "states": {
+        "normal": "shop_button_gold_normal.png"
+      }
+    },
+    "shop_button_gold_hover": {
+      "file_name": "shop_button_gold_hover.png",
+      "scope": "page",
+      "path": "project/assets/ui/shop/shop_button_gold_hover.png",
+      "res_path": "res://assets/ui/shop/shop_button_gold_hover.png",
+      "nine_patch_margin": 24,
+      "states": {
+        "hover": "shop_button_gold_hover.png"
+      }
+    },
+    "shop_button_gold_pressed": {
+      "file_name": "shop_button_gold_pressed.png",
+      "scope": "page",
+      "path": "project/assets/ui/shop/shop_button_gold_pressed.png",
+      "res_path": "res://assets/ui/shop/shop_button_gold_pressed.png",
+      "nine_patch_margin": 24,
+      "states": {
+        "pressed": "shop_button_gold_pressed.png"
+      }
+    },
+    "shop_button_disabled_dark": {
+      "file_name": "shop_button_disabled_dark.png",
+      "scope": "page",
+      "path": "project/assets/ui/shop/shop_button_disabled_dark.png",
+      "res_path": "res://assets/ui/shop/shop_button_disabled_dark.png",
+      "nine_patch_margin": 24,
+      "states": {
+        "disabled": "shop_button_disabled_dark.png"
+      }
+    },
+    "shop_backpack_panel_purple": {
+      "file_name": "shop_backpack_panel_purple.png",
+      "scope": "page",
+      "path": "project/assets/ui/shop/shop_backpack_panel_purple.png",
+      "res_path": "res://assets/ui/shop/shop_backpack_panel_purple.png",
+      "nine_patch_margin": 24,
+      "states": {}
+    },
+    "shop_backpack_title_purple": {
+      "file_name": "shop_backpack_title_purple.png",
+      "scope": "page",
+      "path": "project/assets/ui/shop/shop_backpack_title_purple.png",
+      "res_path": "res://assets/ui/shop/shop_backpack_title_purple.png",
+      "nine_patch_margin": 18,
+      "states": {}
+    },
+    "shop_slot_empty": {
+      "file_name": "shop_slot_empty.png",
+      "scope": "page",
+      "path": "project/assets/ui/shop/shop_slot_empty.png",
+      "res_path": "res://assets/ui/shop/shop_slot_empty.png",
+      "nine_patch_margin": 16,
+      "states": {}
+    },
+    "shop_slot_filled_red": {
+      "file_name": "shop_slot_filled_red.png",
+      "scope": "page",
+      "path": "project/assets/ui/shop/shop_slot_filled_red.png",
+      "res_path": "res://assets/ui/shop/shop_slot_filled_red.png",
+      "nine_patch_margin": 16,
+      "states": {}
+    },
+    "shop_slot_missing_dark": {
+      "file_name": "shop_slot_missing_dark.png",
+      "scope": "page",
+      "path": "project/assets/ui/shop/shop_slot_missing_dark.png",
+      "res_path": "res://assets/ui/shop/shop_slot_missing_dark.png",
+      "nine_patch_margin": 16,
+      "states": {}
+    },
+    "shop_count_badge_dark": {
+      "file_name": "shop_count_badge_dark.png",
+      "scope": "page",
+      "path": "project/assets/ui/shop/shop_count_badge_dark.png",
+      "res_path": "res://assets/ui/shop/shop_count_badge_dark.png",
+      "nine_patch_margin": 12,
+      "states": {}
+    },
+    "shop_stat_row_dark": {
+      "file_name": "shop_stat_row_dark.png",
+      "scope": "page",
+      "path": "project/assets/ui/shop/shop_stat_row_dark.png",
+      "res_path": "res://assets/ui/shop/shop_stat_row_dark.png",
+      "nine_patch_margin": 16,
+      "states": {}
+    },
+    "shop_nameplate_red": {
+      "file_name": "shop_nameplate_red.png",
+      "scope": "page",
+      "path": "project/assets/ui/shop/shop_nameplate_red.png",
+      "res_path": "res://assets/ui/shop/shop_nameplate_red.png",
+      "nine_patch_margin": 18,
+      "states": {}
+    }
+  }
+}

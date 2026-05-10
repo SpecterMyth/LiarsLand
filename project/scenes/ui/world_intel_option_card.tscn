@@ -1,0 +1,152 @@
+[gd_scene format=3 uid="uid://bi4rto553q8jp"]
+
+[ext_resource type="Script" uid="uid://dtutc7u41meci" path="res://scripts/ui/world_intel_option_card.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://snookd17457s" path="res://assets/generated/ui/intel/q01_01_lie_origin_moon.png" id="3_preview"]
+[ext_resource type="Texture2D" uid="uid://ctv2ujh4bwvag" path="res://assets/ui/common/bag_panel_left_dark.png" id="4_ysn3g"]
+[ext_resource type="Texture2D" uid="uid://cdwbk3lb3cwrq" path="res://assets/generated/npc_fox_head_avatar.png" id="5_portrait"]
+[ext_resource type="Texture2D" uid="uid://bh7p4qr5hfeyl" path="res://assets/generated/npc_crow_head_avatar.png" id="10_crow"]
+[ext_resource type="Texture2D" uid="uid://bnri1cxhmxc65" path="res://assets/generated/npc_deer_head_avatar.png" id="11_deer"]
+[ext_resource type="Texture2D" uid="uid://dgvm4srs3v0xh" path="res://assets/generated/npc_snake_head_avatar.png" id="12_snake"]
+[ext_resource type="Texture2D" uid="uid://b8gdlola8nxtr" path="res://assets/generated/npc_wolf_head_avatar.png" id="13_wolf"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_button"]
+
+[node name="WorldIntelOptionCard" type="Button" unique_id=1451712671]
+custom_minimum_size = Vector2(176, 222)
+offset_right = 176.0
+offset_bottom = 222.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_button")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_button")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_button")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_button")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_button")
+toggle_mode = true
+script = ExtResource("1_script")
+fallback_option_image = ExtResource("3_preview")
+fallback_portrait_image = ExtResource("5_portrait")
+
+[node name="Background" type="TextureRect" parent="." unique_id=2016567357]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("4_ysn3g")
+expand_mode = 1
+
+[node name="SelectedOutline" type="TextureRect" parent="." unique_id=1800458989]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Content" type="VBoxContainer" parent="." unique_id=1869985195]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 13.0
+offset_top = 13.0
+offset_right = -13.0
+offset_bottom = -19.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="Art" type="TextureRect" parent="Content" unique_id=980720284]
+custom_minimum_size = Vector2(0, 116)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+texture = ExtResource("3_preview")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="SourceLabel" type="Label" parent="Content" unique_id=579280406]
+visible = false
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.78, 0.75, 0.68, 1)
+theme_override_colors/font_outline_color = Color(0.05, 0.018, 0.055, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 13
+text = "Source: Example"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+
+[node name="Portraits" type="HBoxContainer" parent="Content" unique_id=768215343]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = -7
+alignment = 1
+
+[node name="PreviewPortrait" type="TextureRect" parent="Content/Portraits" unique_id=609899876]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("5_portrait")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="PreviewPortraitCrow" type="TextureRect" parent="Content/Portraits" unique_id=1422282359]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+tooltip_text = "假想头像：墨羽书记官"
+mouse_filter = 2
+texture = ExtResource("10_crow")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="PreviewPortraitDeer" type="TextureRect" parent="Content/Portraits" unique_id=1830413263]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+tooltip_text = "假想头像：白杖使节"
+mouse_filter = 2
+texture = ExtResource("11_deer")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="PreviewPortraitSnake" type="TextureRect" parent="Content/Portraits" unique_id=515933211]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+tooltip_text = "假想头像：青鳞药师"
+mouse_filter = 2
+texture = ExtResource("12_snake")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="PreviewPortraitWolf" type="TextureRect" parent="Content/Portraits" unique_id=1026584725]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+tooltip_text = "假想头像：铁颈军官"
+mouse_filter = 2
+texture = ExtResource("13_wolf")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="OptionTitle" type="Label" parent="Content" unique_id=1349735453]
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.91, 0.74, 1)
+theme_override_colors/font_outline_color = Color(0.05, 0.018, 0.055, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 16
+text = "谎言来自月亮"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true

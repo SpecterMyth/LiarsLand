@@ -8,12 +8,22 @@ signal stream_field_delta(section: String, field_name: String, delta: String)
 const CONFIG_LOCAL_PATH := "res://config.local.json"
 const CONFIG_EXAMPLE_PATH := "res://config.example.json"
 const WEB_CHAT_PROXY_PATH := "/api/chat"
+const STREAM_FIRST_CHARS := 8
+const STREAM_THINKING_MIN_CHARS := 24
+const STREAM_SPEECH_MIN_CHARS := 12
+const STREAM_MAX_BUFFER_MS := 55
+const MOCK_THINKING_CHUNK_CHARS := 18
+const MOCK_SPEECH_CHUNK_CHARS := 12
+const MOCK_STREAM_DELAY_SECONDS := 0.025
 
 var config: Dictionary = {}
 var player_http: HTTPRequest
 var npc_http: HTTPRequest
 var last_error := ""
 var cancelled_sections := {}
+var stream_emit_buffers := {}
+var stream_emit_started_at := {}
+var stream_emit_has_emitted := {}
 
 
 func _ready() -> void:
@@ -32,6 +42,7 @@ func use_mock_llm() -> bool:
 func chat_json(section: String, system_prompt: String, user_prompt: String, fallback: Dictionary, stream_text := false) -> Dictionary:
 	last_error = ""
 	cancelled_sections[section] = false
+	_reset_stream_emit_buffers(section)
 	if _should_mock(section):
 		if stream_text:
 			await _emit_mock_response_stream(section, fallback)
@@ -239,6 +250,7 @@ func _call_chat_stream(section: String, system_prompt: String, user_prompt: Stri
 	if not sse_buffer.is_empty():
 		var parsed_tail := _consume_sse_buffer(sse_buffer + "\n\n", raw, visible_fields, section)
 		raw = parsed_tail.get("raw", raw)
+	_flush_stream_emit_buffers(section)
 	return raw
 
 
@@ -266,7 +278,7 @@ func _consume_sse_buffer(buffer: String, raw: String, visible_fields: Dictionary
 			if delta.is_empty() and reasoning_delta.is_empty():
 				continue
 			if not reasoning_delta.is_empty():
-				_emit_stream_field(section, "thinking", reasoning_delta)
+				_queue_stream_field(section, "thinking", reasoning_delta)
 				visible_fields["thinking"] = String(visible_fields.get("thinking", "")) + reasoning_delta
 			if not delta.is_empty():
 				raw += delta
@@ -274,7 +286,9 @@ func _consume_sse_buffer(buffer: String, raw: String, visible_fields: Dictionary
 					var emitted_field: String = "thinking" if field_name == "reasoning" else field_name
 					var visible_delta: String = _visible_stream_delta(raw, String(visible_fields.get(field_name, "")), field_name)
 					if not visible_delta.is_empty():
-						_emit_stream_field(section, emitted_field, visible_delta)
+						if emitted_field == "speech":
+							_flush_stream_field(section, "thinking")
+						_queue_stream_field(section, emitted_field, visible_delta)
 						visible_fields[field_name] = String(visible_fields.get(field_name, "")) + visible_delta
 	return {"buffer": buffer, "raw": raw, "visible_fields": visible_fields}
 
@@ -309,6 +323,56 @@ func _emit_stream_field(section: String, field_name: String, delta: String) -> v
 	stream_field_delta.emit(section, field_name, delta)
 	if field_name == "thinking":
 		stream_delta.emit(section, delta)
+
+
+func _queue_stream_field(section: String, field_name: String, delta: String) -> void:
+	if delta.is_empty():
+		return
+	var key := _stream_emit_key(section, field_name)
+	if not stream_emit_buffers.has(key):
+		stream_emit_buffers[key] = ""
+		stream_emit_started_at[key] = Time.get_ticks_msec()
+	stream_emit_buffers[key] = String(stream_emit_buffers.get(key, "")) + delta
+	var buffered := String(stream_emit_buffers.get(key, ""))
+	var min_chars := STREAM_SPEECH_MIN_CHARS if field_name == "speech" else STREAM_THINKING_MIN_CHARS
+	if not bool(stream_emit_has_emitted.get(key, false)):
+		min_chars = min(min_chars, STREAM_FIRST_CHARS)
+	var elapsed := Time.get_ticks_msec() - int(stream_emit_started_at.get(key, Time.get_ticks_msec()))
+	if buffered.length() >= min_chars or elapsed >= STREAM_MAX_BUFFER_MS:
+		_flush_stream_field(section, field_name)
+
+
+func _flush_stream_field(section: String, field_name: String) -> void:
+	var key := _stream_emit_key(section, field_name)
+	var buffered := String(stream_emit_buffers.get(key, ""))
+	if buffered.is_empty():
+		return
+	stream_emit_buffers[key] = ""
+	stream_emit_started_at[key] = Time.get_ticks_msec()
+	stream_emit_has_emitted[key] = true
+	_emit_stream_field(section, field_name, buffered)
+
+
+func _flush_stream_emit_buffers(section: String) -> void:
+	_flush_stream_field(section, "thinking")
+	_flush_stream_field(section, "speech")
+
+
+func _reset_stream_emit_buffers(section: String) -> void:
+	var prefix := "%s::" % section
+	for key in stream_emit_buffers.keys():
+		if String(key).begins_with(prefix):
+			stream_emit_buffers.erase(key)
+	for key in stream_emit_started_at.keys():
+		if String(key).begins_with(prefix):
+			stream_emit_started_at.erase(key)
+	for key in stream_emit_has_emitted.keys():
+		if String(key).begins_with(prefix):
+			stream_emit_has_emitted.erase(key)
+
+
+func _stream_emit_key(section: String, field_name: String) -> String:
+	return "%s::%s" % [section, field_name]
 
 
 func _partial_json_string_value(text: String, field_name: String) -> String:
@@ -396,11 +460,11 @@ func _preview_stream_text(content: String) -> String:
 
 
 func _emit_mock_stream(section: String, text: String) -> void:
-	for i in range(0, text.length(), 6):
+	for i in range(0, text.length(), MOCK_THINKING_CHUNK_CHARS):
 		if _is_cancelled(section):
 			return
-		_emit_stream_field(section, "thinking", text.substr(i, 6))
-		await get_tree().create_timer(0.035).timeout
+		_emit_stream_field(section, "thinking", text.substr(i, MOCK_THINKING_CHUNK_CHARS))
+		await get_tree().create_timer(MOCK_STREAM_DELAY_SECONDS).timeout
 
 
 func _emit_mock_response_stream(section: String, response: Dictionary) -> void:
@@ -413,11 +477,12 @@ func _emit_mock_response_stream(section: String, response: Dictionary) -> void:
 
 
 func _emit_mock_field_stream(section: String, field_name: String, text: String) -> void:
-	for i in range(0, text.length(), 6):
+	var chunk_chars := MOCK_SPEECH_CHUNK_CHARS if field_name == "speech" else MOCK_THINKING_CHUNK_CHARS
+	for i in range(0, text.length(), chunk_chars):
 		if _is_cancelled(section):
 			return
-		_emit_stream_field(section, field_name, text.substr(i, 6))
-		await get_tree().create_timer(0.035).timeout
+		_emit_stream_field(section, field_name, text.substr(i, chunk_chars))
+		await get_tree().create_timer(MOCK_STREAM_DELAY_SECONDS).timeout
 
 
 func _section_config(section: String) -> Dictionary:

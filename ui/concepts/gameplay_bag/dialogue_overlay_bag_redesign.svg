@@ -1,0 +1,261 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <style>
+      text{font-family:"Noto Sans SC","Microsoft YaHei",sans-serif;dominant-baseline:text-before-edge}
+      .title{font-size:34px;font-weight:700;fill:#f6e9cb}
+      .name{font-size:18px;font-weight:600;fill:#f6e9cb;text-anchor:middle}
+      .count{font-size:22px;font-weight:700;fill:#e4b85b;text-anchor:end}
+      .hint{font-size:18px;fill:#9f927a}
+    </style>
+
+    <symbol id="icon-energy" viewBox="0 0 80 80">
+      <rect x="8" y="8" width="64" height="64" fill="#201512" stroke="#d5a34a" stroke-width="4"/>
+      <path d="M45 8 20 45h20l-7 27 28-43H40z" fill="#f0c75f" stroke="#7b481a" stroke-width="4" stroke-linejoin="round"/>
+    </symbol>
+
+    <symbol id="icon-space" viewBox="0 0 80 80">
+      <rect x="8" y="8" width="64" height="64" fill="#10191a" stroke="#24b9a9" stroke-width="4"/>
+      <path d="M20 30h40l-4 34H24z" fill="#74502d" stroke="#e4b85b" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M30 30c0-9 4-14 10-14s10 5 10 14" fill="none" stroke="#e4b85b" stroke-width="4" stroke-linecap="round"/>
+    </symbol>
+
+    <symbol id="icon-blood" viewBox="0 0 80 80">
+      <rect x="8" y="8" width="64" height="64" fill="#261114" stroke="#c64b45" stroke-width="4"/>
+      <path d="M40 18c10 13 18 23 18 34 0 10-8 17-18 17s-18-7-18-17c0-11 8-21 18-34z" fill="#b5423c"/>
+    </symbol>
+
+    <symbol id="icon-key" viewBox="0 0 80 80">
+      <rect x="8" y="8" width="64" height="64" fill="#261114" stroke="#c64b45" stroke-width="4"/>
+      <circle cx="30" cy="34" r="11" fill="none" stroke="#e4b85b" stroke-width="7"/>
+      <path d="M40 42 62 64M52 54l-8 8M60 62l-6 6" stroke="#e4b85b" stroke-width="7" stroke-linecap="square"/>
+    </symbol>
+
+    <symbol id="icon-seal" viewBox="0 0 80 80">
+      <rect x="8" y="8" width="64" height="64" fill="#261114" stroke="#c64b45" stroke-width="4"/>
+      <path d="M25 18h30l7 16-22 32-22-32z" fill="#5c5960" stroke="#d0c8bd" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M31 35h18M35 47h10" stroke="#f6e9cb" stroke-width="4" stroke-linecap="round"/>
+    </symbol>
+
+    <symbol id="icon-crown" viewBox="0 0 80 80">
+      <rect x="8" y="8" width="64" height="64" fill="#261114" stroke="#c64b45" stroke-width="4"/>
+      <path d="M20 55h40l4-28-15 12-9-20-9 20-15-12z" fill="#c88732" stroke="#f2ca73" stroke-width="4" stroke-linejoin="round"/>
+    </symbol>
+
+    <symbol id="icon-gem" viewBox="0 0 80 80">
+      <rect x="8" y="8" width="64" height="64" fill="#261114" stroke="#c64b45" stroke-width="4"/>
+      <path d="M25 20h30l12 16-27 32-27-32z" fill="#6c4db0" stroke="#d0c8bd" stroke-width="4" stroke-linejoin="round"/>
+    </symbol>
+
+    <symbol id="icon-book" viewBox="0 0 80 80">
+      <rect x="8" y="8" width="64" height="64" fill="#261114" stroke="#c64b45" stroke-width="4"/>
+      <path d="M22 18h24c7 0 12 5 12 12v34H30c-5 0-8-3-8-8z" fill="#2d2838" stroke="#e4b85b" stroke-width="4"/>
+      <path d="M34 30h14M34 42h12" stroke="#f6e9cb" stroke-width="4" stroke-linecap="round"/>
+    </symbol>
+
+    <symbol id="icon-needle" viewBox="0 0 80 80">
+      <rect x="8" y="8" width="64" height="64" fill="#10191a" stroke="#24b9a9" stroke-width="4"/>
+      <path d="M20 56 56 20l6 6-36 36z" fill="#d0c8bd" stroke="#24b9a9" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M18 60h18M53 18l10-8" stroke="#f6e9cb" stroke-width="4" stroke-linecap="round"/>
+    </symbol>
+
+    <symbol id="icon-name" viewBox="0 0 80 80">
+      <rect x="8" y="8" width="64" height="64" fill="#10191a" stroke="#24b9a9" stroke-width="4"/>
+      <path d="M23 20h34v42H23z" fill="#1d2830" stroke="#24b9a9" stroke-width="4"/>
+      <path d="M31 32h18M31 44h14M31 56h21" stroke="#f6e9cb" stroke-width="4" stroke-linecap="round"/>
+    </symbol>
+
+    <symbol id="icon-star" viewBox="0 0 80 80">
+      <rect x="8" y="8" width="64" height="64" fill="#10191a" stroke="#24b9a9" stroke-width="4"/>
+      <path d="M40 16 48 32l18 3-13 13 3 18-16-9-16 9 3-18-13-13 18-3z" fill="#e4b85b" stroke="#f6e9cb" stroke-width="3" stroke-linejoin="round"/>
+    </symbol>
+
+    <symbol id="icon-flame" viewBox="0 0 80 80">
+      <rect x="8" y="8" width="64" height="64" fill="#10191a" stroke="#24b9a9" stroke-width="4"/>
+      <path d="M43 14c5 14-10 17 4 31 2-8 10-11 12-19 8 11 7 25-1 34-10 11-29 11-37 0-8-12 0-26 10-34-1 8 3 13 8 17-5-13 1-20 4-29z" fill="#c64b45" stroke="#f2ca73" stroke-width="3" stroke-linejoin="round"/>
+    </symbol>
+
+    <symbol id="icon-moon" viewBox="0 0 80 80">
+      <rect x="8" y="8" width="64" height="64" fill="#10191a" stroke="#24b9a9" stroke-width="4"/>
+      <path d="M52 16c-12 4-21 15-21 28s9 23 21 27c-4 2-9 3-14 3-18 0-32-14-32-32S20 10 38 10c5 0 10 1 14 3z" transform="translate(10 0) scale(.82)" fill="#d0c8bd" stroke="#f6e9cb" stroke-width="4"/>
+    </symbol>
+
+    <symbol id="icon-wing" viewBox="0 0 80 80">
+      <rect x="8" y="8" width="64" height="64" fill="#10191a" stroke="#24b9a9" stroke-width="4"/>
+      <path d="M18 58c22-3 35-16 44-38-20 2-37 11-50 29 11-5 22-8 33-8-7 7-16 12-27 17z" fill="#d0c8bd" stroke="#24b9a9" stroke-width="4" stroke-linejoin="round"/>
+    </symbol>
+
+    <symbol id="icon-item" viewBox="0 0 80 80">
+      <rect x="8" y="8" width="64" height="64" fill="#1d1413" stroke="#b77725" stroke-width="4"/>
+      <path d="M40 16 58 28v24L40 64 22 52V28z" fill="#4b3014" stroke="#e4b85b" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M22 28 40 40 58 28M40 40v24" stroke="#f6e9cb" stroke-width="3" opacity="0.65"/>
+    </symbol>
+  </defs>
+
+  <rect width="1920" height="1080" fill="#120b0d"/>
+
+  <rect x="180" y="110" width="1560" height="860" fill="#171014" stroke="#d5a34a" stroke-width="4"/>
+
+  <text x="220" y="145" class="title">背包布局图</text>
+
+  <rect x="1250" y="138" width="48" height="48" fill="#201512" stroke="#d5a34a" stroke-width="3"/>
+  <use href="#icon-energy" x="1254" y="142" width="40" height="40"/>
+  <text x="1380" y="151" class="count">99999</text>
+
+  <rect x="1450" y="138" width="48" height="48" fill="#10191a" stroke="#24b9a9" stroke-width="3"/>
+  <use href="#icon-space" x="1454" y="142" width="40" height="40"/>
+  <text x="1620" y="151" class="count">28/40</text>
+
+  <rect x="1640" y="130" width="70" height="70" fill="#321317" stroke="#d5a34a" stroke-width="4"/>
+  <line x1="1658" y1="148" x2="1692" y2="182" stroke="#f6e9cb" stroke-width="6" stroke-linecap="round"/>
+  <line x1="1692" y1="148" x2="1658" y2="182" stroke="#f6e9cb" stroke-width="6" stroke-linecap="round"/>
+
+  <rect x="220" y="260" width="500" height="690" fill="#1a1013" stroke="#b5423c" stroke-width="4"/>
+  <text x="250" y="290" class="title">统治需求</text>
+  <rect x="250" y="340" width="440" height="260" fill="#211014" stroke="#c64b45" stroke-width="3"/>
+
+  <g>
+    <rect x="282" y="368" width="88" height="88" fill="#120f11" stroke="#c64b45" stroke-width="3"/>
+    <use href="#icon-blood" x="286" y="372" width="80" height="80"/>
+    <text x="326" y="458" class="name">血契杖镶</text>
+
+    <rect x="426" y="368" width="88" height="88" fill="#120f11" stroke="#c64b45" stroke-width="3"/>
+    <use href="#icon-key" x="430" y="372" width="80" height="80"/>
+    <text x="470" y="458" class="name">月厅密钥</text>
+
+    <rect x="570" y="368" width="88" height="88" fill="#120f11" stroke="#c64b45" stroke-width="3"/>
+    <use href="#icon-seal" x="574" y="372" width="80" height="80"/>
+    <text x="614" y="458" class="name">灰冕契印</text>
+
+    <rect x="282" y="484" width="88" height="88" fill="#120f11" stroke="#c64b45" stroke-width="3"/>
+    <use href="#icon-crown" x="286" y="488" width="80" height="80"/>
+    <text x="326" y="574" class="name">赤冠碎片</text>
+
+    <rect x="426" y="484" width="88" height="88" fill="#120f11" stroke="#c64b45" stroke-width="3"/>
+    <use href="#icon-gem" x="430" y="488" width="80" height="80"/>
+    <text x="470" y="574" class="name">紫晶眼</text>
+
+    <rect x="570" y="484" width="88" height="88" fill="#120f11" stroke="#c64b45" stroke-width="3"/>
+    <use href="#icon-book" x="574" y="488" width="80" height="80"/>
+    <text x="614" y="574" class="name">王令残页</text>
+  </g>
+
+  <text x="250" y="620" class="title">升华需求</text>
+  <rect x="250" y="670" width="440" height="260" fill="#10191a" stroke="#24b9a9" stroke-width="3"/>
+
+  <g>
+    <rect x="282" y="696" width="88" height="88" fill="#101315" stroke="#24b9a9" stroke-width="3"/>
+    <use href="#icon-needle" x="286" y="700" width="80" height="80"/>
+    <text x="326" y="786" class="name">银针袖扣</text>
+
+    <rect x="426" y="696" width="88" height="88" fill="#101315" stroke="#24b9a9" stroke-width="3"/>
+    <use href="#icon-name" x="430" y="700" width="80" height="80"/>
+    <text x="470" y="786" class="name">失落本名</text>
+
+    <rect x="570" y="696" width="88" height="88" fill="#101315" stroke="#24b9a9" stroke-width="3"/>
+    <use href="#icon-star" x="574" y="700" width="80" height="80"/>
+    <text x="614" y="786" class="name">星砂</text>
+
+    <rect x="282" y="812" width="88" height="88" fill="#101315" stroke="#24b9a9" stroke-width="3"/>
+    <use href="#icon-flame" x="286" y="816" width="80" height="80"/>
+    <text x="326" y="902" class="name">心火</text>
+
+    <rect x="426" y="812" width="88" height="88" fill="#101315" stroke="#24b9a9" stroke-width="3"/>
+    <use href="#icon-moon" x="430" y="816" width="80" height="80"/>
+    <text x="470" y="902" class="name">月相片</text>
+
+    <rect x="570" y="812" width="88" height="88" fill="#101315" stroke="#24b9a9" stroke-width="3"/>
+    <use href="#icon-wing" x="574" y="816" width="80" height="80"/>
+    <text x="614" y="902" class="name">羽化骨</text>
+  </g>
+
+  <rect x="780" y="260" width="920" height="690" fill="#150f12" stroke="#b77725" stroke-width="4"/>
+  <text x="810" y="290" class="title">背包</text>
+  <text x="1555" y="295" class="hint">8 x 5 / 40</text>
+
+  <g>
+    <rect x="830" y="350" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-item" x="834" y="354" width="80" height="80"/>
+    <rect x="930" y="350" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-blood" x="934" y="354" width="80" height="80"/>
+    <rect x="1030" y="350" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-key" x="1034" y="354" width="80" height="80"/>
+    <rect x="1130" y="350" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-seal" x="1134" y="354" width="80" height="80"/>
+    <rect x="1230" y="350" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-crown" x="1234" y="354" width="80" height="80"/>
+    <rect x="1330" y="350" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-gem" x="1334" y="354" width="80" height="80"/>
+    <rect x="1430" y="350" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-book" x="1434" y="354" width="80" height="80"/>
+    <rect x="1530" y="350" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-needle" x="1534" y="354" width="80" height="80"/>
+
+    <rect x="830" y="470" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-name" x="834" y="474" width="80" height="80"/>
+    <rect x="930" y="470" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-star" x="934" y="474" width="80" height="80"/>
+    <rect x="1030" y="470" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-flame" x="1034" y="474" width="80" height="80"/>
+    <rect x="1130" y="470" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-moon" x="1134" y="474" width="80" height="80"/>
+    <rect x="1230" y="470" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-wing" x="1234" y="474" width="80" height="80"/>
+    <rect x="1330" y="470" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-item" x="1334" y="474" width="80" height="80"/>
+    <rect x="1430" y="470" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-item" x="1434" y="474" width="80" height="80"/>
+    <rect x="1530" y="470" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-item" x="1534" y="474" width="80" height="80"/>
+
+    <rect x="830" y="590" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-item" x="834" y="594" width="80" height="80"/>
+    <rect x="930" y="590" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-item" x="934" y="594" width="80" height="80"/>
+    <rect x="1030" y="590" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-item" x="1034" y="594" width="80" height="80"/>
+    <rect x="1130" y="590" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-item" x="1134" y="594" width="80" height="80"/>
+    <rect x="1230" y="590" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-item" x="1234" y="594" width="80" height="80"/>
+    <rect x="1330" y="590" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-item" x="1334" y="594" width="80" height="80"/>
+    <rect x="1430" y="590" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-item" x="1434" y="594" width="80" height="80"/>
+    <rect x="1530" y="590" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-item" x="1534" y="594" width="80" height="80"/>
+
+    <rect x="830" y="710" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-item" x="834" y="714" width="80" height="80"/>
+    <rect x="930" y="710" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-item" x="934" y="714" width="80" height="80"/>
+    <rect x="1030" y="710" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-item" x="1034" y="714" width="80" height="80"/>
+    <rect x="1130" y="710" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-item" x="1134" y="714" width="80" height="80"/>
+    <rect x="1230" y="710" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-item" x="1234" y="714" width="80" height="80"/>
+    <rect x="1330" y="710" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-item" x="1334" y="714" width="80" height="80"/>
+    <rect x="1430" y="710" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-item" x="1434" y="714" width="80" height="80"/>
+    <rect x="1530" y="710" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-item" x="1534" y="714" width="80" height="80"/>
+
+    <rect x="830" y="830" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-item" x="834" y="834" width="80" height="80"/>
+    <rect x="930" y="830" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-item" x="934" y="834" width="80" height="80"/>
+    <rect x="1030" y="830" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-item" x="1034" y="834" width="80" height="80"/>
+    <rect x="1130" y="830" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-item" x="1134" y="834" width="80" height="80"/>
+    <rect x="1230" y="830" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-item" x="1234" y="834" width="80" height="80"/>
+    <rect x="1330" y="830" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-item" x="1334" y="834" width="80" height="80"/>
+    <rect x="1430" y="830" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-item" x="1434" y="834" width="80" height="80"/>
+    <rect x="1530" y="830" width="88" height="88" fill="#1d1413" stroke="#b77725" stroke-width="3"/>
+    <use href="#icon-item" x="1534" y="834" width="80" height="80"/>
+  </g>
+</svg>

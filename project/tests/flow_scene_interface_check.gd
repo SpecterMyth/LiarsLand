@@ -13,20 +13,43 @@ func _run() -> void:
 		"NpcCardSlots/NpcCard1",
 		"NpcCardSlots/NpcCard2",
 		"NpcCardSlots/NpcCard3",
-		"UtilityColumn"
+		"RightUtilityButtons/InfoButton",
+		"RightUtilityButtons/BagButton",
+		"RightUtilityButtons/HistoryButton",
+		"RightUtilityButtons/RulesButton",
+		"RightUtilityButtons/StatusButton",
+		"RightUtilityButtons/SettingsButton"
 	])
 	_assert_scene_nodes("res://scenes/ui/shop_page.tscn", [
 		"Background",
-		"StatusBar/StatusRow/EnergyLabel",
-		"StatusBar/StatusRow/InventoryLabel",
-		"PlayerCard/PlayerContent/Stats",
-		"AscensionRequirement/Box/Slots",
-		"DominionRequirement/Box/Slots",
+		"TitleBanner",
+		"TitleLabel",
+		"CloseButton",
+		"BagResourceBar/EnergyPlate/EnergyValue",
+		"BagResourceBar/CapacityPlate/CapacityValue",
+		"PlayerCard",
+		"PlayerCard/Stats",
+		"RequirementPanel/DominionRequirementGrid",
+		"RequirementPanel/AscensionRequirementGrid",
 		"ShopItemSlots/ShopItem1",
 		"ShopItemSlots/ShopItem2",
 		"ShopItemSlots/ShopItem3",
-		"BackpackPanel/BackpackContent/BackpackGrid",
-		"BackpackPanel/BackpackContent/LeaveButton"
+		"RightUtilityButtons/InfoButton",
+		"RightUtilityButtons/BagButton",
+		"RightUtilityButtons/HistoryButton",
+		"RightUtilityButtons/RulesButton",
+		"RightUtilityButtons/StatusButton",
+		"RightUtilityButtons/SettingsButton"
+	])
+	_assert_scene_nodes("res://scenes/ui/inventory_overlay.tscn", [
+		"TitleBanner",
+		"TitleLabel",
+		"CloseButton",
+		"BagResourceBar/EnergyPlate/EnergyValue",
+		"BagResourceBar/CapacityPlate/CapacityValue",
+		"RequirementPanel/DominionRequirementGrid",
+		"RequirementPanel/AscensionRequirementGrid",
+		"InventoryItemGrid"
 	])
 	_assert_scene_nodes("res://scenes/ui/ascension_page.tscn", [
 		"StatControls/HpMinusButton",
@@ -34,7 +57,33 @@ func _run() -> void:
 		"StatControls/CharmMinusButton",
 		"StatControls/CharmPlusButton",
 		"AscendConfirmButton",
-		"DominionButton"
+		"DominionButton",
+		"RightUtilityButtons/InfoButton",
+		"RightUtilityButtons/BagButton"
+	])
+	_assert_scene_nodes("res://scenes/ui/guidelines_page.tscn", [
+		"TitleBanner",
+		"TitleLabel",
+		"CloseButton",
+		"MainPanel/Content/TabRow/IdentityTab",
+		"MainPanel/Content/TabRow/BehaviorTab",
+		"MainPanel/Content/TabRow/GrowthTab",
+		"MainPanel/Content/GuidelineEdit",
+		"MainPanel/Content/AppendRow/AppendEdit",
+		"MainPanel/Content/AppendRow/MergeButton",
+		"MainPanel/Content/Footer/AutoActionCheck",
+		"MainPanel/Content/Footer/AutoGrowthCheck",
+		"MainPanel/Content/Footer/SaveButton",
+		"MainPanel/Content/Footer/ResetButton",
+		"DecisionPanel"
+	])
+	_assert_scene_nodes("res://scenes/ui/death_page.tscn", [
+		"Background",
+		"Veil",
+		"Content",
+		"Content/RuleEdit",
+		"Content/ButtonRow/MergeButton",
+		"Content/ButtonRow/RestartButton"
 	])
 	print("LiarsLand flow scene interface checks passed.")
 	quit(0)

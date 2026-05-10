@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#170d20"/>
+  <rect width="1280" height="720" fill="#050306" opacity="0.58"/>
+  <polygon points="-24,18 396,18 372,108 -24,108" fill="#7a2e35" stroke="#050403" stroke-width="5"/>
+  <text x="36" y="72" fill="#f6e9cb" font-size="35" font-family="sans-serif" font-weight="700">历史对话</text>
+  <rect x="1192" y="28" width="58" height="58" fill="#241014" stroke="#d99018" stroke-width="4"/>
+  <text x="1211" y="68" fill="#f6e9cb" font-size="30" font-family="sans-serif">X</text>
+  <rect x="82" y="118" width="1116" height="544" rx="4" fill="#23102f" opacity="0.96" stroke="#d99018" stroke-width="4"/>
+  <rect x="112" y="156" width="254" height="458" rx="4" fill="#4a315f" stroke="#050403" stroke-width="4"/>
+  <text x="136" y="198" fill="#ffd77a" font-size="22" font-family="sans-serif" font-weight="700">章节与筛选</text>
+  <rect x="136" y="226" width="206" height="52" rx="3" fill="#1b0d25" stroke="#d99018" stroke-width="2"/>
+  <text x="154" y="258" fill="#f6e9cb" font-size="18" font-family="sans-serif">当前章节 / 回合</text>
+  <rect x="136" y="298" width="206" height="52" rx="3" fill="#1b0d25" stroke="#0e6a66" stroke-width="2"/>
+  <text x="154" y="330" fill="#f6e9cb" font-size="18" font-family="sans-serif">玩家 / 对手 / 事件</text>
+  <rect x="136" y="370" width="206" height="52" rx="3" fill="#1b0d25" stroke="#7a2e35" stroke-width="2"/>
+  <text x="154" y="402" fill="#f6e9cb" font-size="18" font-family="sans-serif">行动与发现</text>
+  <rect x="396" y="156" width="772" height="458" rx="4" fill="#120a16" stroke="#050403" stroke-width="4"/>
+  <text x="424" y="198" fill="#ffd77a" font-size="22" font-family="sans-serif" font-weight="700">完整记录滚动区</text>
+  <rect x="424" y="222" width="706" height="72" rx="3" fill="#2b1821" stroke="#7a2e35" stroke-width="2"/>
+  <rect x="424" y="314" width="706" height="72" rx="3" fill="#1a2430" stroke="#0e6a66" stroke-width="2"/>
+  <rect x="424" y="406" width="706" height="72" rx="3" fill="#2c2411" stroke="#d99018" stroke-width="2"/>
+  <rect x="424" y="498" width="706" height="72" rx="3" fill="#2b1821" stroke="#7a2e35" stroke-width="2"/>
+  <text x="444" y="265" fill="#f6e9cb" font-size="18" font-family="sans-serif">按时间排列：玩家、对手、系统事件分色显示</text>
+  <rect x="112" y="622" width="1056" height="24" fill="#0b070c" opacity="0.86"/>
+  <text x="136" y="640" fill="#ffd77a" font-size="16" font-family="sans-serif">底部状态：共 N 条记录 / 当前回合</text>
+</svg>

@@ -1,0 +1,975 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>骗子大陆行动动画方案</title>
+  <style>
+    :root {
+      --ink: #f6dfab;
+      --muted: #bca77b;
+      --dim: #74634a;
+      --bg: #130d12;
+      --panel: #20121a;
+      --panel-2: #281922;
+      --line: rgba(246, 223, 171, 0.18);
+      --gold: #f0b94f;
+      --red: #d85045;
+      --teal: #56c0ba;
+      --violet: #9a6be2;
+      --green: #74d68a;
+      --shadow: rgba(0, 0, 0, 0.45);
+      font-family: "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 18% 8%, rgba(216, 80, 69, 0.22), transparent 28%),
+        radial-gradient(circle at 78% 18%, rgba(86, 192, 186, 0.16), transparent 30%),
+        linear-gradient(135deg, #0b090d, var(--bg) 45%, #171016);
+      min-height: 100vh;
+    }
+
+    .page {
+      width: min(1440px, calc(100vw - 48px));
+      margin: 0 auto;
+      padding: 32px 0 48px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+      align-items: stretch;
+      margin-bottom: 24px;
+    }
+
+    .hero,
+    .stage,
+    .panel,
+    .card {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(45, 26, 35, 0.92), rgba(27, 17, 24, 0.95));
+      box-shadow: 0 18px 50px var(--shadow);
+    }
+
+    .hero {
+      min-height: 280px;
+      padding: 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -10% -30% 20%;
+      height: 210px;
+      background: linear-gradient(90deg, transparent, rgba(240, 185, 79, 0.22), transparent);
+      transform: rotate(-8deg);
+    }
+
+    .eyebrow {
+      color: var(--teal);
+      font-size: 14px;
+      letter-spacing: 0;
+      margin: 0 0 14px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 62px);
+      line-height: 1.04;
+      letter-spacing: 0;
+      max-width: 780px;
+    }
+
+    .hero p {
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.8;
+    }
+
+    .rule-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      color: var(--ink);
+      background: rgba(10, 8, 10, 0.34);
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+
+    .stage {
+      min-height: 280px;
+      padding: 20px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 14px;
+      overflow: hidden;
+    }
+
+    .stage-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .stage-title strong {
+      color: var(--ink);
+      font-size: 16px;
+    }
+
+    .preview {
+      position: relative;
+      min-height: 170px;
+      border: 1px solid rgba(246, 223, 171, 0.12);
+      background:
+        linear-gradient(90deg, rgba(216, 80, 69, 0.18), transparent 36%, transparent 64%, rgba(86, 192, 186, 0.16)),
+        linear-gradient(180deg, #1a1219, #0d0b10);
+      overflow: hidden;
+    }
+
+    .actor {
+      position: absolute;
+      bottom: 12px;
+      width: 112px;
+      height: 132px;
+      border: 2px solid rgba(246, 223, 171, 0.18);
+      background:
+        linear-gradient(180deg, rgba(246, 223, 171, 0.18), transparent),
+        linear-gradient(145deg, #5d2633, #1c121a 70%);
+      box-shadow: 0 18px 32px rgba(0, 0, 0, 0.38);
+    }
+
+    .actor::before {
+      content: "";
+      position: absolute;
+      left: 29px;
+      top: 18px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #e1b075;
+      box-shadow: inset -12px -8px 0 rgba(0, 0, 0, 0.18);
+    }
+
+    .actor::after {
+      content: "";
+      position: absolute;
+      left: 22px;
+      top: 74px;
+      width: 66px;
+      height: 44px;
+      background: rgba(246, 223, 171, 0.18);
+      clip-path: polygon(16% 0, 84% 0, 100% 100%, 0 100%);
+    }
+
+    .actor.player {
+      left: 34px;
+    }
+
+    .actor.npc {
+      right: 34px;
+      background:
+        linear-gradient(180deg, rgba(86, 192, 186, 0.20), transparent),
+        linear-gradient(145deg, #244b52, #11151a 72%);
+    }
+
+    .artifact {
+      position: absolute;
+      left: calc(50% - 28px);
+      top: calc(50% - 34px);
+      width: 56px;
+      height: 56px;
+      border: 2px solid rgba(240, 185, 79, 0.78);
+      background:
+        radial-gradient(circle at 45% 38%, #fff1ba, #f0b94f 35%, #7c3034 70%);
+      box-shadow: 0 0 28px rgba(240, 185, 79, 0.45);
+    }
+
+    .slash {
+      position: absolute;
+      left: 20%;
+      top: 45%;
+      width: 60%;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, #fff4c7, var(--red), transparent);
+      transform: rotate(-18deg);
+      filter: blur(0.3px);
+    }
+
+    .veil {
+      position: absolute;
+      inset: 0;
+      border: 0 solid rgba(0, 0, 0, 0.0);
+      box-shadow: inset 0 0 90px rgba(0, 0, 0, 0.72);
+    }
+
+    .covenant {
+      position: absolute;
+      left: 27%;
+      right: 27%;
+      top: 50%;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--green), var(--gold), transparent);
+      box-shadow: 0 0 22px rgba(116, 214, 138, 0.42);
+      transform-origin: center;
+      opacity: 0;
+    }
+
+    .sigil {
+      position: absolute;
+      left: calc(50% - 48px);
+      top: calc(50% - 48px);
+      width: 96px;
+      height: 96px;
+      border: 2px solid rgba(240, 185, 79, 0.55);
+      border-radius: 50%;
+      box-shadow: 0 0 30px rgba(240, 185, 79, 0.28), inset 0 0 28px rgba(216, 80, 69, 0.18);
+      opacity: 0;
+    }
+
+    .shadow-strike {
+      position: absolute;
+      left: 22%;
+      top: 26%;
+      width: 56%;
+      height: 54%;
+      background: linear-gradient(110deg, transparent 12%, rgba(0, 0, 0, 0.86) 42%, rgba(216, 80, 69, 0.75) 49%, transparent 58%);
+      filter: blur(1px);
+      opacity: 0;
+    }
+
+    .exit-trail {
+      position: absolute;
+      left: 28px;
+      bottom: 32px;
+      width: 160px;
+      height: 82px;
+      background: linear-gradient(90deg, rgba(86, 192, 186, 0.0), rgba(86, 192, 186, 0.36), transparent);
+      transform: skewX(-18deg);
+      opacity: 0;
+    }
+
+    .preview[data-demo="撤离"] .actor.npc,
+    .preview[data-demo="撤离"] .artifact,
+    .preview[data-demo="撤离"] .slash,
+    .preview[data-demo="撤离"] .covenant,
+    .preview[data-demo="撤离"] .sigil,
+    .preview[data-demo="撤离"] .shadow-strike {
+      opacity: 0;
+      animation: none;
+    }
+
+    .preview[data-demo="撤离"] .actor.player {
+      animation: leavePlayer 3s ease-in-out infinite;
+    }
+
+    .preview[data-demo="撤离"] .exit-trail {
+      animation: leaveTrail 3s ease-in-out infinite;
+    }
+
+    .preview[data-demo="撤离"] .veil {
+      animation: leaveVeil 3s ease-in-out infinite;
+    }
+
+    .preview[data-demo="赠送"] .actor.player {
+      animation: giftPlayer 5s ease-in-out infinite;
+    }
+
+    .preview[data-demo="赠送"] .actor.npc {
+      animation: giftNpc 5s ease-in-out infinite;
+    }
+
+    .preview[data-demo="赠送"] .artifact {
+      animation: giftArtifact 5s ease-in-out infinite;
+    }
+
+    .preview[data-demo="赠送"] .sigil {
+      border-radius: 10%;
+      animation: giftSeal 5s ease-in-out infinite;
+    }
+
+    .preview[data-demo="赠送"] .slash,
+    .preview[data-demo="赠送"] .shadow-strike {
+      opacity: 0;
+      animation: none;
+    }
+
+    .preview[data-demo="施法"] .actor.player {
+      animation: castPlayer 5s ease-in-out infinite;
+    }
+
+    .preview[data-demo="施法"] .actor.npc {
+      animation: castNpc 5s ease-in-out infinite;
+    }
+
+    .preview[data-demo="施法"] .artifact {
+      animation: castArtifact 5s ease-in-out infinite;
+    }
+
+    .preview[data-demo="施法"] .sigil {
+      animation: castSigil 5s linear infinite;
+    }
+
+    .preview[data-demo="施法"] .slash {
+      animation: castBolt 5s ease-in-out infinite;
+    }
+
+    .preview[data-demo="邀请"] .actor.player {
+      animation: invitePlayer 5s ease-in-out infinite;
+    }
+
+    .preview[data-demo="邀请"] .actor.npc {
+      animation: inviteNpc 5s ease-in-out infinite;
+    }
+
+    .preview[data-demo="邀请"] .artifact,
+    .preview[data-demo="邀请"] .slash,
+    .preview[data-demo="邀请"] .shadow-strike {
+      opacity: 0;
+      animation: none;
+    }
+
+    .preview[data-demo="邀请"] .covenant {
+      animation: inviteLine 5s ease-in-out infinite;
+    }
+
+    .preview[data-demo="邀请"] .sigil {
+      animation: inviteSeal 5s ease-in-out infinite;
+    }
+
+    .preview[data-demo="决斗"] .actor.player {
+      animation: duelPlayer 5s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+    }
+
+    .preview[data-demo="决斗"] .actor.npc {
+      animation: duelNpc 5s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+    }
+
+    .preview[data-demo="决斗"] .artifact,
+    .preview[data-demo="决斗"] .covenant,
+    .preview[data-demo="决斗"] .sigil,
+    .preview[data-demo="决斗"] .shadow-strike {
+      opacity: 0;
+      animation: none;
+    }
+
+    .preview[data-demo="决斗"] .slash {
+      animation: duelSlash 5s cubic-bezier(0.2, 0.9, 0.3, 1) infinite;
+    }
+
+    .preview[data-demo="暗杀"] .actor.player {
+      animation: assassinatePlayer 5s ease-in-out infinite;
+    }
+
+    .preview[data-demo="暗杀"] .actor.npc {
+      animation: assassinateNpc 5s ease-in-out infinite;
+    }
+
+    .preview[data-demo="暗杀"] .artifact,
+    .preview[data-demo="暗杀"] .covenant,
+    .preview[data-demo="暗杀"] .sigil {
+      opacity: 0;
+      animation: none;
+    }
+
+    .preview[data-demo="暗杀"] .shadow-strike {
+      animation: shadowStrike 5s ease-in-out infinite;
+    }
+
+    .preview[data-demo="暗杀"] .veil {
+      animation: assassinateVeil 5s ease-in-out infinite;
+    }
+
+    .stage-controls {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      color: var(--ink);
+      background: rgba(15, 10, 14, 0.64);
+      padding: 10px 6px;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    button.active {
+      border-color: rgba(240, 185, 79, 0.72);
+      color: #fff2c0;
+      background: rgba(240, 185, 79, 0.18);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .panel {
+      padding: 20px;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    .overview {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .overview th,
+    .overview td {
+      border-bottom: 1px solid var(--line);
+      padding: 11px 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .overview th {
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .flow {
+      display: grid;
+      gap: 10px;
+      counter-reset: step;
+    }
+
+    .flow-step {
+      border: 1px solid var(--line);
+      background: rgba(10, 8, 10, 0.28);
+      padding: 12px 12px 12px 46px;
+      position: relative;
+      min-height: 50px;
+    }
+
+    .flow-step::before {
+      counter-increment: step;
+      content: counter(step);
+      position: absolute;
+      left: 12px;
+      top: 12px;
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      background: rgba(240, 185, 79, 0.18);
+      color: var(--gold);
+      border: 1px solid rgba(240, 185, 79, 0.42);
+      font-size: 13px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      padding: 18px;
+      min-height: 320px;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 14px;
+    }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 14px;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .duration {
+      color: #111;
+      background: var(--gold);
+      padding: 6px 9px;
+      font-weight: 700;
+      min-width: 58px;
+      text-align: center;
+    }
+
+    .tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      border: 1px solid var(--line);
+      color: var(--muted);
+      padding: 5px 8px;
+      font-size: 12px;
+      background: rgba(0, 0, 0, 0.16);
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 4px;
+      height: 12px;
+    }
+
+    .bar {
+      background: rgba(246, 223, 171, 0.16);
+    }
+
+    .bar.tension {
+      background: rgba(216, 80, 69, 0.72);
+    }
+
+    .bar.reveal {
+      background: rgba(240, 185, 79, 0.86);
+    }
+
+    .beats {
+      color: var(--muted);
+      line-height: 1.75;
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .outcome {
+      border-top: 1px solid var(--line);
+      padding-top: 12px;
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    .outcome strong {
+      color: var(--ink);
+    }
+
+    .notice {
+      border-left: 4px solid var(--red);
+      background: rgba(216, 80, 69, 0.12);
+      padding: 14px 16px;
+      color: #ffd9cf;
+      line-height: 1.75;
+    }
+
+    .file-note {
+      margin-top: 24px;
+      color: var(--dim);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    @keyframes leavePlayer {
+      0% { transform: translateX(0) scale(1); opacity: 1; filter: brightness(1); }
+      45% { transform: translateX(20px) scale(0.98); opacity: 0.85; filter: brightness(0.75) sepia(0.4); }
+      82%, 100% { transform: translateX(-210px) scale(0.78); opacity: 0; filter: brightness(0.45) sepia(0.8); }
+    }
+
+    @keyframes leaveTrail {
+      0%, 25% { opacity: 0; transform: translateX(24px) skewX(-18deg); }
+      55% { opacity: 0.8; transform: translateX(-26px) skewX(-18deg); }
+      100% { opacity: 0; transform: translateX(-170px) skewX(-18deg); }
+    }
+
+    @keyframes leaveVeil {
+      0%, 100% { box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.52); }
+      70% { box-shadow: inset 0 0 120px rgba(86, 192, 186, 0.18); }
+    }
+
+    @keyframes giftPlayer {
+      0%, 100% { transform: translateX(0); filter: brightness(0.96); }
+      38% { transform: translateX(26px) translateY(-5px); filter: brightness(1.15); }
+      70% { transform: translateX(14px); filter: brightness(1.05); }
+    }
+
+    @keyframes giftNpc {
+      0%, 100% { transform: translateX(0); filter: brightness(0.9); }
+      48% { transform: translateX(-12px); filter: brightness(1.0); }
+      78% { transform: translateX(-28px) translateY(-4px); filter: brightness(1.22); }
+    }
+
+    @keyframes giftArtifact {
+      0% { transform: translate(-150px, 36px) rotate(-12deg) scale(0.82); opacity: 0; }
+      18% { opacity: 1; }
+      50% { transform: translate(-14px, -16px) rotate(90deg) scale(1.08); }
+      82%, 100% { transform: translate(138px, 38px) rotate(178deg) scale(0.86); opacity: 0.85; }
+    }
+
+    @keyframes giftSeal {
+      0%, 18% { opacity: 0; transform: scale(0.55) rotate(0); }
+      48% { opacity: 0.9; transform: scale(1.08) rotate(28deg); }
+      86%, 100% { opacity: 0; transform: scale(1.35) rotate(42deg); }
+    }
+
+    @keyframes castPlayer {
+      0%, 100% { transform: translateX(0); filter: brightness(0.86); }
+      38% { transform: translateX(14px) translateY(-8px); filter: brightness(1.3); }
+      78% { transform: translateX(2px); filter: brightness(1.08); }
+    }
+
+    @keyframes castNpc {
+      0%, 100% { transform: translateX(0); filter: brightness(0.86); }
+      48% { transform: translateX(-10px); filter: brightness(0.9); }
+      82% { transform: translateX(34px) rotate(2deg); filter: brightness(1.5) saturate(1.4); }
+    }
+
+    @keyframes castArtifact {
+      0%, 100% { transform: translateY(0) rotate(0) scale(0.9); opacity: 0.95; }
+      40% { transform: translateY(-22px) rotate(220deg) scale(1.2); opacity: 1; }
+      76% { transform: translate(104px, 4px) rotate(420deg) scale(0.72); opacity: 0.55; }
+    }
+
+    @keyframes castSigil {
+      0% { opacity: 0.15; transform: rotate(0) scale(0.78); }
+      44% { opacity: 0.95; transform: rotate(260deg) scale(1.15); }
+      100% { opacity: 0.2; transform: rotate(520deg) scale(0.82); }
+    }
+
+    @keyframes castBolt {
+      0%, 52% { opacity: 0; transform: translateX(-70px) rotate(-8deg) scaleX(0.45); }
+      70% { opacity: 1; transform: translateX(30px) rotate(-8deg) scaleX(1); }
+      86%, 100% { opacity: 0; transform: translateX(120px) rotate(-8deg) scaleX(0.6); }
+    }
+
+    @keyframes invitePlayer {
+      0%, 100% { transform: translateX(0); filter: brightness(0.92); }
+      46% { transform: translateX(20px); filter: brightness(1.05); }
+      76% { transform: translateX(34px) translateY(-2px); filter: brightness(1.18); }
+    }
+
+    @keyframes inviteNpc {
+      0%, 100% { transform: translateX(0); filter: brightness(0.92); }
+      46% { transform: translateX(-20px); filter: brightness(1.05); }
+      76% { transform: translateX(-34px) translateY(-2px); filter: brightness(1.18); }
+    }
+
+    @keyframes inviteLine {
+      0%, 18% { opacity: 0; transform: scaleX(0.1); filter: hue-rotate(120deg); }
+      45% { opacity: 0.45; transform: scaleX(0.72); filter: hue-rotate(-50deg); }
+      72%, 100% { opacity: 1; transform: scaleX(1); filter: hue-rotate(0); }
+    }
+
+    @keyframes inviteSeal {
+      0%, 22% { opacity: 0; transform: scale(0.45); }
+      52% { opacity: 0.75; transform: scale(0.95) rotate(-12deg); border-color: rgba(216, 80, 69, 0.68); }
+      82%, 100% { opacity: 0.95; transform: scale(1.05) rotate(0); border-color: rgba(116, 214, 138, 0.78); }
+    }
+
+    @keyframes duelPlayer {
+      0%, 100% { transform: translateX(0); filter: brightness(0.92); }
+      28% { transform: translateX(42px); filter: brightness(1.2); }
+      50% { transform: translateX(8px); }
+      75% { transform: translateX(120px) scale(1.08); filter: brightness(1.45); }
+    }
+
+    @keyframes duelNpc {
+      0%, 100% { transform: translateX(0); filter: brightness(0.92); }
+      30% { transform: translateX(-40px); filter: brightness(1.16); }
+      52% { transform: translateX(-8px); }
+      78% { transform: translateX(36px) rotate(2deg); filter: brightness(0.72); }
+    }
+
+    @keyframes duelSlash {
+      0%, 18% { opacity: 0; transform: translateX(-100px) rotate(-18deg) scaleX(0.55); }
+      35% { opacity: 1; transform: translateX(-16px) rotate(-18deg) scaleX(1); }
+      54% { opacity: 0; transform: translateX(80px) rotate(-18deg) scaleX(0.65); }
+      68% { opacity: 0; transform: translateX(80px) rotate(18deg) scaleX(0.65); }
+      80% { opacity: 1; transform: translateX(8px) rotate(18deg) scaleX(1.25); }
+      100% { opacity: 0; transform: translateX(-80px) rotate(18deg) scaleX(0.4); }
+    }
+
+    @keyframes assassinatePlayer {
+      0%, 100% { transform: translateX(0); opacity: 1; filter: brightness(0.65); }
+      38% { transform: translateX(20px); opacity: 0.55; filter: brightness(0.45); }
+      62% { transform: translateX(220px) scale(0.84); opacity: 0.22; filter: brightness(0.2); }
+      78% { transform: translateX(150px) scale(1.05); opacity: 1; filter: brightness(1.2); }
+    }
+
+    @keyframes assassinateNpc {
+      0%, 100% { transform: translateX(0); filter: brightness(0.62); }
+      58% { transform: translateX(0); filter: brightness(0.42); }
+      80% { transform: translateX(28px) rotate(2deg); filter: brightness(1.4) saturate(1.5); }
+    }
+
+    @keyframes shadowStrike {
+      0%, 42% { opacity: 0; transform: translateX(-110px) scaleX(0.75); }
+      62% { opacity: 1; transform: translateX(20px) scaleX(1.05); }
+      82%, 100% { opacity: 0; transform: translateX(160px) scaleX(0.45); }
+    }
+
+    @keyframes assassinateVeil {
+      0%, 100% { box-shadow: inset 0 0 92px rgba(0, 0, 0, 0.72); }
+      48% { box-shadow: inset 0 0 145px rgba(0, 0, 0, 0.94); }
+      78% { box-shadow: inset 0 0 36px rgba(216, 80, 69, 0.55); }
+    }
+
+    @media (max-width: 980px) {
+      .page {
+        width: min(100vw - 24px, 760px);
+        padding-top: 18px;
+      }
+
+      header,
+      .grid,
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .stage-controls {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <section class="hero">
+        <p class="eyebrow">Liars Land / Action Animation Plan</p>
+        <h1>行动先演出，结果后揭示</h1>
+        <p>
+          玩家或 NPC 执行动作后，先进入全屏行动动画。动画会按真实结算结果选择结尾分支，
+          但在播放完成前不显示系统日志、结果横幅、死亡页或下一阶段界面。
+        </p>
+        <div class="rule-strip">
+          <span class="pill">撤离 3 秒</span>
+          <span class="pill">其余行动 5 秒</span>
+          <span class="pill">结果延迟揭示</span>
+          <span class="pill">动画结尾对应真实结算</span>
+        </div>
+      </section>
+
+      <section class="stage" aria-label="动画预览">
+        <div class="stage-title">
+          <strong id="stageName">决斗预览</strong>
+          <span id="stageCaption">双方对峙，中线压迫，最后一击才揭示胜负</span>
+        </div>
+        <div class="preview" id="preview" data-demo="决斗">
+          <div class="actor player"></div>
+          <div class="actor npc"></div>
+          <div class="artifact"></div>
+          <div class="slash"></div>
+          <div class="covenant"></div>
+          <div class="sigil"></div>
+          <div class="shadow-strike"></div>
+          <div class="exit-trail"></div>
+          <div class="veil"></div>
+        </div>
+        <div class="stage-controls">
+          <button type="button" data-demo="撤离">撤离</button>
+          <button type="button" data-demo="赠送">赠送</button>
+          <button type="button" data-demo="施法">施法</button>
+          <button type="button" data-demo="邀请">邀请</button>
+          <button type="button" data-demo="决斗" class="active">决斗</button>
+          <button type="button" data-demo="暗杀">暗杀</button>
+        </div>
+      </section>
+    </header>
+
+    <section class="grid">
+      <aside class="stack">
+        <section class="panel">
+          <h2>行动总览</h2>
+          <table class="overview">
+            <thead>
+              <tr>
+                <th>行动</th>
+                <th>时长</th>
+                <th>画面对象</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>撤离</td><td>3 秒</td><td>玩家角色</td></tr>
+              <tr><td>赠送</td><td>5 秒</td><td>双方角色 + 道具</td></tr>
+              <tr><td>施法</td><td>5 秒</td><td>双方角色 + 道具</td></tr>
+              <tr><td>邀请</td><td>5 秒</td><td>双方角色</td></tr>
+              <tr><td>决斗</td><td>5 秒</td><td>双方角色</td></tr>
+              <tr><td>暗杀</td><td>5 秒</td><td>双方角色</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="panel">
+          <h2>执行流程</h2>
+          <div class="flow">
+            <div class="flow-step">行动确认：手动按钮、玩家 LLM 行动、NPC 行动统一进入动画流程。</div>
+            <div class="flow-step">规则预结算：先得到真实事件和胜负，但暂存不展示。</div>
+            <div class="flow-step">播放动画：overlay 拦截输入，隐藏结果横幅，按钮不可点。</div>
+            <div class="flow-step">结果揭示：动画结尾与真实结算一致，再追加日志和更新状态。</div>
+            <div class="flow-step">继续流程：死亡页、商店、选择对手或下一段对话在动画结束后触发。</div>
+          </div>
+        </section>
+
+        <section class="notice">
+          关键原则：动画不是随机演出。规则层可以先算出结果，但 UI 层必须把结果藏到动画结束后。
+          成功、失败、反杀、法器转移、死亡等结尾都由真实结算驱动。
+        </section>
+      </aside>
+
+      <section class="cards">
+        <article class="card">
+          <div class="card-head">
+            <h3>撤离</h3>
+            <span class="duration">3s</span>
+          </div>
+          <div class="tags"><span class="tag">玩家独演</span><span class="tag">冷色残影</span><span class="tag">安全离场</span></div>
+          <div class="timeline"><span class="bar tension"></span><span class="bar tension"></span><span class="bar reveal"></span><span class="bar reveal"></span><span class="bar reveal"></span></div>
+          <ul class="beats">
+            <li>玩家半身像压低亮度，背景轻微拉远。</li>
+            <li>脚下出现斜向速度线，角色向画面外滑退。</li>
+            <li>最后留下蓝灰残影，残影散开后才显示撤离结果。</li>
+          </ul>
+          <div class="outcome"><strong>结尾：</strong>撤离成功时画面清空；若被规则拦截，残影断裂并转红。</div>
+        </article>
+
+        <article class="card">
+          <div class="card-head">
+            <h3>赠送</h3>
+            <span class="duration">5s</span>
+          </div>
+          <div class="tags"><span class="tag">双方表演</span><span class="tag">道具移动</span><span class="tag">关系变化</span></div>
+          <div class="timeline"><span class="bar"></span><span class="bar tension"></span><span class="bar tension"></span><span class="bar reveal"></span><span class="bar reveal"></span></div>
+          <ul class="beats">
+            <li>玩家和 NPC 同时入场，道具图标从玩家侧升起。</li>
+            <li>紫金契约环包住道具，双方做点头/伸手动作。</li>
+            <li>图标落向接收者一侧，暖光扩散，亲近感上升。</li>
+          </ul>
+          <div class="outcome"><strong>结尾：</strong>成功时道具归入目标侧；失败时图标在中线轻震、暗淡或退回。</div>
+        </article>
+
+        <article class="card">
+          <div class="card-head">
+            <h3>施法</h3>
+            <span class="duration">5s</span>
+          </div>
+          <div class="tags"><span class="tag">双方表演</span><span class="tag">道具核心</span><span class="tag">高悬念</span></div>
+          <div class="timeline"><span class="bar tension"></span><span class="bar tension"></span><span class="bar tension"></span><span class="bar reveal"></span><span class="bar reveal"></span></div>
+          <ul class="beats">
+            <li>道具悬在中线，符文围绕图标快速旋转。</li>
+            <li>前 3 秒只给剪影、暗红闪光和音画脉冲。</li>
+            <li>最后符文命中或偏转，才显露施法成败。</li>
+          </ul>
+          <div class="outcome"><strong>结尾：</strong>成功时 NPC 侧法器光点被吸向玩家；失败时道具滑入 NPC 侧。</div>
+        </article>
+
+        <article class="card">
+          <div class="card-head">
+            <h3>邀请</h3>
+            <span class="duration">5s</span>
+          </div>
+          <div class="tags"><span class="tag">双方表演</span><span class="tag">盟约线</span><span class="tag">信任悬念</span></div>
+          <div class="timeline"><span class="bar"></span><span class="bar tension"></span><span class="bar tension"></span><span class="bar reveal"></span><span class="bar reveal"></span></div>
+          <ul class="beats">
+            <li>双方相对站定，中间浮现不稳定盟约印章。</li>
+            <li>前 3 秒印章忽明忽暗，角色缓慢靠近又停住。</li>
+            <li>最后盟约线稳定或断裂，映射真实邀请结果。</li>
+          </ul>
+          <div class="outcome"><strong>结尾：</strong>成功为绿色金边稳定连接；陷阱/失败则线条断裂并转暗红。</div>
+        </article>
+
+        <article class="card">
+          <div class="card-head">
+            <h3>决斗</h3>
+            <span class="duration">5s</span>
+          </div>
+          <div class="tags"><span class="tag">双方表演</span><span class="tag">中线对峙</span><span class="tag">胜负揭示</span></div>
+          <div class="timeline"><span class="bar tension"></span><span class="bar tension"></span><span class="bar tension"></span><span class="bar reveal"></span><span class="bar reveal"></span></div>
+          <ul class="beats">
+            <li>画面中线切开双方阵地，角色进入低身对峙。</li>
+            <li>刀光、冲刺残影、定格闪白连续制造压迫。</li>
+            <li>最后一击压过中线，才展示谁赢得决斗。</li>
+          </ul>
+          <div class="outcome"><strong>结尾：</strong>玩家胜则玩家侧推进并夺取光点；玩家败则 NPC 侧压制、玩家侧碎裂。</div>
+        </article>
+
+        <article class="card">
+          <div class="card-head">
+            <h3>暗杀</h3>
+            <span class="duration">5s</span>
+          </div>
+          <div class="tags"><span class="tag">双方表演</span><span class="tag">低光窥视</span><span class="tag">命中/防御</span></div>
+          <div class="timeline"><span class="bar tension"></span><span class="bar tension"></span><span class="bar tension"></span><span class="bar reveal"></span><span class="bar reveal"></span></div>
+          <ul class="beats">
+            <li>边缘黑幕收窄，场景进入低光状态。</li>
+            <li>影子移动、短促闪光、心跳式屏幕脉冲推进悬念。</li>
+            <li>最后一瞬给出穿刺命中或防御纹路亮起。</li>
+          </ul>
+          <div class="outcome"><strong>结尾：</strong>成功时攻击影穿过目标；失败时目标防御纹震开攻击方。</div>
+        </article>
+      </section>
+    </section>
+
+    <p class="file-note">建议实现入口：Godot UI 新增 ActionAnimationOverlay，挂载在 dialogue HUD 上方。</p>
+  </main>
+
+  <script>
+    const captions = {
+      "撤离": "玩家独演，冷色退场，残影散开后揭示结果",
+      "赠送": "双方同屏，道具跨越中线，暖光确认关系变化",
+      "施法": "道具成核心，符文旋转，命中或偏转决定结果",
+      "邀请": "盟约印章摇摆不定，连接稳定或断裂",
+      "决斗": "双方对峙，中线压迫，最后一击才揭示胜负",
+      "暗杀": "低光窥视、心跳脉冲，最后瞬间命中或被防住"
+    };
+
+    const preview = document.getElementById("preview");
+    const title = document.getElementById("stageName");
+    const caption = document.getElementById("stageCaption");
+    const buttons = Array.from(document.querySelectorAll("[data-demo]"));
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const demo = button.dataset.demo;
+        buttons.forEach((item) => item.classList.toggle("active", item === button));
+        title.textContent = demo + "预览";
+        caption.textContent = captions[demo];
+        preview.dataset.demo = "";
+        preview.offsetHeight;
+        window.requestAnimationFrame(() => {
+          preview.dataset.demo = demo;
+        });
+      });
+    });
+  </script>
+</body>
+</html>

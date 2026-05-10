@@ -1,0 +1,796 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>《骗子大陆》核心玩法重构脑暴：议会、罪行与信仰</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f3e8;
+      --paper: #fffaf0;
+      --ink: #221f1a;
+      --muted: #665f55;
+      --line: #d8cdb8;
+      --accent: #9b3131;
+      --accent-dark: #672121;
+      --gold: #b9822c;
+      --green: #2f6f59;
+      --blue: #355f8d;
+      --shadow: rgba(54, 42, 28, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.45), rgba(255,255,255,0)),
+        var(--bg);
+      color: var(--ink);
+      font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", Arial, sans-serif;
+      line-height: 1.75;
+    }
+
+    main {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 40px 0 64px;
+    }
+
+    header {
+      padding: 34px 38px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      box-shadow: 0 18px 48px var(--shadow);
+    }
+
+    h1,
+    h2,
+    h3 {
+      line-height: 1.28;
+      margin: 0;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      font-size: clamp(30px, 4vw, 52px);
+      max-width: 900px;
+    }
+
+    h2 {
+      padding-top: 10px;
+      font-size: 26px;
+      border-top: 2px solid var(--line);
+    }
+
+    h3 {
+      font-size: 18px;
+      color: var(--accent-dark);
+    }
+
+    p {
+      margin: 10px 0 0;
+    }
+
+    ul,
+    ol {
+      margin: 10px 0 0;
+      padding-left: 1.4em;
+    }
+
+    li + li {
+      margin-top: 4px;
+    }
+
+    .subtitle {
+      max-width: 860px;
+      color: var(--muted);
+      font-size: 18px;
+      margin-top: 14px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 3px 10px;
+      border: 1px solid var(--line);
+      background: #fff4dc;
+      color: var(--accent-dark);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    section {
+      margin-top: 28px;
+      padding: 26px 30px;
+      background: rgba(255, 250, 240, 0.72);
+      border: 1px solid var(--line);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .panel {
+      min-height: 100%;
+      padding: 18px;
+      background: #fffaf0;
+      border: 1px solid var(--line);
+    }
+
+    .panel strong {
+      color: var(--accent-dark);
+    }
+
+    .note {
+      padding: 16px 18px;
+      margin-top: 16px;
+      border-left: 5px solid var(--accent);
+      background: #fff1d7;
+    }
+
+    .rule-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .rule {
+      padding: 16px 18px;
+      background: #fffaf0;
+      border: 1px solid var(--line);
+    }
+
+    .rule-title {
+      display: block;
+      color: var(--accent-dark);
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .flow {
+      counter-reset: flow;
+      display: grid;
+      gap: 10px;
+      padding: 0;
+      margin: 16px 0 0;
+      list-style: none;
+    }
+
+    .flow li {
+      counter-increment: flow;
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 14px 16px;
+      background: #fffaf0;
+      border: 1px solid var(--line);
+    }
+
+    .flow li::before {
+      content: counter(flow);
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      background: var(--accent);
+      color: white;
+      font-weight: 800;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 16px;
+      border-collapse: collapse;
+      background: #fffaf0;
+      font-size: 15px;
+    }
+
+    th,
+    td {
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      background: #f3dfbd;
+      color: var(--accent-dark);
+    }
+
+    .pillars {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .faiths .panel:nth-child(1) h3 { color: var(--blue); }
+    .faiths .panel:nth-child(2) h3 { color: var(--accent); }
+    .faiths .panel:nth-child(3) h3 { color: var(--green); }
+
+    .questions li::marker {
+      color: var(--gold);
+      font-weight: 800;
+    }
+
+    .chapter-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .compact-list {
+      margin-top: 8px;
+      padding-left: 1.2em;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .crime-table td:first-child {
+      width: 74px;
+      color: var(--accent-dark);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 840px) {
+      main {
+        width: min(100% - 24px, 1120px);
+        padding-top: 18px;
+      }
+
+      header,
+      section {
+        padding: 22px;
+      }
+
+      .grid,
+      .pillars {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>核心玩法重构脑暴：议会、罪行与信仰</h1>
+      <p class="subtitle">
+        这是一份讨论用方案草案。目标不是立刻锁死系统，而是把“玩家如何观察 AI、如何做判断、如何产生直接博弈”这几个问题摆到台面上。
+      </p>
+      <div class="meta">
+        <span class="tag">状态：脑暴草案</span>
+        <span class="tag">范围：核心玩法</span>
+        <span class="tag">保留：现有美术资源与界面资产</span>
+        <span class="tag">日期：2026-05-10</span>
+      </div>
+    </header>
+
+    <section>
+      <h2>一、当前问题判断</h2>
+      <div class="grid">
+        <div class="panel">
+          <h3>系统复杂度过高</h3>
+          <p>现有玩法需要玩家理解过多隐性规则，观察 AI 行动时难以形成清晰的“我看懂了什么、我应该做什么”的反馈链。</p>
+        </div>
+        <div class="panel">
+          <h3>核心博弈点不够直接</h3>
+          <p>玩家与 NPC 的互动缺少一个稳定、可重复、能立刻改变局势的冲突焦点，导致对话结果不容易转化为明确收益。</p>
+        </div>
+        <div class="panel">
+          <h3>关卡设计过度依赖手工调度</h3>
+          <p>如果每章都需要精细安排线索、谜题和触发条件，LLM 的不稳定性会显著放大制作与测试成本。</p>
+        </div>
+      </div>
+      <div class="note">
+        新方向应该尽量让一局游戏天然产生戏剧性：每个人都可能有把柄，每一次投票都能杀人，每一次谈判都可能改变阵营胜负。
+      </div>
+    </section>
+
+    <section>
+      <h2>二、核心幻想</h2>
+      <p>
+        玩家与所有 NPC 都是小镇议会成员。每个人都曾经犯下若干荒唐、搞笑、足以被政治利用的罪行。大家表面上讨论公共道德，实际上都在保护自己、清算别人、拉拢同信仰者，并试图让自己的信仰成为小镇主流。
+      </p>
+      <div class="grid pillars">
+        <div class="panel">
+          <h3>公开议题</h3>
+          <p>某种行为是否有罪，是否应该处决犯过该行为的人。</p>
+        </div>
+        <div class="panel">
+          <h3>隐藏把柄</h3>
+          <p>每名角色知道自己的 3 条罪行，但不知道其他人的真实罪行。</p>
+        </div>
+        <div class="panel">
+          <h3>秘密信仰</h3>
+          <p>每名角色属于一个隐藏信仰阵营，并希望该阵营成为主流。</p>
+        </div>
+        <div class="panel">
+          <h3>政治交易</h3>
+          <p>对话不只是闲聊，而是围绕投票、承诺、背叛与生存展开。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>三、基础设定</h2>
+      <div class="rule-list">
+        <div class="rule">
+          <span class="rule-title">1. 议会成员</span>
+          玩家和所有 NPC 都是同一个小镇的议会成员。每个小镇构成一个章节。
+        </div>
+        <div class="rule">
+          <span class="rule-title">2. 搞笑罪行</span>
+          每名议员从罪行库中抽取 3 条个人罪行。罪行可以重复，因此多人可能犯过同一种罪。
+        </div>
+        <div class="rule">
+          <span class="rule-title">3. 隐藏信仰</span>
+          每名议员拥有一个隐藏信仰。当前候选包装为天神、恶魔、萨满，也可以继续调整为更贴合《骗子大陆》气质的三方势力。
+        </div>
+        <div class="rule">
+          <span class="rule-title">4. 阵营目标</span>
+          每个人的目标是让自己的信仰成为小镇主流信仰。玩家的章节目标也是让自己的信仰获胜。
+        </div>
+        <div class="rule">
+          <span class="rule-title">5. 大地图目标</span>
+          玩家最终目标是征服所有地区，让自己的信仰成为整片大陆的主流信仰。
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>四、前三章测试规模</h2>
+      <p>
+        前三章先作为玩法验证梯度：第一章验证“罪行投票是否能立刻产生紧张感”，第二章验证“三阵营信息博弈是否成立”，第三章验证更大议会下的连锁处决与公开信仰是否仍然可读。
+      </p>
+      <div class="grid chapter-grid">
+        <div class="panel">
+          <h3>第一章：四人议会</h3>
+          <p><strong>规模：</strong>总角色数 4，包含玩家。</p>
+          <p><strong>阵营：</strong>2 个阵营。</p>
+          <p><strong>罪行：</strong>总共 5 条罪行，每名角色 5 选 3。</p>
+          <p><strong>终局：</strong>处决掉任何一个角色，章节立刻结束。</p>
+          <ul class="compact-list">
+            <li>推荐目的：教学局、短局、快速暴露投票后果。</li>
+            <li>推荐场景：月市、档案厅、使馆花园、边门检查口。</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>第二章：九人议会</h3>
+          <p><strong>规模：</strong>总角色数 9，包含玩家。</p>
+          <p><strong>阵营：</strong>3 个阵营。</p>
+          <p><strong>罪行：</strong>总共 8 条罪行，每名角色抽取 3 条。</p>
+          <p><strong>终局：</strong>使用常规主流信仰判定与处决连锁。</p>
+          <ul class="compact-list">
+            <li>推荐目的：验证三阵营交易、伪装和误杀。</li>
+            <li>推荐场景：债契拍卖台、烧毁目录室、解药后室、假面裁缝铺等。</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>第三章：十二人议会</h3>
+          <p><strong>规模：</strong>总角色数 12，包含玩家。</p>
+          <p><strong>阵营：</strong>3 个阵营。</p>
+          <p><strong>罪行：</strong>总共 10 条罪行，每名角色抽取 3 条。</p>
+          <p><strong>终局：</strong>强调公开信仰、死亡遗嘱和多段连锁。</p>
+          <ul class="compact-list">
+            <li>推荐目的：验证中型局是否仍然容易观察。</li>
+            <li>推荐场景：边境瞭望塔、骨秤柜台、灰烬地图露台、回声镜亭等。</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note">
+        第一章“杀一人即结束”很关键：它让玩家在最小系统里理解一件事，投票不是抽象数值，而是会立刻改变故事结局的政治武器。
+      </div>
+    </section>
+
+    <section>
+      <h2>五、信息对等原则</h2>
+      <p>
+        玩家和所有 NPC 的信息完全对等。每个角色只知道公开信息，以及自己的隐藏信息；任何角色都不知道其他人的隐藏罪行或隐藏信仰。
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>信息类型</th>
+            <th>是否公开</th>
+            <th>说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>罪行库</td>
+            <td>公开</td>
+            <td>所有人都知道本章可能出现哪些罪行，因此能围绕有限议题谈判。</td>
+          </tr>
+          <tr>
+            <td>已产生的正式投票</td>
+            <td>公开</td>
+            <td>包括具体罪行、投票方向和投票人。正式投票不可更改。</td>
+          </tr>
+          <tr>
+            <td>投票倾向</td>
+            <td>公开</td>
+            <td>包括倾向来源和目标罪行，但倾向可更改，因此只是软承诺。</td>
+          </tr>
+          <tr>
+            <td>个人罪行</td>
+            <td>隐藏</td>
+            <td>只有本人知道。其他人只能从谈判、回避、投票行为中推断。</td>
+          </tr>
+          <tr>
+            <td>个人信仰</td>
+            <td>隐藏，除非主动公开</td>
+            <td>公开后进入可见阵营博弈，但也会成为其他阵营的明确目标。</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note">
+        这条原则能显著改善可读性：玩家不是在和“知道剧本的系统”对抗，而是在和同样信息不完整、同样会误判的议员对抗。
+      </div>
+    </section>
+
+    <section>
+      <h2>六、三阵营设定草案</h2>
+      <p>
+        建议暂时把阵营包装从“天神、恶魔、萨满”调整为更贴合骗子大陆政治喜剧的三种公共神话：圣契庭、赤宴会、野梦社。它们仍然能对应秩序、欲望、民俗三角，但语气更适合议会、罪行和处决。
+      </p>
+      <div class="grid faiths">
+        <div class="panel">
+          <h3>圣契庭</h3>
+          <p><strong>信条：</strong>所有罪都必须被命名，所有名字都必须被盖章。</p>
+          <p><strong>政治风格：</strong>强调档案、契约、证词、名册和程序正义。圣契庭成员不一定善良，他们只是相信“清算必须写得漂亮”。</p>
+          <p><strong>适配角色：</strong>乌鸦书记官、獾纹誓约公证人、黑豹静卫、山羊铃桥守。</p>
+          <p><strong>适配场景：</strong>档案厅、烧毁目录室、骨秤柜台、回声镜亭。</p>
+        </div>
+        <div class="panel">
+          <h3>赤宴会</h3>
+          <p><strong>信条：</strong>禁忌是餐单，罪名是酒杯，最会交易的人才配活到明天。</p>
+          <p><strong>政治风格：</strong>强调欲望、债务、表演、交易和漂亮谎言。赤宴会成员擅长把处决包装成庆典，把背叛说成礼物。</p>
+          <p><strong>适配角色：</strong>狐狸夜市贵族、碎齿债跑、猞猁假面裁缝、鳗鱼走私客。</p>
+          <p><strong>适配场景：</strong>月市、债契拍卖台、假面裁缝铺、走私排水闸。</p>
+        </div>
+        <div class="panel">
+          <h3>野梦社</h3>
+          <p><strong>信条：</strong>法律会忘，动物会怕，梦和旧仪式会记得真正的账。</p>
+          <p><strong>政治风格：</strong>强调征兆、传闻、族群记忆、仪式和直觉。野梦社成员不一定反文明，但相信小镇不能只由印章和债券统治。</p>
+          <p><strong>适配角色：</strong>白鹿使节、月蛾点灯人、青鳞药师、金喉试毒师、蝙蝠屋顶密探。</p>
+          <p><strong>适配场景：</strong>使馆花园、月灯屋脊、毒瓶橱窗、解药后室、灰烬地图露台。</p>
+        </div>
+      </div>
+      <div class="note">
+        第一章只启用圣契庭与赤宴会，让玩家先理解“阵营争夺”。第二章再引入野梦社，形成真正的三角博弈。
+      </div>
+    </section>
+
+    <section>
+      <h2>七、章节角色与场景建议</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>章节</th>
+            <th>建议角色池</th>
+            <th>使用理由</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>第一章</td>
+            <td>玩家、狐狸夜市贵族、乌鸦书记官、白鹿使节</td>
+            <td>角色性格差异清楚，场景资产成熟。虽然第一章只启用两个阵营，但白鹿可以作为“被卷入的温和议员”存在，方便测试误杀和保护。</td>
+          </tr>
+          <tr>
+            <td>第二章</td>
+            <td>玩家、狐狸、乌鸦、白鹿、青鳞药师、铁颚军官、月蛾点灯人、碎齿债跑、猞猁假面裁缝</td>
+            <td>组合覆盖交易、秩序、仪式、军纪、债务、伪装等话题，适合 8 条罪行的第一轮复杂局。</td>
+          </tr>
+          <tr>
+            <td>第三章</td>
+            <td>玩家、第二章保留 8 名 NPC 中的 6 名，再加入猫头鹰星占师、野猪军需商、壁纹听者、白天鹅礼剑士、黑豹静卫</td>
+            <td>扩大到 12 人时，需要更多“验证者、煽动者、防守者、攻击者”。这组角色能测试公开信仰后的联盟与反联盟。</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        这里的角色分配只是第一版测试建议，不意味着剧情上前三章必须连续复用同一批 NPC。真正实现时可以把“角色资产复用”和“章节剧情死亡”分开处理。
+      </p>
+    </section>
+
+    <section>
+      <h2>八、20 条搞笑罪行库草案</h2>
+      <p>
+        罪行需要足够荒唐，适合被严肃地拿来投票处决；同时又要能暗示角色、场景和政治关系。下面这些先作为总库，前三章从中抽取较小子集。
+      </p>
+      <table class="crime-table">
+        <thead>
+          <tr>
+            <th>编号</th>
+            <th>罪行名称</th>
+            <th>荒唐事实</th>
+            <th>可引发的谈判点</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>C01</td><td>伪造月亮收据</td><td>声称自己替小镇付过三晚月光维护费，并要求大家补缴。</td><td>债务、月市、点灯人。</td></tr>
+          <tr><td>C02</td><td>在档案页边画胡子</td><td>给旧王朝所有正式画像都添了卷胡子，导致书记官无法判断哪张是真证据。</td><td>档案、证词、乌鸦。</td></tr>
+          <tr><td>C03</td><td>偷换停战花束</td><td>把外交花束换成能打喷嚏的草，导致仪式持续失败。</td><td>使馆、礼法、白鹿。</td></tr>
+          <tr><td>C04</td><td>出售双倍解药</td><td>卖一种“喝之前和喝之后都要买”的解药，并坚称这是完整疗程。</td><td>药铺、试毒、青鳞药师。</td></tr>
+          <tr><td>C05</td><td>把军令写成菜单</td><td>边门守军收到命令后，误以为要向敌人供应炖菜。</td><td>军纪、边门、铁颚军官。</td></tr>
+          <tr><td>C06</td><td>熄灭月骨灯后假装是黎明</td><td>为了提前下班，宣布整个小镇进入清晨。</td><td>灯火、巡夜、月蛾。</td></tr>
+          <tr><td>C07</td><td>递送会咬人的债券</td><td>债券会追着欠债人跑，因此被控“暴力金融”。</td><td>债务、跑腿、狐狸。</td></tr>
+          <tr><td>C08</td><td>缝制过度诚实的假面</td><td>戴上后会自动说出一句真话，严重破坏社交秩序。</td><td>伪装、假面、身份。</td></tr>
+          <tr><td>C09</td><td>篡改星象概率</td><td>把“明日有雨”改成“明日有 73% 的道歉需求”。</td><td>星占、统计、猫头鹰。</td></tr>
+          <tr><td>C10</td><td>向城门供应空箱子</td><td>辩称空箱子能提升士气，因为大家会想象里面有补给。</td><td>军需、采购、野猪。</td></tr>
+          <tr><td>C11</td><td>偷听墙缝后替墙作证</td><td>坚持墙壁听见了一切，但墙壁不方便出庭。</td><td>证词、监听、壁纹听者。</td></tr>
+          <tr><td>C12</td><td>用决斗礼仪插队</td><td>在面包铺前向所有排队者发起礼貌决斗。</td><td>荣誉、礼剑、白天鹅。</td></tr>
+          <tr><td>C13</td><td>把沉默登记为发言</td><td>会议记录显示某人“沉默三分钟，态度极其嚣张”。</td><td>守卫、记录、程序。</td></tr>
+          <tr><td>C14</td><td>试毒时夸毒很好喝</td><td>导致毒药销量上升，被控扰乱公共安全。</td><td>药剂、广告、金喉试毒师。</td></tr>
+          <tr><td>C15</td><td>递送一封已经拆开的急信</td><td>解释说这样能让收信人节省拆信时间。</td><td>假信、路线、野兔信使。</td></tr>
+          <tr><td>C16</td><td>在屋顶倒挂发布市政公告</td><td>所有公告都要倒着读，群众脖子严重抗议。</td><td>屋顶、情报、蝙蝠。</td></tr>
+          <tr><td>C17</td><td>给誓约盖可擦印章</td><td>声称这能让契约更有弹性。</td><td>公证、誓约、獾纹公证人。</td></tr>
+          <tr><td>C18</td><td>把排水闸命名为贵宾通道</td><td>收取通行费后才提醒客人需要弯腰爬行。</td><td>走私、边境、鳗鱼。</td></tr>
+          <tr><td>C19</td><td>反复敲响回声铃制造多数意见</td><td>用回声冒充群众支持。</td><td>民意、钟声、山羊。</td></tr>
+          <tr><td>C20</td><td>提前宣判明天的案子</td><td>理由是“明天也会很忙，不如今天先判”。</td><td>审判、效率、螳螂刀审。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>九、胜负判定</h2>
+      <p>
+        小镇信仰以剩余存活议员的公开支持为准。若存活议员中超过半数公开支持同一个信仰，则该信仰获胜。
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>场景</th>
+            <th>判定</th>
+            <th>设计意图</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>某信仰获得存活议员过半公开支持</td>
+            <td>该信仰立刻赢得本章</td>
+            <td>让公开身份成为强力但危险的终局推进手段。</td>
+          </tr>
+          <tr>
+            <td>存活议员数量小于等于 3</td>
+            <td>强制公开信仰并结算</td>
+            <td>避免局面拖延，并制造残局摊牌。</td>
+          </tr>
+          <tr>
+            <td>残局为 1:1:1</td>
+            <td>所有人同时失败</td>
+            <td>鼓励玩家提前布局，避免只靠清场解决问题。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>十、回合结构</h2>
+      <ol class="flow">
+        <li>
+          <div>
+            <h3>选择对象</h3>
+            <p>每回合玩家选择任意一名 NPC 进行对话。</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h3>围绕法案谈判</h3>
+            <p>对话主题是劝说 NPC 对“是否处决犯过某类罪行的人”的法案进行投票。</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h3>产生承诺或投票</h3>
+            <p>双方可以表达倾向、直接投票、政治交易，或选择撤退结束对话。</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h3>检查处决</h3>
+            <p>任一罪行的有罪票达到总议员人数的一半时，法案立即执行。</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h3>死亡遗嘱投票</h3>
+            <p>被处决者留下最后一轮全罪行投票，可能触发新的连锁处决。</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h3>信仰公开窗口</h3>
+            <p>每次处决后，存活者都可以判断是否公开自己的信仰，并据此结盟、欺骗或推进终局。</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>十一、对话中的行动</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>行动</th>
+            <th>效果</th>
+            <th>玩家观察点</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>暂时撤退</td>
+            <td>强制结束本次对话。</td>
+            <td>NPC 为什么回避？是怕某个罪行、识破了威胁，还是在等待更好的交易？</td>
+          </tr>
+          <tr>
+            <td>直接投票</td>
+            <td>立刻对某项罪行投出有罪或无罪票，且不可更改。</td>
+            <td>不可逆选择让局势变得可读，也让承诺有重量。</td>
+          </tr>
+          <tr>
+            <td>政治交易</td>
+            <td>双方绑定若干罪行的投票方案，同时投票，且不可更改。</td>
+            <td>交易是核心博弈点：保护谁、牺牲谁、换取什么票。</td>
+          </tr>
+          <tr>
+            <td>倾向表达</td>
+            <td>表达对某项行为的投票倾向，但之后可更改。</td>
+            <td>倾向是可被欺骗、试探、反悔的软信息。</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note">
+        建议在 UI 上明确区分“倾向”和“已投票”。玩家观察 AI 时，最需要知道哪些话只是姿态，哪些动作已经把局势永久改变。
+      </div>
+    </section>
+
+    <section>
+      <h2>十二、处决与连锁</h2>
+      <p>
+        当某条法案的有罪票数达到总议员人数的一半，该法案立即执行。所有犯过该罪行的议会成员都会被处决，无论他们是否公开过自己的罪行或信仰。
+      </p>
+      <div class="grid">
+        <div class="panel">
+          <h3>罪行是刀</h3>
+          <p>玩家并不是直接杀某个人，而是推动“某类行为有罪”。这会天然制造误伤、连坐和伪装空间。</p>
+        </div>
+        <div class="panel">
+          <h3>死亡不是沉默</h3>
+          <p>被处决者会留下最后一轮投票，对每个罪行选择有罪、无罪或弃权。</p>
+        </div>
+        <div class="panel">
+          <h3>连锁制造戏剧</h3>
+          <p>遗嘱投票会再次触发处决检查，因此一次清算可能引发后续清算。</p>
+        </div>
+      </div>
+      <p>
+        被处决 NPC 的信仰不立即公开，直到本章结束或玩家失败。这让玩家无法轻易确认自己刚刚杀掉的是盟友、敌人还是关键中立票。
+      </p>
+    </section>
+
+    <section>
+      <h2>十三、NPC 策略框架</h2>
+      <p>NPC 的策略优先级可以初步定义为：</p>
+      <ol>
+        <li>优先保证自己不因个人罪行被处决。</li>
+        <li>争取让自己信仰阵营的存活者获得胜利。</li>
+        <li>通过对话劝说玩家支持特定提议，或与玩家达成政治交易。</li>
+        <li>在必要时说谎、拖延、撤退、暴露信仰、牺牲非关键盟友。</li>
+      </ol>
+      <div class="note">
+        这套策略比“解谜型 NPC”更适合 LLM：NPC 不需要严格记住作者设计的谜题答案，而是围绕自己的生存、信仰和已知票局做局部决策。
+      </div>
+    </section>
+
+    <section>
+      <h2>十四、阵营命名备选</h2>
+      <p>
+        “天神、恶魔、萨满”能清楚表达三方阵营，但可能略微常规。下面是一些更贴合骗子大陆荒诞政治气质的包装方向，供后续讨论。
+      </p>
+      <div class="grid faiths">
+        <div class="panel">
+          <h3>秩序派：圣契 / 天秤 / 王冠</h3>
+          <p>相信罪行必须被记录、审判和归档。台词风格偏礼法、契约、证据与等级。</p>
+        </div>
+        <div class="panel">
+          <h3>欲望派：赤宴 / 恶魔 / 狂欢</h3>
+          <p>相信所有禁忌都只是权力游戏。台词风格偏交易、诱惑、享乐与反讽。</p>
+        </div>
+        <div class="panel">
+          <h3>灵兆派：面具 / 萨满 / 野梦</h3>
+          <p>相信罪与罚来自古老征兆和族群记忆。台词风格偏预言、仪式、梦境与民俗。</p>
+        </div>
+      </div>
+      <p>
+        也可以把三方从宗教改成“政治神话”：法典派、狂欢派、祖灵派。这样更容易兼容搞笑罪行与议会处决，减少现实宗教联想。
+      </p>
+    </section>
+
+    <section>
+      <h2>十五、核心乐趣假设</h2>
+      <div class="rule-list">
+        <div class="rule">
+          <span class="rule-title">读人</span>
+          从 NPC 的回避、试探、交易条件中判断他怕什么罪、想保护谁、可能属于哪个信仰。
+        </div>
+        <div class="rule">
+          <span class="rule-title">做局</span>
+          用一个罪行法案同时威胁多人，逼迫 NPC 交换投票、公开信仰或暴露真实立场。
+        </div>
+        <div class="rule">
+          <span class="rule-title">背叛</span>
+          由于投票不可更改，玩家可以诱使 NPC 先交出关键票，再改变后续谈判方向。
+        </div>
+        <div class="rule">
+          <span class="rule-title">残局摊牌</span>
+          死亡遗嘱和强制公开让后期快速收束，减少无限闲聊。</div>
+      </div>
+    </section>
+
+    <section>
+      <h2>十六、待讨论问题</h2>
+      <ol class="questions">
+        <li>第一章 4 人局处决一人即结束时，胜负应该按“被处决者阵营失败”结算，还是按剩余公开支持重新结算？</li>
+        <li>“有罪票达到总议员人数的一半”是否需要向上取整？例如 9 人局是 5 票执行，还是 4.5 视为 5 票。</li>
+        <li>无罪票是否只是阻止处决，还是能锁定某罪行在本章不再被审？如果无罪票太弱，政治交易会过度偏向杀人。</li>
+        <li>投票倾向公开后是否允许“撤回记录”，还是保留历史轨迹？保留历史能增强观察，撤回记录能减少 UI 压力。</li>
+        <li>NPC 是否会主动找玩家谈判？如果只有玩家发起对话，系统更可控；如果 NPC 会插话，戏剧性更强但实现复杂度更高。</li>
+        <li>死亡遗嘱投票是否应该公开具体票型？公开能帮助玩家复盘，不公开能保留悬疑。</li>
+        <li>公开信仰是否应该提供额外能力？例如公开后能要求同信仰者回应、获得一次强制会谈，或降低交易门槛。</li>
+        <li>搞笑罪行的尺度如何控制？最好荒诞、可爱、带政治隐喻，但避免真实恶性犯罪，否则处决喜剧感会变味。</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>十七、最小可测试原型</h2>
+      <p>为了验证这套玩法是否真的更好玩，建议先按前三章做纸面或低保真原型，而不是立刻接入完整 LLM 与现有 UI。</p>
+      <table>
+        <thead>
+          <tr>
+            <th>原型规模</th>
+            <th>内容</th>
+            <th>验证目标</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>第一章低保真</td>
+            <td>4 名角色、2 个阵营、5 条罪行、每人 5 选 3，处决一人即结束。</td>
+            <td>验证玩家能否在最小局里看懂投票、倾向、隐藏罪行和处决后果。</td>
+          </tr>
+          <tr>
+            <td>第二章低保真</td>
+            <td>9 名角色、3 个阵营、8 条罪行，每回合 1 次会谈。</td>
+            <td>验证三阵营下的交易、伪装、误杀和公开信仰是否能自然发生。</td>
+          </tr>
+          <tr>
+            <td>第三章低保真</td>
+            <td>12 名角色、3 个阵营、10 条罪行，启用死亡遗嘱与连锁处决压力测试。</td>
+            <td>验证更大议会下玩家是否仍能通过公开记录理解局势，而不是被信息量淹没。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>

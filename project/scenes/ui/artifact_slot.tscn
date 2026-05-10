@@ -1,18 +1,31 @@
-[gd_scene format=3]
+[gd_scene load_steps=4 format=3 uid="uid://bdfjnaaegscpk"]
 
-[node name="ArtifactSlot" type="PanelContainer"]
+[ext_resource type="Texture2D" uid="uid://dsrp5uk01pkuc" path="res://assets/ui/shop/shop_slot_empty.png" id="1_slot"]
+[ext_resource type="Script" path="res://scripts/ui/artifact_slot.gd" id="2_artifact_slot"]
+[ext_resource type="FontFile" uid="uid://bfxtkx81kxl1d" path="res://assets/fonts/AlibabaPuHuiTi-3-105-Heavy.ttf" id="3_font"]
+
+[node name="ArtifactSlot" type="PanelContainer" unique_id=499500310]
 custom_minimum_size = Vector2(58, 58)
+offset_right = 58.0
+offset_bottom = 58.0
+script = ExtResource("2_artifact_slot")
+
+[node name="Root" type="Control" parent="." unique_id=1945858787]
+custom_minimum_size = Vector2(58, 58)
+layout_mode = 2
+
+[node name="Background" type="TextureRect" parent="Root" unique_id=1552787530]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("1_slot")
+expand_mode = 1
 
-[node name="Root" type="Control" parent="."]
-custom_minimum_size = Vector2(58, 58)
-layout_mode = 2
-
-[node name="Icon" type="TextureRect" parent="Root"]
+[node name="Icon" type="TextureRect" parent="Root" unique_id=118743815]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -27,19 +40,21 @@ mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Badge" type="PanelContainer" parent="Root"]
+[node name="Badge" type="PanelContainer" parent="Root" unique_id=275005393]
 visible = false
 layout_mode = 1
+anchors_preset = -1
 anchor_left = 0.58
 anchor_top = 0.58
 anchor_right = 1.0
 anchor_bottom = 0.92
 
-[node name="CountLabel" type="Label" parent="Root/Badge"]
+[node name="CountLabel" type="Label" parent="Root/Badge" unique_id=806390584]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
 theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 15
 text = "1"
 horizontal_alignment = 1

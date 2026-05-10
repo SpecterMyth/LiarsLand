@@ -1,0 +1,62 @@
+[
+  {
+    "action": "leave",
+    "type": "error",
+    "text": "WARNING: 'res://scenes/ui/artifact_slot.tscn': In external resource #0, invalid UID: 'uid://bhuqhlan58qel' - using text path instead: 'res://scripts/ui/artifact_slot.gd'."
+  },
+  {
+    "action": "leave",
+    "type": "error",
+    "text": "   at: open (core/io/resource_format_binary.cpp:1092)"
+  },
+  {
+    "action": "gift",
+    "type": "error",
+    "text": "WARNING: 'res://scenes/ui/artifact_slot.tscn': In external resource #0, invalid UID: 'uid://bhuqhlan58qel' - using text path instead: 'res://scripts/ui/artifact_slot.gd'."
+  },
+  {
+    "action": "gift",
+    "type": "error",
+    "text": "   at: open (core/io/resource_format_binary.cpp:1092)"
+  },
+  {
+    "action": "cast",
+    "type": "error",
+    "text": "WARNING: 'res://scenes/ui/artifact_slot.tscn': In external resource #0, invalid UID: 'uid://bhuqhlan58qel' - using text path instead: 'res://scripts/ui/artifact_slot.gd'."
+  },
+  {
+    "action": "cast",
+    "type": "error",
+    "text": "   at: open (core/io/resource_format_binary.cpp:1092)"
+  },
+  {
+    "action": "invite",
+    "type": "error",
+    "text": "WARNING: 'res://scenes/ui/artifact_slot.tscn': In external resource #0, invalid UID: 'uid://bhuqhlan58qel' - using text path instead: 'res://scripts/ui/artifact_slot.gd'."
+  },
+  {
+    "action": "invite",
+    "type": "error",
+    "text": "   at: open (core/io/resource_format_binary.cpp:1092)"
+  },
+  {
+    "action": "duel",
+    "type": "error",
+    "text": "WARNING: 'res://scenes/ui/artifact_slot.tscn': In external resource #0, invalid UID: 'uid://bhuqhlan58qel' - using text path instead: 'res://scripts/ui/artifact_slot.gd'."
+  },
+  {
+    "action": "duel",
+    "type": "error",
+    "text": "   at: open (core/io/resource_format_binary.cpp:1092)"
+  },
+  {
+    "action": "assassinate",
+    "type": "error",
+    "text": "WARNING: 'res://scenes/ui/artifact_slot.tscn': In external resource #0, invalid UID: 'uid://bhuqhlan58qel' - using text path instead: 'res://scripts/ui/artifact_slot.gd'."
+  },
+  {
+    "action": "assassinate",
+    "type": "error",
+    "text": "   at: open (core/io/resource_format_binary.cpp:1092)"
+  }
+]

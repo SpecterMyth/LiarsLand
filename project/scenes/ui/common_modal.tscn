@@ -1,0 +1,253 @@
+[gd_scene format=3 uid="uid://ulib5u7kiqjg"]
+
+[ext_resource type="Script" uid="uid://4alxn3tg25ic" path="res://scripts/ui/common_modal.gd" id="1_common_modal"]
+[ext_resource type="Texture2D" uid="uid://bitamk4fvg0ub" path="res://assets/generated/ui/dialogue/dialogue_lower_gold_full.png" id="2_iefmu"]
+[ext_resource type="Texture2D" uid="uid://byu0d1026texe" path="res://assets/ui/common/button_secondary_blank_normal.png" id="4_secondary_normal"]
+[ext_resource type="Texture2D" uid="uid://dok26y2csej80" path="res://assets/ui/common/button_secondary_blank_hover.png" id="5_secondary_hover"]
+[ext_resource type="Texture2D" uid="uid://bhq43gkjq7ucg" path="res://assets/ui/common/button_secondary_blank_pressed.png" id="6_secondary_pressed"]
+[ext_resource type="Texture2D" uid="uid://b2g454rw3h2kk" path="res://assets/ui/common/button_primary_gold_normal.png" id="7_primary_normal"]
+[ext_resource type="Texture2D" uid="uid://dlfal647wayx0" path="res://assets/ui/common/button_primary_gold_hover.png" id="8_primary_hover"]
+[ext_resource type="Texture2D" uid="uid://do021trm5y5bu" path="res://assets/ui/common/button_primary_gold_pressed.png" id="9_primary_pressed"]
+[ext_resource type="Texture2D" uid="uid://bwig1lkguorrb" path="res://assets/ui/common/button_disabled_dark.png" id="10_disabled"]
+[ext_resource type="Texture2D" uid="uid://cf3lfw7lydd3q" path="res://assets/generated/ui/dialogue/panel_gold_9.png" id="10_iefmu"]
+[ext_resource type="FontFile" uid="uid://bfxtkx81kxl1d" path="res://assets/fonts/AlibabaPuHuiTi-3-105-Heavy.ttf" id="11_modal_font"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_modal"]
+content_margin_left = 60.0
+content_margin_top = 70.0
+content_margin_right = 60.0
+content_margin_bottom = 0.0
+texture = ExtResource("2_iefmu")
+texture_margin_left = 50.0
+texture_margin_top = 50.0
+texture_margin_right = 50.0
+texture_margin_bottom = 50.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_secondary_normal"]
+content_margin_left = 24.0
+content_margin_top = 12.0
+content_margin_right = 24.0
+content_margin_bottom = 12.0
+texture = ExtResource("4_secondary_normal")
+texture_margin_left = 24.0
+texture_margin_top = 24.0
+texture_margin_right = 24.0
+texture_margin_bottom = 24.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_secondary_pressed"]
+content_margin_left = 24.0
+content_margin_top = 12.0
+content_margin_right = 24.0
+content_margin_bottom = 12.0
+texture = ExtResource("6_secondary_pressed")
+texture_margin_left = 24.0
+texture_margin_top = 24.0
+texture_margin_right = 24.0
+texture_margin_bottom = 24.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_secondary_hover"]
+content_margin_left = 24.0
+content_margin_top = 12.0
+content_margin_right = 24.0
+content_margin_bottom = 12.0
+texture = ExtResource("5_secondary_hover")
+texture_margin_left = 24.0
+texture_margin_top = 24.0
+texture_margin_right = 24.0
+texture_margin_bottom = 24.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_disabled"]
+content_margin_left = 24.0
+content_margin_top = 12.0
+content_margin_right = 24.0
+content_margin_bottom = 12.0
+texture = ExtResource("10_disabled")
+texture_margin_left = 24.0
+texture_margin_top = 24.0
+texture_margin_right = 24.0
+texture_margin_bottom = 24.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_primary_normal"]
+content_margin_left = 24.0
+content_margin_top = 12.0
+content_margin_right = 24.0
+content_margin_bottom = 12.0
+texture = ExtResource("7_primary_normal")
+texture_margin_left = 24.0
+texture_margin_top = 24.0
+texture_margin_right = 24.0
+texture_margin_bottom = 24.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_primary_pressed"]
+content_margin_left = 24.0
+content_margin_top = 12.0
+content_margin_right = 24.0
+content_margin_bottom = 12.0
+texture = ExtResource("9_primary_pressed")
+texture_margin_left = 24.0
+texture_margin_top = 24.0
+texture_margin_right = 24.0
+texture_margin_bottom = 24.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_primary_hover"]
+content_margin_left = 24.0
+content_margin_top = 12.0
+content_margin_right = 24.0
+content_margin_bottom = 12.0
+texture = ExtResource("8_primary_hover")
+texture_margin_left = 24.0
+texture_margin_top = 24.0
+texture_margin_right = 24.0
+texture_margin_bottom = 24.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_title_nameplate"]
+content_margin_left = 35.0
+content_margin_top = 0.0
+content_margin_right = 23.0
+content_margin_bottom = 0.0
+texture = ExtResource("10_iefmu")
+texture_margin_left = 40.0
+texture_margin_top = 10.0
+texture_margin_right = 40.0
+texture_margin_bottom = 10.0
+
+[node name="CommonModal" type="Control" unique_id=67415741]
+z_index = 4000
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1280.0
+offset_bottom = 720.0
+mouse_filter = 2
+script = ExtResource("1_common_modal")
+
+[node name="Backdrop" type="Button" parent="." unique_id=713192883]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+flat = true
+
+[node name="Dim" type="ColorRect" parent="Backdrop" unique_id=183264086]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.02, 0.008, 0.01, 0.7)
+
+[node name="DialogueModalPanel" type="PanelContainer" parent="." unique_id=790278837]
+custom_minimum_size = Vector2(880, 430)
+layout_mode = 0
+offset_left = 200.0
+offset_top = 145.0
+offset_right = 1080.0
+offset_bottom = 575.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_modal")
+
+[node name="Stack" type="VBoxContainer" parent="DialogueModalPanel" unique_id=83689846]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 14
+
+[node name="ContentScroll" type="ScrollContainer" parent="DialogueModalPanel/Stack" unique_id=740399500]
+custom_minimum_size = Vector2(0, 252)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Content" type="VBoxContainer" parent="DialogueModalPanel/Stack/ContentScroll" unique_id=957382455]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="EditorBodyPreview" type="Label" parent="DialogueModalPanel/Stack/ContentScroll/Content" unique_id=133427011]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0)
+theme_override_constants/outline_size = 0
+theme_override_fonts/font = ExtResource("11_modal_font")
+theme_override_font_sizes/font_size = 23
+text = "这里是通用内容区。运行时可以放入文字、图标、法器选项列表或其他 Control。"
+autowrap_mode = 3
+
+[node name="Buttons" type="HBoxContainer" parent="DialogueModalPanel/Stack" unique_id=1816839023]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 18
+alignment = 2
+
+[node name="CancelButton" type="Button" parent="DialogueModalPanel/Stack/Buttons" unique_id=1121733804]
+custom_minimum_size = Vector2(192, 58)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_disabled_color = Color(1, 1, 1, 0.55)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0)
+theme_override_constants/outline_size = 0
+theme_override_fonts/font = ExtResource("11_modal_font")
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxTexture_secondary_normal")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_secondary_pressed")
+theme_override_styles/hover = SubResource("StyleBoxTexture_secondary_hover")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_disabled")
+text = "取消"
+clip_text = true
+
+[node name="ConfirmButton" type="Button" parent="DialogueModalPanel/Stack/Buttons" unique_id=507162901]
+custom_minimum_size = Vector2(192, 58)
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_disabled_color = Color(0, 0, 0, 0.55)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0)
+theme_override_constants/outline_size = 0
+theme_override_fonts/font = ExtResource("11_modal_font")
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxTexture_primary_normal")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_primary_pressed")
+theme_override_styles/hover = SubResource("StyleBoxTexture_primary_hover")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_disabled")
+text = "确定"
+clip_text = true
+
+[node name="TitleWrap" type="Control" parent="." unique_id=297978978]
+custom_minimum_size = Vector2(0, 66)
+anchors_preset = 0
+offset_left = 281.0
+offset_top = 125.0
+offset_right = 1093.0
+offset_bottom = 452.0
+
+[node name="TitleNameplate" type="PanelContainer" parent="TitleWrap" unique_id=734019995]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.35700002
+anchor_bottom = 0.21100001
+offset_left = -30.0
+offset_top = -4.0
+offset_right = 80.11597
+offset_bottom = 0.002998352
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_title_nameplate")
+
+[node name="TitleLabel" type="Label" parent="TitleWrap/TitleNameplate" unique_id=1904462047]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0)
+theme_override_constants/outline_size = 0
+theme_override_fonts/font = ExtResource("11_modal_font")
+theme_override_font_sizes/font_size = 30
+text = "通用弹窗标题"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true

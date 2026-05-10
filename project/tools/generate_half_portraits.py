@@ -7,15 +7,15 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "assets" / "generated"
-PORTRAITS = [
-    "player_portrait.png",
-    "npc_fox_portrait.png",
-    "npc_crow_portrait.png",
-    "npc_deer_portrait.png",
-    "npc_snake_portrait.png",
-    "npc_wolf_portrait.png",
-    "opponent_portrait.png",
-]
+EXCLUDED_SUFFIXES = ("_portrait_half.png",)
+
+
+def portrait_sources() -> list[Path]:
+    return sorted(
+        path
+        for path in ASSETS.glob("*_portrait.png")
+        if path.is_file() and not path.name.endswith(EXCLUDED_SUFFIXES)
+    )
 
 
 def alpha_bbox(img: Image.Image) -> tuple[int, int, int, int]:
@@ -44,10 +44,8 @@ def make_half(src: Path) -> None:
 
 
 def main() -> None:
-    for name in PORTRAITS:
-        src = ASSETS / name
-        if src.exists():
-            make_half(src)
+    for src in portrait_sources():
+        make_half(src)
     print("Generated half-body portraits.")
 
 

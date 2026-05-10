@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#18121c"/>
+  <rect width="1280" height="720" fill="#050306" opacity="0.58"/>
+  <polygon points="-24,18 396,18 372,108 -24,108" fill="#7a2e35" stroke="#050403" stroke-width="5"/>
+  <text x="36" y="72" fill="#f6e9cb" font-size="35" font-family="sans-serif" font-weight="700">设置</text>
+  <rect x="1192" y="28" width="58" height="58" fill="#241014" stroke="#d99018" stroke-width="4"/>
+  <text x="1211" y="68" fill="#f6e9cb" font-size="30" font-family="sans-serif">X</text>
+  <rect x="154" y="124" width="972" height="524" rx="4" fill="#111018" opacity="0.96" stroke="#d99018" stroke-width="4"/>
+  <rect x="196" y="172" width="888" height="126" rx="4" fill="#2c2411" stroke="#050403" stroke-width="4"/>
+  <text x="228" y="216" fill="#ffd77a" font-size="24" font-family="sans-serif" font-weight="700">游戏控制</text>
+  <rect x="716" y="202" width="148" height="52" rx="4" fill="#d99018" stroke="#050403" stroke-width="3"/>
+  <text x="764" y="236" fill="#150a02" font-size="20" font-family="sans-serif" font-weight="700">开始</text>
+  <rect x="886" y="202" width="148" height="52" rx="4" fill="#7a2e35" stroke="#050403" stroke-width="3"/>
+  <text x="934" y="236" fill="#f6e9cb" font-size="20" font-family="sans-serif" font-weight="700">重置</text>
+  <rect x="196" y="330" width="420" height="224" rx="4" fill="#0e6a66" stroke="#050403" stroke-width="4"/>
+  <text x="228" y="374" fill="#f6e9cb" font-size="24" font-family="sans-serif" font-weight="700">自动行为</text>
+  <rect x="228" y="410" width="340" height="48" fill="#071416" stroke="#d99018" stroke-width="2"/>
+  <text x="254" y="442" fill="#f6e9cb" font-size="19" font-family="sans-serif">自动行动开关</text>
+  <rect x="228" y="482" width="340" height="48" fill="#071416" stroke="#d99018" stroke-width="2"/>
+  <text x="254" y="514" fill="#f6e9cb" font-size="19" font-family="sans-serif">自动成长开关</text>
+  <rect x="660" y="330" width="424" height="224" rx="4" fill="#4a315f" stroke="#050403" stroke-width="4"/>
+  <text x="692" y="374" fill="#f6e9cb" font-size="24" font-family="sans-serif" font-weight="700">界面 / 对话</text>
+  <text x="692" y="426" fill="#f6e9cb" font-size="19" font-family="sans-serif">显示当前设置状态和说明</text>
+  <text x="692" y="470" fill="#ffd77a" font-size="19" font-family="sans-serif">暂不新增尚未存在的系统选项</text>
+  <rect x="196" y="584" width="888" height="30" fill="#0b070c" opacity="0.86"/>
+  <text x="228" y="606" fill="#ffd77a" font-size="16" font-family="sans-serif">底部状态：设置会即时生效</text>
+</svg>

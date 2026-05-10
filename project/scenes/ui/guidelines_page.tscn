@@ -1,0 +1,580 @@
+[gd_scene load_steps=37 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/guidelines_page.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/bg_round_start_city.png" id="2_bg"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/shop_texture_scratches_dark.png" id="3_scratches"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/title_banner_red.png" id="4_title_banner"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/bag_close_normal.png" id="5_close_normal"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/bag_close_hover.png" id="6_close_hover"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/bag_close_pressed.png" id="7_close_pressed"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/button_primary_gold_normal.png" id="8_primary_normal"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/button_primary_gold_hover.png" id="9_primary_hover"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/button_primary_gold_pressed.png" id="10_primary_pressed"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/button_secondary_blank_normal.png" id="11_secondary_normal"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/button_secondary_blank_hover.png" id="12_secondary_hover"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/button_secondary_blank_pressed.png" id="13_secondary_pressed"]
+[ext_resource type="Texture2D" path="res://assets/ui/guidelines/guideline_tab_identity.png" id="14_tab_identity"]
+[ext_resource type="Texture2D" path="res://assets/ui/guidelines/guideline_tab_behavior.png" id="15_tab_behavior"]
+[ext_resource type="Texture2D" path="res://assets/ui/guidelines/guideline_tab_growth.png" id="16_tab_growth"]
+[ext_resource type="FontFile" path="res://assets/fonts/AlibabaPuHuiTi-3-105-Heavy.ttf" id="17_title_font"]
+[ext_resource type="Script" path="res://scripts/ui/standard_button.gd" id="18_standard_button"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_main_panel"]
+content_margin_left = 18.0
+content_margin_top = 14.0
+content_margin_right = 18.0
+content_margin_bottom = 14.0
+bg_color = Color(0.035, 0.03, 0.036, 0.96)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.88, 0.52, 0.18, 0.92)
+corner_radius_top_left = 4
+corner_radius_bottom_right = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_identity_tab"]
+content_margin_left = 18.0
+content_margin_top = 12.0
+content_margin_right = 18.0
+content_margin_bottom = 12.0
+bg_color = Color(0.1044, 0.3016, 0.3016, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.262, 0.592, 0.592, 1)
+corner_radius_top_left = 4
+corner_radius_bottom_right = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_behavior_tab"]
+content_margin_left = 18.0
+content_margin_top = 12.0
+content_margin_right = 18.0
+content_margin_bottom = 12.0
+bg_color = Color(0.2784, 0.058, 0.1044, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.532, 0.19, 0.262, 1)
+corner_radius_top_left = 4
+corner_radius_bottom_right = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_growth_tab"]
+content_margin_left = 18.0
+content_margin_top = 12.0
+content_margin_right = 18.0
+content_margin_bottom = 12.0
+bg_color = Color(0.1972, 0.116, 0.3364, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.406, 0.28, 0.622, 1)
+corner_radius_top_left = 4
+corner_radius_bottom_right = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_direct_chip"]
+content_margin_left = 14.0
+content_margin_top = 8.0
+content_margin_right = 14.0
+content_margin_bottom = 8.0
+bg_color = Color(0.3854, 0.0656, 0.082, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.576, 0.264, 0.28, 1)
+corner_radius_top_left = 4
+corner_radius_bottom_right = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_append_chip"]
+content_margin_left = 14.0
+content_margin_top = 8.0
+content_margin_right = 14.0
+content_margin_bottom = 8.0
+bg_color = Color(0, 0.2952, 0.3116, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2, 0.488, 0.504, 1)
+corner_radius_top_left = 4
+corner_radius_bottom_right = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_edit"]
+content_margin_left = 18.0
+content_margin_top = 14.0
+content_margin_right = 18.0
+content_margin_bottom = 14.0
+bg_color = Color(0.02, 0.018, 0.02, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.78, 0.47, 0.16, 0.7)
+corner_radius_top_left = 4
+corner_radius_bottom_right = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_append_edit"]
+content_margin_left = 18.0
+content_margin_top = 12.0
+content_margin_right = 18.0
+content_margin_bottom = 12.0
+bg_color = Color(0.018, 0.03, 0.03, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.12, 0.72, 0.72, 0.58)
+corner_radius_top_left = 4
+corner_radius_bottom_right = 4
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_secondary_normal"]
+content_margin_left = 24.0
+content_margin_top = 12.0
+content_margin_right = 24.0
+content_margin_bottom = 12.0
+texture = ExtResource("11_secondary_normal")
+texture_margin_left = 24.0
+texture_margin_top = 24.0
+texture_margin_right = 24.0
+texture_margin_bottom = 24.0
+axis_stretch_horizontal = 0
+axis_stretch_vertical = 0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_secondary_hover"]
+content_margin_left = 24.0
+content_margin_top = 12.0
+content_margin_right = 24.0
+content_margin_bottom = 12.0
+texture = ExtResource("12_secondary_hover")
+texture_margin_left = 24.0
+texture_margin_top = 24.0
+texture_margin_right = 24.0
+texture_margin_bottom = 24.0
+axis_stretch_horizontal = 0
+axis_stretch_vertical = 0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_secondary_pressed"]
+content_margin_left = 24.0
+content_margin_top = 12.0
+content_margin_right = 24.0
+content_margin_bottom = 12.0
+texture = ExtResource("13_secondary_pressed")
+texture_margin_left = 24.0
+texture_margin_top = 24.0
+texture_margin_right = 24.0
+texture_margin_bottom = 24.0
+axis_stretch_horizontal = 0
+axis_stretch_vertical = 0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_primary_normal"]
+content_margin_left = 24.0
+content_margin_top = 12.0
+content_margin_right = 24.0
+content_margin_bottom = 12.0
+texture = ExtResource("8_primary_normal")
+texture_margin_left = 24.0
+texture_margin_top = 24.0
+texture_margin_right = 24.0
+texture_margin_bottom = 24.0
+axis_stretch_horizontal = 0
+axis_stretch_vertical = 0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_primary_hover"]
+content_margin_left = 24.0
+content_margin_top = 12.0
+content_margin_right = 24.0
+content_margin_bottom = 12.0
+texture = ExtResource("9_primary_hover")
+texture_margin_left = 24.0
+texture_margin_top = 24.0
+texture_margin_right = 24.0
+texture_margin_bottom = 24.0
+axis_stretch_horizontal = 0
+axis_stretch_vertical = 0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_primary_pressed"]
+content_margin_left = 24.0
+content_margin_top = 12.0
+content_margin_right = 24.0
+content_margin_bottom = 12.0
+texture = ExtResource("10_primary_pressed")
+texture_margin_left = 24.0
+texture_margin_top = 24.0
+texture_margin_right = 24.0
+texture_margin_bottom = 24.0
+axis_stretch_horizontal = 0
+axis_stretch_vertical = 0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_tab_identity"]
+content_margin_left = 64.0
+content_margin_top = 12.0
+content_margin_right = 18.0
+content_margin_bottom = 12.0
+texture = ExtResource("14_tab_identity")
+axis_stretch_horizontal = 0
+axis_stretch_vertical = 0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_tab_behavior"]
+content_margin_left = 64.0
+content_margin_top = 12.0
+content_margin_right = 18.0
+content_margin_bottom = 12.0
+texture = ExtResource("15_tab_behavior")
+axis_stretch_horizontal = 0
+axis_stretch_vertical = 0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_tab_growth"]
+content_margin_left = 64.0
+content_margin_top = 12.0
+content_margin_right = 18.0
+content_margin_bottom = 12.0
+texture = ExtResource("16_tab_growth")
+axis_stretch_horizontal = 0
+axis_stretch_vertical = 0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_decision"]
+content_margin_left = 22.0
+content_margin_top = 18.0
+content_margin_right = 22.0
+content_margin_bottom = 18.0
+bg_color = Color(0.028, 0.022, 0.03, 0.985)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.65, 0.2, 0.95)
+corner_radius_top_left = 4
+corner_radius_bottom_right = 4
+
+[node name="GuidelinesPanel" type="Control"]
+z_index = 1000
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+script = ExtResource("1_script")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Veil" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.015, 0.01, 0.012, 0.78)
+
+[node name="TextureScratches" type="TextureRect" parent="."]
+modulate = Color(1, 1, 1, 0.18)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("3_scratches")
+expand_mode = 1
+stretch_mode = 1
+
+[node name="TitleBanner" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = -23.0
+offset_top = 17.333
+offset_right = 396.667
+offset_bottom = 107.333
+mouse_filter = 2
+texture = ExtResource("4_title_banner")
+expand_mode = 1
+
+[node name="TitleLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 26.0
+offset_right = 236.0
+offset_bottom = 80.666
+theme_override_colors/font_color = Color(0.964706, 0.913725, 0.796078, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("17_title_font")
+theme_override_font_sizes/font_size = 35
+text = "准则"
+vertical_alignment = 1
+
+[node name="CloseButton" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = 1192.0
+offset_top = 28.0
+offset_right = 1249.333
+offset_bottom = 85.333
+tooltip_text = "关闭"
+focus_mode = 0
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("5_close_normal")
+texture_pressed = ExtResource("7_close_pressed")
+texture_hover = ExtResource("6_close_hover")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="MainPanel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchor_left = 0.07
+anchor_top = 0.165
+anchor_right = 0.925
+anchor_bottom = 0.915
+theme_override_styles/panel = SubResource("StyleBoxFlat_main_panel")
+
+[node name="Content" type="VBoxContainer" parent="MainPanel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TabRow" type="GridContainer" parent="MainPanel/Content"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 8
+columns = 3
+
+[node name="IdentityTab" type="Button" parent="MainPanel/Content/TabRow"]
+custom_minimum_size = Vector2(346, 64)
+layout_mode = 2
+size_flags_horizontal = 4
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 0.92, 0.62, 1)
+theme_override_font_sizes/font_size = 21
+theme_override_styles/normal = SubResource("StyleBoxTexture_tab_identity")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_tab_identity")
+theme_override_styles/hover = SubResource("StyleBoxTexture_tab_identity")
+text = "对外身份"
+
+script = ExtResource("18_standard_button")
+button_style = "secondary"
+standard_font_size = 21
+
+[node name="BehaviorTab" type="Button" parent="MainPanel/Content/TabRow"]
+custom_minimum_size = Vector2(346, 64)
+layout_mode = 2
+size_flags_horizontal = 4
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 0.92, 0.62, 1)
+theme_override_font_sizes/font_size = 21
+theme_override_styles/normal = SubResource("StyleBoxTexture_tab_behavior")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_tab_behavior")
+theme_override_styles/hover = SubResource("StyleBoxTexture_tab_behavior")
+text = "对话行动"
+
+script = ExtResource("18_standard_button")
+button_style = "secondary"
+standard_font_size = 21
+
+[node name="GrowthTab" type="Button" parent="MainPanel/Content/TabRow"]
+custom_minimum_size = Vector2(346, 64)
+layout_mode = 2
+size_flags_horizontal = 4
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 0.92, 0.62, 1)
+theme_override_font_sizes/font_size = 21
+theme_override_styles/normal = SubResource("StyleBoxTexture_tab_growth")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_tab_growth")
+theme_override_styles/hover = SubResource("StyleBoxTexture_tab_growth")
+text = "成长逻辑"
+
+script = ExtResource("18_standard_button")
+button_style = "secondary"
+standard_font_size = 21
+
+[node name="GuidelineEdit" type="TextEdit" parent="MainPanel/Content"]
+custom_minimum_size = Vector2(0, 250)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(1, 0.91, 0.74, 1)
+theme_override_colors/font_placeholder_color = Color(0.62, 0.48, 0.35, 1)
+theme_override_font_sizes/font_size = 17
+theme_override_styles/normal = SubResource("StyleBoxFlat_edit")
+placeholder_text = "编辑当前准则..."
+wrap_mode = 1
+
+[node name="AppendRow" type="HBoxContainer" parent="MainPanel/Content"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="AppendEdit" type="TextEdit" parent="MainPanel/Content/AppendRow"]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.94, 0.98, 0.92, 1)
+theme_override_colors/font_placeholder_color = Color(0.52, 0.68, 0.64, 1)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_append_edit")
+placeholder_text = "输入要追加的新规则..."
+wrap_mode = 1
+
+[node name="MergeButton" type="Button" parent="MainPanel/Content/AppendRow"]
+custom_minimum_size = Vector2(144, 40)
+layout_mode = 2
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.45)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxTexture_secondary_normal")
+theme_override_styles/hover = SubResource("StyleBoxTexture_secondary_hover")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_secondary_pressed")
+text = "融合准则"
+
+script = ExtResource("18_standard_button")
+button_style = "secondary"
+standard_font_size = 18
+
+[node name="Footer" type="GridContainer" parent="MainPanel/Content"]
+layout_mode = 2
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 8
+columns = 5
+
+[node name="AutoActionCheck" type="CheckBox" parent="MainPanel/Content/Footer"]
+custom_minimum_size = Vector2(130, 44)
+layout_mode = 2
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 0.84, 0.44, 1)
+theme_override_font_sizes/font_size = 18
+text = "自己行动"
+
+[node name="AutoGrowthCheck" type="CheckBox" parent="MainPanel/Content/Footer"]
+custom_minimum_size = Vector2(130, 44)
+layout_mode = 2
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 0.84, 0.44, 1)
+theme_override_font_sizes/font_size = 18
+text = "自己成长"
+
+[node name="StatusLabel" type="Label" parent="MainPanel/Content/Footer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.85, 0.5, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 17
+text = "正在编辑：对外身份"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ResetButton" type="Button" parent="MainPanel/Content/Footer"]
+custom_minimum_size = Vector2(144, 40)
+layout_mode = 2
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.45)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxTexture_secondary_normal")
+theme_override_styles/hover = SubResource("StyleBoxTexture_secondary_hover")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_secondary_pressed")
+text = "重置当前"
+
+script = ExtResource("18_standard_button")
+button_style = "secondary"
+standard_font_size = 18
+
+[node name="SaveButton" type="Button" parent="MainPanel/Content/Footer"]
+custom_minimum_size = Vector2(144, 40)
+layout_mode = 2
+focus_mode = 0
+theme_override_colors/font_color = Color(0.08, 0.035, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.45)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxTexture_primary_normal")
+theme_override_styles/hover = SubResource("StyleBoxTexture_primary_hover")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_primary_pressed")
+text = "保存"
+
+script = ExtResource("18_standard_button")
+standard_font_size = 18
+
+[node name="DecisionPanel" type="PanelContainer" parent="."]
+visible = false
+z_index = 100
+layout_mode = 1
+anchor_left = 0.225
+anchor_top = 0.245
+anchor_right = 0.775
+anchor_bottom = 0.675
+mouse_filter = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_decision")
+
+[node name="DecisionContent" type="VBoxContainer" parent="DecisionPanel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="DecisionTitle" type="Label" parent="DecisionPanel/DecisionContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0.38, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 28
+text = "角色决策"
+horizontal_alignment = 1
+
+[node name="DecisionBody" type="Label" parent="DecisionPanel/DecisionContent"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.94, 0.98, 0.9, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 18
+autowrap_mode = 3
+
+[node name="DecisionCountdown" type="Label" parent="DecisionPanel/DecisionContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.88, 0.52, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 20
+text = "5 秒后执行"
+horizontal_alignment = 1
+
+[node name="DecisionProgress" type="ProgressBar" parent="DecisionPanel/DecisionContent"]
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+max_value = 5.0
+value = 5.0
+show_percentage = false
+
+[node name="DecisionCancelButton" type="Button" parent="DecisionPanel/DecisionContent"]
+custom_minimum_size = Vector2(180, 44)
+layout_mode = 2
+focus_mode = 0
+script = ExtResource("18_standard_button")
+button_style = "secondary"
+standard_font_size = 18
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.45)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxTexture_secondary_normal")
+theme_override_styles/hover = SubResource("StyleBoxTexture_secondary_hover")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_secondary_pressed")
+text = "取消"

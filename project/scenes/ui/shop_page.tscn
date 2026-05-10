@@ -1,16 +1,32 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://dai0m0f1y7mfc"]
 
-[ext_resource type="PackedScene" path="res://scenes/ui/shop_item_card.tscn" id="1_item"]
+[ext_resource type="Texture2D" uid="uid://dy3pmfkytwl1y" path="res://assets/generated/bg_moon_market.png" id="1_bg"]
+[ext_resource type="PackedScene" uid="uid://fhme6sms88pw" path="res://scenes/ui/shop_item_card.tscn" id="2_item"]
+[ext_resource type="Texture2D" uid="uid://wkrok03laijs" path="res://assets/ui/common/title_banner_red.png" id="3_title"]
+[ext_resource type="PackedScene" uid="uid://cj66isaqy0mgh" path="res://scenes/ui/bag_resource_bar.tscn" id="4_resource_bar"]
+[ext_resource type="Texture2D" uid="uid://x2t7p2e58gtc" path="res://assets/ui/common/bag_close_normal.png" id="6_close_normal"]
+[ext_resource type="Texture2D" uid="uid://bxxe7ugcm6h4n" path="res://assets/ui/common/bag_close_hover.png" id="7_close_hover"]
+[ext_resource type="Texture2D" uid="uid://dgnmp72mo6xm0" path="res://assets/ui/common/bag_close_pressed.png" id="8_close_pressed"]
+[ext_resource type="PackedScene" path="res://scenes/ui/right_utility_buttons.tscn" id="9_utility"]
+[ext_resource type="PackedScene" path="res://scenes/ui/player_info_card.tscn" id="11_player"]
+[ext_resource type="Texture2D" uid="uid://cycdufmhttpr4" path="res://assets/ui/common/common_background_panel_dark_teal.png" id="11_ux3hi"]
+[ext_resource type="PackedScene" uid="uid://b2hflfnj0d6xq" path="res://scenes/ui/requirement_panel.tscn" id="12_requirement"]
+[ext_resource type="PackedScene" path="res://scenes/ui/common_title_bar.tscn" id="12_x7fek"]
+[ext_resource type="Texture2D" uid="uid://boxigemetrnwv" path="res://assets/ui/common/common_title_bar_dark_teal.png" id="13_85spc"]
+[ext_resource type="Script" uid="uid://bp7thsl2ofpbf" path="res://scripts/ui/standard_button.gd" id="13_standard_button"]
+[ext_resource type="PackedScene" path="res://scenes/ui/common_background_panel.tscn" id="14_panel"]
+[ext_resource type="Texture2D" uid="uid://blp74ww0pik6f" path="res://assets/ui/common/shop_texture_scratches_dark.png" id="15_scratches"]
+[ext_resource type="FontFile" uid="uid://bfxtkx81kxl1d" path="res://assets/fonts/AlibabaPuHuiTi-3-105-Heavy.ttf" id="17_title_font"]
 
-[node name="ShopPage" type="Control"]
+[node name="ShopPage" type="Control" unique_id=1599390718]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 0
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=1636648667]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -18,10 +34,11 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+texture = ExtResource("1_bg")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="Veil" type="ColorRect" parent="."]
+[node name="Veil" type="ColorRect" parent="." unique_id=69453631]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -29,143 +46,135 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0, 0, 0, 0.56)
+color = Color(0.015, 0.012, 0.018, 0.64)
 
-[node name="TitleBanner" type="TextureRect" parent="."]
+[node name="Scratches" type="TextureRect" parent="." unique_id=1138594741]
+modulate = Color(1, 1, 1, 0.18)
 layout_mode = 1
-anchor_top = 0.055
-anchor_right = 0.475
-anchor_bottom = 0.205
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
+texture = ExtResource("15_scratches")
 expand_mode = 1
-stretch_mode = 1
+stretch_mode = 2
 
-[node name="TitleLabel" type="Label" parent="."]
+[node name="TitleBanner" type="TextureRect" parent="." unique_id=691567667]
 layout_mode = 1
-anchor_left = 0.04
-anchor_top = 0.083
-anchor_right = 0.34
-anchor_bottom = 0.163
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+anchors_preset = -1
+anchor_left = -0.018
+anchor_top = 0.024
+anchor_right = 0.31
+anchor_bottom = 0.149
+mouse_filter = 2
+texture = ExtResource("3_title")
+expand_mode = 1
+
+[node name="TitleLabel" type="Label" parent="." unique_id=2072931320]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.028
+anchor_top = 0.036
+anchor_right = 0.255
+anchor_bottom = 0.112
+theme_override_colors/font_color = Color(0.964706, 0.913725, 0.796078, 1)
 theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
-theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 48
-text = "月市商店"
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("17_title_font")
+theme_override_font_sizes/font_size = 35
+text = "夜市法器铺"
 vertical_alignment = 1
+clip_text = true
 
-[node name="StatusBar" type="PanelContainer" parent="."]
+[node name="BagResourceBar" parent="." unique_id=1583432930 instance=ExtResource("4_resource_bar")]
+layout_mode = 0
+offset_left = 608.4
+offset_top = 18.72
+offset_right = 1158.4
+offset_bottom = 118.72
+
+[node name="CloseButton" type="TextureButton" parent="." unique_id=1205230206]
 layout_mode = 1
-anchor_left = 0.695
-anchor_top = 0.07
-anchor_right = 0.96
-anchor_bottom = 0.13
+anchors_preset = -1
+anchor_left = 0.925
+anchor_top = 0.039
+anchor_right = 0.974
+anchor_bottom = 0.124
+tooltip_text = "关闭"
+focus_mode = 0
+texture_normal = ExtResource("6_close_normal")
+texture_pressed = ExtResource("8_close_pressed")
+texture_hover = ExtResource("7_close_hover")
+ignore_texture_size = true
+stretch_mode = 0
 
-[node name="StatusRow" type="HBoxContainer" parent="StatusBar"]
-layout_mode = 2
-theme_override_constants/separation = 10
+[node name="PlayerCard" parent="." unique_id=674474685 instance=ExtResource("11_player")]
+offset_left = 38.4
+offset_top = 118.8
+offset_right = 364.8
+offset_bottom = 676.8
 
-[node name="EnergyLabel" type="Label" parent="StatusBar/StatusRow"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 19
-text = "◇ 能量 0"
-vertical_alignment = 1
-
-[node name="InventoryLabel" type="Label" parent="StatusBar/StatusRow"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 19
-text = "袋 背包 0"
-vertical_alignment = 1
-
-[node name="PlayerCard" type="PanelContainer" parent="."]
+[node name="GoodsPanel" type="Control" parent="." unique_id=290664201]
+custom_minimum_size = Vector2(450, 600)
 layout_mode = 1
-anchor_left = 0.03
-anchor_top = 0.22
-anchor_right = 0.25
-anchor_bottom = 0.94
+anchors_preset = 0
+offset_left = 377.59998
+offset_top = 111.6
+offset_right = 827.6
+offset_bottom = 711.6
 
-[node name="PlayerContent" type="VBoxContainer" parent="PlayerCard"]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="Portrait" type="TextureRect" parent="PlayerCard/PlayerContent"]
-custom_minimum_size = Vector2(0, 235)
-layout_mode = 2
-mouse_filter = 2
-expand_mode = 1
-stretch_mode = 6
-
-[node name="NamePlate" type="Label" parent="PlayerCard/PlayerContent"]
-custom_minimum_size = Vector2(0, 46)
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "玩家角色"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Stats" type="VBoxContainer" parent="PlayerCard/PlayerContent"]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="AscensionRequirement" type="PanelContainer" parent="."]
+[node name="GoodsPanelBack" parent="GoodsPanel" unique_id=366975943 instance=ExtResource("14_panel")]
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 1
-anchor_left = 0.295
-anchor_top = 0.22
-anchor_right = 0.53
-anchor_bottom = 0.395
+offset_top = 30.0
+offset_right = 420.0
+offset_bottom = 590.0
+texture = ExtResource("11_ux3hi")
+patch_margin_left = 70
+patch_margin_top = 70
+patch_margin_right = 70
+patch_margin_bottom = 70
+frame_color = "dark_teal"
+apply_default_size = false
 
-[node name="Box" type="VBoxContainer" parent="AscensionRequirement"]
-layout_mode = 2
-theme_override_constants/separation = 8
+[node name="CommonTitleBar" parent="GoodsPanel" unique_id=1043119028 instance=ExtResource("12_x7fek")]
+custom_minimum_size = Vector2(0, 0)
+layout_mode = 0
+offset_left = 30.0
+offset_top = 10.0
+offset_right = 280.0
+offset_bottom = 80.0
+texture = ExtResource("13_85spc")
+patch_margin_left = 100
+patch_margin_right = 100
+frame_color = "dark_teal"
+apply_default_size = false
 
-[node name="Title" type="Label" parent="AscensionRequirement/Box"]
-custom_minimum_size = Vector2(0, 36)
-layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "升华需求"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Slots" type="HBoxContainer" parent="AscensionRequirement/Box"]
-layout_mode = 2
-theme_override_constants/separation = 5
-
-[node name="DominionRequirement" type="PanelContainer" parent="."]
+[node name="ShopItemsTitle" type="Label" parent="GoodsPanel/CommonTitleBar" unique_id=2112541967]
 layout_mode = 1
-anchor_left = 0.565
-anchor_top = 0.22
-anchor_right = 0.8
-anchor_bottom = 0.395
-
-[node name="Box" type="VBoxContainer" parent="DominionRequirement"]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="Title" type="Label" parent="DominionRequirement/Box"]
-custom_minimum_size = Vector2(0, 36)
-layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "统治需求"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Slots" type="HBoxContainer" parent="DominionRequirement/Box"]
-layout_mode = 2
-theme_override_constants/separation = 5
-
-[node name="ShopItemsTitle" type="Label" parent="."]
-layout_mode = 1
-anchor_left = 0.405
-anchor_top = 0.415
-anchor_right = 0.695
-anchor_bottom = 0.473
-theme_override_font_sizes/font_size = 26
+anchors_preset = -1
+anchor_left = 0.345
+anchor_top = 0.18
+anchor_right = 0.575
+anchor_bottom = 0.252
+offset_left = -86.25
+offset_top = 2.3999996
+offset_right = 106.25
+offset_bottom = 34.36
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_colors/font_color = Color(0.964706, 0.913725, 0.796078, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("17_title_font")
+theme_override_font_sizes/font_size = 23
 text = "可购买法器"
 horizontal_alignment = 1
 vertical_alignment = 1
+clip_text = true
 
-[node name="ShopItemSlots" type="Control" parent="."]
+[node name="ShopItemSlots" type="Control" parent="GoodsPanel" unique_id=735257922]
+custom_minimum_size = Vector2(450, 600)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -173,55 +182,47 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ShopItem1" parent="ShopItemSlots" instance=ExtResource("1_item")]
+[node name="ShopItem1" parent="GoodsPanel/ShopItemSlots" unique_id=1962020565 instance=ExtResource("2_item")]
+layout_mode = 0
+offset_left = 25.600006
+offset_top = 115.2
+offset_right = 140.8
+offset_bottom = 457.2
+
+[node name="ShopItem2" parent="GoodsPanel/ShopItemSlots" unique_id=1688062661 instance=ExtResource("2_item")]
+layout_mode = 0
+offset_left = 147.20001
+offset_top = 115.2
+offset_right = 262.40002
+offset_bottom = 457.2
+
+[node name="ShopItem3" parent="GoodsPanel/ShopItemSlots" unique_id=1946812115 instance=ExtResource("2_item")]
+layout_mode = 0
+offset_left = 268.80002
+offset_top = 115.2
+offset_right = 384.0
+offset_bottom = 457.2
+
+[node name="RequirementPanel" parent="." unique_id=1029904809 instance=ExtResource("12_requirement")]
+layout_mode = 0
+offset_left = 784.0
+offset_top = 118.8
+offset_right = 1184.0
+offset_bottom = 700.8
+
+[node name="ContinueButton" type="Button" parent="." unique_id=1474037784]
 layout_mode = 1
-anchor_left = 0.3
-anchor_top = 0.5
-anchor_right = 0.45
-anchor_bottom = 0.905
-
-[node name="ShopItem2" parent="ShopItemSlots" instance=ExtResource("1_item")]
-layout_mode = 1
-anchor_left = 0.468
-anchor_top = 0.5
-anchor_right = 0.618
-anchor_bottom = 0.905
-
-[node name="ShopItem3" parent="ShopItemSlots" instance=ExtResource("1_item")]
-layout_mode = 1
-anchor_left = 0.636
-anchor_top = 0.5
-anchor_right = 0.786
-anchor_bottom = 0.905
-
-[node name="BackpackPanel" type="PanelContainer" parent="."]
-layout_mode = 1
-anchor_left = 0.805
-anchor_top = 0.24
-anchor_right = 0.97
-anchor_bottom = 0.905
-
-[node name="BackpackContent" type="VBoxContainer" parent="BackpackPanel"]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="BackpackTitle" type="Label" parent="BackpackPanel/BackpackContent"]
-custom_minimum_size = Vector2(0, 42)
-layout_mode = 2
-theme_override_font_sizes/font_size = 22
-text = "我的背包"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="BackpackGrid" type="GridContainer" parent="BackpackPanel/BackpackContent"]
-layout_mode = 2
-columns = 2
-theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 8
-
-[node name="LeaveButton" type="Button" parent="BackpackPanel/BackpackContent"]
-custom_minimum_size = Vector2(0, 46)
-layout_mode = 2
+anchors_preset = -1
+anchor_left = 0.345
+anchor_top = 0.79875
+anchor_right = 0.585
+anchor_bottom = 0.92625
 focus_mode = 0
-theme_override_font_sizes/font_size = 23
-text = "离开商店"
+tooltip_text = "离开商店，继续本回合"
+theme_override_font_sizes/font_size = 39
+text = "继续冒险"
+script = ExtResource("13_standard_button")
+standard_font_size = 39
+
+[node name="RightUtilityButtons" parent="." unique_id=469365119 instance=ExtResource("9_utility")]
+layout_mode = 1

@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs>
+<style>text{font-family:"Noto Sans SC","Microsoft YaHei",sans-serif;dominant-baseline:text-before-edge}.title{font-weight:700}</style>
+</defs>
+<rect x="0" y="0" width="1920" height="1080" fill="#120b0d" stroke="none" stroke-width="0" opacity="1"/>
+<polygon points="0,120 420,0 660,0 180,1080 0,1080" fill="#6d0d21" stroke="none" stroke-width="0" opacity="0.3333333333333333"/>
+<polygon points="1420,0 1920,0 1920,1080 1680,1080 1320,360" fill="#075b5d" stroke="none" stroke-width="0" opacity="0.3137254901960784"/>
+<polygon points="760,0 1140,0 980,1080 600,1080" fill="#3e1455" stroke="none" stroke-width="0" opacity="0.2549019607843137"/>
+<line x1="-100" y1="1080" x2="420" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="140" y1="1080" x2="660" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="380" y1="1080" x2="900" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="620" y1="1080" x2="1140" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="860" y1="1080" x2="1380" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="1100" y1="1080" x2="1620" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="1340" y1="1080" x2="1860" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="1580" y1="1080" x2="2100" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="1820" y1="1080" x2="2340" y2="0" stroke="#000000" stroke-width="5" opacity="0.25"/>
+<line x1="0" y1="0" x2="0" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="96" y1="0" x2="96" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="192" y1="0" x2="192" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="288" y1="0" x2="288" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="384" y1="0" x2="384" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="480" y1="0" x2="480" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="576" y1="0" x2="576" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="672" y1="0" x2="672" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="768" y1="0" x2="768" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="864" y1="0" x2="864" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="960" y1="0" x2="960" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1056" y1="0" x2="1056" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1152" y1="0" x2="1152" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1248" y1="0" x2="1248" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1344" y1="0" x2="1344" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1440" y1="0" x2="1440" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1536" y1="0" x2="1536" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1632" y1="0" x2="1632" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1728" y1="0" x2="1728" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="1824" y1="0" x2="1824" y2="1080" stroke="#1d1013" stroke-width="1" opacity="0.45"/>
+<line x1="0" y1="0" x2="1920" y2="0" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="96" x2="1920" y2="96" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="192" x2="1920" y2="192" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="288" x2="1920" y2="288" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="384" x2="1920" y2="384" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="480" x2="1920" y2="480" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="576" x2="1920" y2="576" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="672" x2="1920" y2="672" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="768" x2="1920" y2="768" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="864" x2="1920" y2="864" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="960" x2="1920" y2="960" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<line x1="0" y1="1056" x2="1920" y2="1056" stroke="#1d1013" stroke-width="1" opacity="0.3"/>
+<polygon points="274,108 1690,108 1690,196 1666,220 250,220 250,132" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="264,96 1680,96 1680,184 1656,208 240,208 240,120" fill="#211014" stroke="#d5a34a" stroke-width="3" opacity="1"/>
+<line x1="264" y1="104" x2="1652" y2="104" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="280" y="120" font-size="40" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">背包</text>
+<text x="282" y="170" font-size="18" fill="#a99779" text-anchor="start" opacity="1">左侧固定显示统治与升华需求，右侧展示当前持有的所有道具。</text>
+<polygon points="210,260 618,260 618,844 594,868 186,868 186,284" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="200,248 608,248 608,832 584,856 176,856 176,272" fill="#1b1013" stroke="#b5423c" stroke-width="3" opacity="1"/>
+<line x1="200" y1="256" x2="580" y2="256" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="216" y="288" font-size="28" fill="#b5423c" text-anchor="start" opacity="1" class="title">统治需求</text>
+<polygon points="238,356 578,356 578,416 566,428 226,428 226,368" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="228,344 568,344 568,404 556,416 216,416 216,356" fill="#141013" stroke="#b5423c" stroke-width="2" opacity="1"/>
+<line x1="228" y1="352" x2="540" y2="352" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="232" y="354" width="52" height="52" fill="none" stroke="#b5423c" stroke-width="1" opacity="0.01"/>
+<text x="300" y="356" font-size="20" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">血契棱镜</text>
+<text x="300" y="386" font-size="16" fill="#a99779" text-anchor="start" opacity="1">已持有</text>
+<polygon points="238,444 578,444 578,504 566,516 226,516 226,456" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="228,432 568,432 568,492 556,504 216,504 216,444" fill="#141013" stroke="#b5423c" stroke-width="2" opacity="1"/>
+<line x1="228" y1="440" x2="540" y2="440" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="232" y="442" width="52" height="52" fill="none" stroke="#b5423c" stroke-width="1" opacity="0.01"/>
+<text x="300" y="444" font-size="20" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">月厅密钥</text>
+<text x="300" y="474" font-size="16" fill="#a99779" text-anchor="start" opacity="1">已持有</text>
+<polygon points="238,532 578,532 578,592 566,604 226,604 226,544" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="228,520 568,520 568,580 556,592 216,592 216,532" fill="#141013" stroke="#b5423c" stroke-width="2" opacity="1"/>
+<line x1="228" y1="528" x2="540" y2="528" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="232" y="530" width="52" height="52" fill="none" stroke="#b5423c" stroke-width="1" opacity="0.01"/>
+<text x="300" y="532" font-size="20" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">灰冠契印</text>
+<text x="300" y="562" font-size="16" fill="#a99779" text-anchor="start" opacity="1">未完成</text>
+<text x="216" y="632" font-size="28" fill="#1fb7a6" text-anchor="start" opacity="1" class="title">升华需求</text>
+<polygon points="238,700 578,700 578,760 566,772 226,772 226,712" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="228,688 568,688 568,748 556,760 216,760 216,700" fill="#141013" stroke="#1fb7a6" stroke-width="2" opacity="1"/>
+<line x1="228" y1="696" x2="540" y2="696" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="232" y="698" width="52" height="52" fill="none" stroke="#1fb7a6" stroke-width="1" opacity="0.01"/>
+<text x="300" y="700" font-size="20" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">银针袖扣</text>
+<text x="300" y="730" font-size="16" fill="#a99779" text-anchor="start" opacity="1">需求</text>
+<polygon points="238,788 578,788 578,848 566,860 226,860 226,800" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="228,776 568,776 568,836 556,848 216,848 216,788" fill="#141013" stroke="#1fb7a6" stroke-width="2" opacity="1"/>
+<line x1="228" y1="784" x2="540" y2="784" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="232" y="786" width="52" height="52" fill="none" stroke="#1fb7a6" stroke-width="1" opacity="0.01"/>
+<text x="300" y="788" font-size="20" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">失落本名</text>
+<text x="300" y="818" font-size="16" fill="#a99779" text-anchor="start" opacity="1">需求</text>
+<polygon points="692,260 1754,260 1754,842 1728,868 666,868 666,286" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="682,248 1744,248 1744,830 1718,856 656,856 656,274" fill="#160e12" stroke="#b77725" stroke-width="3" opacity="1"/>
+<line x1="682" y1="256" x2="1716" y2="256" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="704" y="288" font-size="32" fill="#b77725" text-anchor="start" opacity="1" class="title">当前持有</text>
+<polygon points="738,372 922,372 922,532 906,548 722,548 722,388" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="728,360 912,360 912,520 896,536 712,536 712,376" fill="#1b1013" stroke="#b77725" stroke-width="3" opacity="1"/>
+<line x1="728" y1="368" x2="884" y2="368" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="770" y="384" width="84" height="84" fill="none" stroke="#b77725" stroke-width="1" opacity="0.01"/>
+<text x="736" y="476" font-size="20" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">血契棱镜</text>
+<text x="862" y="490" font-size="28" fill="#e4b85b" text-anchor="start" opacity="1" class="title">x2</text>
+<polygon points="982,372 1166,372 1166,532 1150,548 966,548 966,388" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="972,360 1156,360 1156,520 1140,536 956,536 956,376" fill="#1b1013" stroke="#b77725" stroke-width="3" opacity="1"/>
+<line x1="972" y1="368" x2="1128" y2="368" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="1014" y="384" width="84" height="84" fill="none" stroke="#b77725" stroke-width="1" opacity="0.01"/>
+<text x="980" y="476" font-size="20" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">月厅密钥</text>
+<text x="1106" y="490" font-size="28" fill="#e4b85b" text-anchor="start" opacity="1" class="title">x1</text>
+<polygon points="1226,372 1410,372 1410,532 1394,548 1210,548 1210,388" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="1216,360 1400,360 1400,520 1384,536 1200,536 1200,376" fill="#1b1013" stroke="#5c5960" stroke-width="3" opacity="1"/>
+<line x1="1216" y1="368" x2="1372" y2="368" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="1258" y="384" width="84" height="84" fill="none" stroke="#5c5960" stroke-width="1" opacity="0.01"/>
+<text x="1224" y="476" font-size="20" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">灰冠契印</text>
+<text x="1350" y="490" font-size="28" fill="#e4b85b" text-anchor="start" opacity="1" class="title">x0</text>
+<polygon points="1470,372 1654,372 1654,532 1638,548 1454,548 1454,388" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="1460,360 1644,360 1644,520 1628,536 1444,536 1444,376" fill="#1b1013" stroke="#b77725" stroke-width="3" opacity="1"/>
+<line x1="1460" y1="368" x2="1616" y2="368" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="1502" y="384" width="84" height="84" fill="none" stroke="#b77725" stroke-width="1" opacity="0.01"/>
+<text x="1468" y="476" font-size="20" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">赤金短匕</text>
+<text x="1594" y="490" font-size="28" fill="#e4b85b" text-anchor="start" opacity="1" class="title">x3</text>
+<polygon points="738,588 922,588 922,748 906,764 722,764 722,604" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="728,576 912,576 912,736 896,752 712,752 712,592" fill="#1b1013" stroke="#b77725" stroke-width="3" opacity="1"/>
+<line x1="728" y1="584" x2="884" y2="584" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="770" y="600" width="84" height="84" fill="none" stroke="#b77725" stroke-width="1" opacity="0.01"/>
+<text x="736" y="692" font-size="20" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">旧血誓约</text>
+<text x="862" y="706" font-size="28" fill="#e4b85b" text-anchor="start" opacity="1" class="title">x1</text>
+<polygon points="982,588 1166,588 1166,748 1150,764 966,764 966,604" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="972,576 1156,576 1156,736 1140,752 956,752 956,592" fill="#1b1013" stroke="#b77725" stroke-width="3" opacity="1"/>
+<line x1="972" y1="584" x2="1128" y2="584" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="1014" y="600" width="84" height="84" fill="none" stroke="#b77725" stroke-width="1" opacity="0.01"/>
+<text x="980" y="692" font-size="20" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">夜市旧债</text>
+<text x="1106" y="706" font-size="28" fill="#e4b85b" text-anchor="start" opacity="1" class="title">x1</text>
+<polygon points="1226,588 1410,588 1410,748 1394,764 1210,764 1210,604" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="1216,576 1400,576 1400,736 1384,752 1200,752 1200,592" fill="#1b1013" stroke="#b77725" stroke-width="3" opacity="1"/>
+<line x1="1216" y1="584" x2="1372" y2="584" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="1258" y="600" width="84" height="84" fill="none" stroke="#b77725" stroke-width="1" opacity="0.01"/>
+<text x="1224" y="692" font-size="20" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">皮下地图</text>
+<text x="1350" y="706" font-size="28" fill="#e4b85b" text-anchor="start" opacity="1" class="title">x1</text>
+<polygon points="1470,588 1654,588 1654,748 1638,764 1454,764 1454,604" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="1460,576 1644,576 1644,736 1628,752 1444,752 1444,592" fill="#1b1013" stroke="#b77725" stroke-width="3" opacity="1"/>
+<line x1="1460" y1="584" x2="1616" y2="584" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<rect x="1502" y="600" width="84" height="84" fill="none" stroke="#b77725" stroke-width="1" opacity="0.01"/>
+<text x="1468" y="692" font-size="20" fill="#f6e9cb" text-anchor="start" opacity="1" class="title">银针袖扣</text>
+<text x="1594" y="706" font-size="28" fill="#e4b85b" text-anchor="start" opacity="1" class="title">x2</text>
+<polygon points="268,892 1690,892 1690,978 1672,996 250,996 250,910" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="258,880 1680,880 1680,966 1662,984 240,984 240,898" fill="#1a1012" stroke="#7d4f24" stroke-width="2" opacity="1"/>
+<line x1="258" y1="888" x2="1652" y2="888" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<polygon points="1134,916 1346,916 1346,960 1334,972 1122,972 1122,928" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="1124,904 1336,904 1336,948 1324,960 1112,960 1112,916" fill="#242226" stroke="#5c5960" stroke-width="2" opacity="1"/>
+<line x1="1124" y1="912" x2="1308" y2="912" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="1224" y="918" font-size="24" fill="#f6e9cb" text-anchor="middle" opacity="1" class="title">整理</text>
+<polygon points="1382,916 1634,916 1634,960 1622,972 1370,972 1370,928" fill="#000000" stroke="none" stroke-width="0" opacity="0.35"/>
+<polygon points="1372,904 1624,904 1624,948 1612,960 1360,960 1360,916" fill="#4b3014" stroke="#e4b85b" stroke-width="2" opacity="1"/>
+<line x1="1372" y1="912" x2="1596" y2="912" stroke="#f2ca73" stroke-width="2" opacity="0.45"/>
+<text x="1492" y="918" font-size="24" fill="#f6e9cb" text-anchor="middle" opacity="1" class="title">返回</text>
+</svg>

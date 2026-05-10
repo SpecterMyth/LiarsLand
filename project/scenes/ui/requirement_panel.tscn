@@ -1,0 +1,140 @@
+[gd_scene format=3 uid="uid://b2hflfnj0d6xq"]
+
+[ext_resource type="Texture2D" uid="uid://b8uedcc6aw4ah" path="res://assets/ui/common/common_background_panel_dark_red.png" id="2_qbcit"]
+[ext_resource type="Texture2D" uid="uid://dtqcju6ttlifa" path="res://assets/ui/common/common_title_bar_dark_red.png" id="4_scb3t"]
+[ext_resource type="Texture2D" uid="uid://bbxn7605jtt1d" path="res://assets/ui/common/common_background_panel_dark_purple.png" id="6_6jq4n"]
+[ext_resource type="FontFile" uid="uid://bfxtkx81kxl1d" path="res://assets/fonts/AlibabaPuHuiTi-3-105-Heavy.ttf" id="6_font"]
+[ext_resource type="PackedScene" path="res://scenes/ui/common_background_panel.tscn" id="7_common_panel"]
+[ext_resource type="Texture2D" uid="uid://bmbdvafcu62bw" path="res://assets/ui/common/common_title_bar_dark_purple.png" id="7_tu4ck"]
+[ext_resource type="PackedScene" path="res://scenes/ui/common_title_bar.tscn" id="8_common_title"]
+[ext_resource type="Script" path="res://scripts/ui/requirement_panel.gd" id="9_requirement_panel"]
+
+[node name="RequirementPanel" type="Control" unique_id=1552460897]
+custom_minimum_size = Vector2(400, 582)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 400.0
+offset_bottom = 582.0
+mouse_filter = 2
+script = ExtResource("9_requirement_panel")
+
+[node name="DominionPanel" parent="." unique_id=2027980715 instance=ExtResource("7_common_panel")]
+custom_minimum_size = Vector2(400, 265)
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.045
+anchor_right = 1.0
+anchor_bottom = 0.5
+texture = ExtResource("2_qbcit")
+patch_margin_left = 70
+patch_margin_top = 70
+patch_margin_right = 70
+patch_margin_bottom = 70
+frame_color = "dark_red"
+apply_default_size = false
+
+[node name="DominionHeader" parent="." unique_id=644615726 instance=ExtResource("8_common_title")]
+custom_minimum_size = Vector2(0, 0)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.07
+anchor_right = 0.62
+anchor_bottom = 0.117
+offset_right = -20.0
+offset_bottom = 1.9059982
+texture = ExtResource("4_scb3t")
+patch_margin_left = 100
+patch_margin_right = 100
+frame_color = "dark_red"
+apply_default_size = false
+
+[node name="DominionTitle" type="Label" parent="DominionHeader" unique_id=1021587269]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.964706, 0.913725, 0.796078, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("6_font")
+theme_override_font_sizes/font_size = 23
+text = "统治需求"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DominionRequirementGrid" type="GridContainer" parent="." unique_id=38540370]
+custom_minimum_size = Vector2(246, 164)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.18
+anchor_top = 0.119
+anchor_right = 0.87
+anchor_bottom = 0.463
+offset_left = -7.0
+offset_right = -7.0
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 0
+columns = 3
+
+[node name="AscensionPanel" parent="." unique_id=30459712 instance=ExtResource("7_common_panel")]
+custom_minimum_size = Vector2(400, 265)
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.544
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource("6_6jq4n")
+patch_margin_left = 70
+patch_margin_top = 70
+patch_margin_right = 70
+patch_margin_bottom = 70
+frame_color = "dark_purple"
+apply_default_size = false
+
+[node name="AscensionHeader" parent="." unique_id=1796646767 instance=ExtResource("8_common_title")]
+custom_minimum_size = Vector2(0, 0)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.07
+anchor_top = 0.497
+anchor_right = 0.59
+anchor_bottom = 0.635
+offset_right = -7.9999847
+offset_bottom = -10.3160095
+texture = ExtResource("7_tu4ck")
+patch_margin_left = 100
+patch_margin_right = 100
+frame_color = "dark_purple"
+apply_default_size = false
+
+[node name="AscensionTitle" type="Label" parent="AscensionHeader" unique_id=548097886]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.964706, 0.913725, 0.796078, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("6_font")
+theme_override_font_sizes/font_size = 23
+text = "升华需求"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AscensionRequirementGrid" type="GridContainer" parent="." unique_id=327394017]
+custom_minimum_size = Vector2(246, 164)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.18
+anchor_top = 0.617
+anchor_right = 0.87
+anchor_bottom = 0.961
+offset_left = -7.0
+offset_right = -7.0
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 0
+columns = 3

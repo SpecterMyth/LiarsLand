@@ -8,6 +8,8 @@ project/export.cfg
 
 # Runtime/import noise
 tmp/
+__pycache__/
+*.pyc
 *_Conflict.gd
 *_Conflict.gd.uid
 *.tmp

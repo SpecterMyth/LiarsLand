@@ -1,0 +1,120 @@
+[gd_scene load_steps=6 format=3 uid="uid://cj66isaqy0mgh"]
+
+[ext_resource type="Texture2D" uid="uid://bmw4cas4il2ul" path="res://assets/ui/common/badge_round_blank.png" id="1_n436i"]
+[ext_resource type="Script" path="res://scripts/ui/bag_resource_bar.gd" id="1_resource_bar_script"]
+[ext_resource type="Texture2D" uid="uid://cmcfe6hk4owlt" path="res://assets/ui/common/bag_resource_icon_energy.png" id="4_energy_icon"]
+[ext_resource type="Texture2D" uid="uid://dbfscqi6g5i20" path="res://assets/ui/common/item_row_teal.png" id="4_n436i"]
+[ext_resource type="Texture2D" uid="uid://c3lixshrdofxl" path="res://assets/ui/common/bag_resource_icon_bag.png" id="5_bag_icon"]
+
+[node name="BagResourceBar" type="Control" unique_id=901062379]
+custom_minimum_size = Vector2(550, 100)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 550.0
+offset_bottom = 100.0
+mouse_filter = 2
+script = ExtResource("1_resource_bar_script")
+
+[node name="Background" type="TextureRect" parent="." unique_id=179940482]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("1_n436i")
+expand_mode = 1
+
+[node name="EnergyPlate" type="TextureRect" parent="." unique_id=2131173988]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.045
+anchor_top = 0.17
+anchor_right = 0.31
+anchor_bottom = 0.83
+offset_left = 10.249998
+offset_top = 3.0
+offset_right = 64.5
+offset_bottom = -3.0
+mouse_filter = 2
+texture = ExtResource("4_n436i")
+expand_mode = 1
+
+[node name="EnergyIcon" type="TextureRect" parent="EnergyPlate" unique_id=1187218629]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.045
+anchor_top = 0.12
+anchor_right = 0.29
+anchor_bottom = 0.88
+offset_left = -9.0
+offset_top = -17.2
+offset_right = 22.0
+offset_bottom = 17.2
+mouse_filter = 2
+texture = ExtResource("4_energy_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="EnergyValue" type="Label" parent="EnergyPlate" unique_id=168034789]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.32
+anchor_top = 0.05
+anchor_right = 0.94
+anchor_bottom = 0.95
+theme_override_colors/font_color = Color(0.894118, 0.721569, 0.356863, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 28
+text = "128"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="CapacityPlate" type="TextureRect" parent="." unique_id=434867241]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.36
+anchor_top = 0.17
+anchor_right = 0.66
+anchor_bottom = 0.83
+offset_left = 46.999985
+offset_top = 3.0
+offset_right = 82.0
+offset_bottom = -3.0
+mouse_filter = 2
+texture = ExtResource("4_n436i")
+expand_mode = 1
+
+[node name="CapacityIcon" type="TextureRect" parent="CapacityPlate" unique_id=971224723]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.04
+anchor_top = 0.12
+anchor_right = 0.26
+anchor_bottom = 0.88
+offset_left = -8.0
+offset_top = -17.2
+offset_right = 28.0
+offset_bottom = 17.2
+mouse_filter = 2
+texture = ExtResource("5_bag_icon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="CapacityValue" type="Label" parent="CapacityPlate" unique_id=962247544]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.3
+anchor_top = 0.05
+anchor_right = 0.95
+anchor_bottom = 0.95
+theme_override_colors/font_color = Color(0.894118, 0.721569, 0.356863, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 28
+text = "24/40"
+horizontal_alignment = 2
+vertical_alignment = 1
