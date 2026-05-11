@@ -1,11 +1,9 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/ui/common/icon_tile_action_leave.png" id="1_leave"]
 [ext_resource type="Texture2D" path="res://assets/ui/common/icon_tile_action_gift.png" id="2_gift"]
-[ext_resource type="Texture2D" path="res://assets/ui/common/icon_tile_action_cast.png" id="3_cast"]
 [ext_resource type="Texture2D" path="res://assets/ui/common/icon_tile_action_invite.png" id="4_invite"]
 [ext_resource type="Texture2D" path="res://assets/ui/common/icon_tile_action_duel.png" id="5_duel"]
-[ext_resource type="Texture2D" path="res://assets/ui/common/icon_tile_action_assassinate.png" id="6_assassinate"]
 
 [node name="LeftActionButtons" type="Control"]
 layout_mode = 3
@@ -19,11 +17,11 @@ mouse_filter = 2
 [node name="LeaveButton" type="TextureButton" parent="."]
 layout_mode = 1
 anchor_left = 0.009
-anchor_top = 0.245
+anchor_top = 0.539
 anchor_right = 0.060
-anchor_bottom = 0.337
+anchor_bottom = 0.631
 focus_mode = 0
-tooltip_text = "撤离"
+tooltip_text = "暂时撤退"
 texture_normal = ExtResource("1_leave")
 texture_hover = ExtResource("1_leave")
 texture_pressed = ExtResource("1_leave")
@@ -33,39 +31,25 @@ stretch_mode = 5
 [node name="GiftButton" type="TextureButton" parent="."]
 layout_mode = 1
 anchor_left = 0.009
-anchor_top = 0.357
+anchor_top = 0.651
 anchor_right = 0.060
-anchor_bottom = 0.449
+anchor_bottom = 0.743
 focus_mode = 0
-tooltip_text = "赠送"
+tooltip_text = "政治交易"
 texture_normal = ExtResource("2_gift")
 texture_hover = ExtResource("2_gift")
 texture_pressed = ExtResource("2_gift")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="CastButton" type="TextureButton" parent="."]
-layout_mode = 1
-anchor_left = 0.009
-anchor_top = 0.469
-anchor_right = 0.060
-anchor_bottom = 0.561
-focus_mode = 0
-tooltip_text = "施法"
-texture_normal = ExtResource("3_cast")
-texture_hover = ExtResource("3_cast")
-texture_pressed = ExtResource("3_cast")
-ignore_texture_size = true
-stretch_mode = 5
-
 [node name="InviteButton" type="TextureButton" parent="."]
 layout_mode = 1
 anchor_left = 0.009
-anchor_top = 0.581
+anchor_top = 0.763
 anchor_right = 0.060
-anchor_bottom = 0.673
+anchor_bottom = 0.855
 focus_mode = 0
-tooltip_text = "邀请"
+tooltip_text = "表达倾向"
 texture_normal = ExtResource("4_invite")
 texture_hover = ExtResource("4_invite")
 texture_pressed = ExtResource("4_invite")
@@ -75,27 +59,13 @@ stretch_mode = 5
 [node name="DuelButton" type="TextureButton" parent="."]
 layout_mode = 1
 anchor_left = 0.009
-anchor_top = 0.693
+anchor_top = 0.875
 anchor_right = 0.060
-anchor_bottom = 0.785
+anchor_bottom = 0.967
 focus_mode = 0
-tooltip_text = "决斗"
+tooltip_text = "直接投票"
 texture_normal = ExtResource("5_duel")
 texture_hover = ExtResource("5_duel")
 texture_pressed = ExtResource("5_duel")
-ignore_texture_size = true
-stretch_mode = 5
-
-[node name="AssassinateButton" type="TextureButton" parent="."]
-layout_mode = 1
-anchor_left = 0.009
-anchor_top = 0.805
-anchor_right = 0.060
-anchor_bottom = 0.897
-focus_mode = 0
-tooltip_text = "暗杀"
-texture_normal = ExtResource("6_assassinate")
-texture_hover = ExtResource("6_assassinate")
-texture_pressed = ExtResource("6_assassinate")
 ignore_texture_size = true
 stretch_mode = 5

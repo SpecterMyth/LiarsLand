@@ -19,6 +19,17 @@ static func load_chapter(path: String) -> Dictionary:
 
 static func validate(data: Dictionary) -> Array[String]:
 	var errors: Array[String] = []
+	if String(data.get("mode", "")) == "council":
+		for key in ["player", "npcs", "factions", "crime_pool"]:
+			if not data.has(key):
+				errors.append("Council chapter is missing '%s'." % key)
+		if data.get("npcs", []).size() == 0:
+			errors.append("Council chapter needs at least one NPC.")
+		if data.get("factions", []).size() < 2:
+			errors.append("Council chapter needs at least two factions.")
+		if data.get("crime_pool", []).size() == 0:
+			errors.append("Council chapter needs crimes.")
+		return errors
 	for key in ["player", "npcs", "artifacts"]:
 		if not data.has(key):
 			errors.append("Chapter is missing '%s'." % key)

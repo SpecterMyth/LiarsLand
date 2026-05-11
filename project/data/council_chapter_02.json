@@ -1,0 +1,48 @@
+{
+  "mode": "council",
+  "id": "council_chapter_02",
+  "chapter_index": 1,
+  "title": "钟楼郡议会：九人听证",
+  "summary": "九名议员与三个党派进入正式议会局。遗嘱投票开始生效，玩家必须活着把自己的党派推成主流。",
+  "max_rounds": 10,
+  "max_dialogue_turns": 2,
+  "crimes_per_member": 3,
+  "execution_threshold_mode": "ceil_half",
+  "force_reveal_at_alive": 3,
+  "death_will_enabled": true,
+  "death_will_effective": true,
+  "factions": [
+    {"id": "blue_tie", "name": "蓝领带党", "color": "#4f83c2", "motto": "规则可以错，表格必须填。"},
+    {"id": "red_hat", "name": "红帽子党", "color": "#d65a4a", "motto": "让小镇再次体面，先把袜子找回来。"},
+    {"id": "green_mug", "name": "绿果汁党", "color": "#65a96f", "motto": "所有争端都可以开会，除非果汁凉了。"}
+  ],
+  "crime_pool": [
+    {"id": "hush_money_invoice", "title": "把封口费伪装成律师账单", "source_note": "Donald Trump 纽约封口费案。"},
+    {"id": "gold_bar_favors", "title": "收金条后替金主办事", "source_note": "Bob Menendez 贿赂案。"},
+    {"id": "classified_boxes_bathroom", "title": "把机密箱子堆在浴室旁", "source_note": "美国机密文件处理争议。"},
+    {"id": "campaign_crypto_hole", "title": "把捐款倒进加密钱坑", "source_note": "FTX 与政治捐款争议。"},
+    {"id": "private_jet_green_talk", "title": "坐私人飞机去发表节俭演说", "source_note": "名人与政客气候言行争议。"},
+    {"id": "expense_moat_cleaning", "title": "用公款清理自家护城河", "source_note": "英国议员开支丑闻。"},
+    {"id": "fake_life_resume", "title": "编造人生履历骗选票和捐款", "source_note": "George Santos 欺诈与身份争议。"},
+    {"id": "lockdown_party", "title": "自己禁聚会却在官邸开酒会", "source_note": "英国 Partygate。"}
+  ],
+  "player": {
+    "id": "player",
+    "public_name": "边境的灰狐代笔员",
+    "public_identity": "跨郡巡回代笔员，受邀记录钟楼听证。",
+    "portrait": "player_portrait.png",
+    "portrait_half": "player_portrait_half.png",
+    "scene": "bg_embassy_bell_bridge.png",
+    "max_output_chars": 900
+  },
+  "npcs": [
+    {"id": "npc_wolf", "public_name": "铁鬃审计长", "public_identity": "总说自己只看数字，实际很会看风向。", "territory": "边境关门", "portrait": "npc_wolf_portrait.png", "portrait_half": "npc_wolf_portrait_half.png", "scene": "bg_border_gate.png", "faction": "blue_tie"},
+    {"id": "npc_snake", "public_name": "银舌议员", "public_identity": "每一句话都像被律师泡过。", "territory": "镜厅", "portrait": "npc_snake_portrait.png", "portrait_half": "npc_snake_portrait_half.png", "scene": "bg_mirror_pavilion.png", "faction": "red_hat"},
+    {"id": "npc_rat", "public_name": "短账跑腿鼠", "public_identity": "知道每一笔小钱最后滚去了哪里。", "territory": "沉默钱亭", "portrait": "npc_rat_debt_runner_portrait.png", "portrait_half": "npc_rat_debt_runner_portrait_half.png", "scene": "bg_silent_coin_booth.png", "faction": "green_mug"},
+    {"id": "npc_owl", "public_name": "夜眼星法院官", "public_identity": "把每次表决都解释成星象。", "territory": "旧法庭天台", "portrait": "npc_owl_court_astrologer_portrait.png", "portrait_half": "npc_owl_court_astrologer_portrait_half.png", "scene": "bg_archive_hall.png", "faction": "blue_tie"},
+    {"id": "npc_badger", "public_name": "獾须公证人", "public_identity": "盖章比眨眼快，反悔比盖章慢。", "territory": "誓约刀口", "portrait": "npc_badger_oath_notary_portrait.png", "portrait_half": "npc_badger_oath_notary_portrait_half.png", "scene": "bg_oath_blade_checkpoint.png", "faction": "red_hat"},
+    {"id": "npc_bat", "public_name": "屋脊传声蝠", "public_identity": "总在大家说完悄悄话后出现。", "territory": "灯笼屋脊", "portrait": "npc_bat_roof_informant_portrait.png", "portrait_half": "npc_bat_roof_informant_portrait_half.png", "scene": "bg_lantern_roofwalk.png", "faction": "green_mug"},
+    {"id": "npc_goat", "public_name": "铜铃保管羊", "public_identity": "每次开会都先问谁负责报销茶点。", "territory": "使馆铃桥", "portrait": "npc_goat_bell_keeper_portrait.png", "portrait_half": "npc_goat_bell_keeper_portrait_half.png", "scene": "bg_embassy_bell_bridge.png", "faction": "blue_tie"},
+    {"id": "npc_moth", "public_name": "扑灯记录员", "public_identity": "不追真相，只追最亮的证词。", "territory": "墨井楼梯", "portrait": "npc_moth_lamplighter_portrait.png", "portrait_half": "npc_moth_lamplighter_portrait_half.png", "scene": "bg_ink_well_stair.png", "faction": "red_hat"}
+  ]
+}

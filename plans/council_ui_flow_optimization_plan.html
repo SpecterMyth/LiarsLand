@@ -1,0 +1,910 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>议会玩法 UI 与流程优化计划</title>
+  <style>
+    :root {
+      --bg: #111015;
+      --panel: #1c1820;
+      --panel-2: #24202a;
+      --ink: #f4dfb2;
+      --muted: #b8a985;
+      --line: rgba(244, 223, 178, 0.18);
+      --gold: #e7b755;
+      --red: #d65a4a;
+      --blue: #4f83c2;
+      --green: #65a96f;
+      --gray: #76716d;
+      font-family: "Microsoft YaHei", "Noto Sans SC", "PingFang SC", system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(135deg, rgba(79, 131, 194, 0.18), transparent 34%),
+        linear-gradient(225deg, rgba(214, 90, 74, 0.15), transparent 32%),
+        var(--bg);
+      line-height: 1.72;
+    }
+
+    main {
+      width: min(1180px, calc(100% - 42px));
+      margin: 0 auto;
+      padding: 36px 0 68px;
+    }
+
+    header,
+    section,
+    .card,
+    .mockup,
+    .flow-step {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(36, 32, 42, 0.96), rgba(28, 24, 32, 0.96));
+      box-shadow: 0 20px 54px rgba(0, 0, 0, 0.32);
+    }
+
+    header {
+      padding: 34px 38px;
+    }
+
+    section {
+      margin-top: 24px;
+      padding: 26px 30px;
+    }
+
+    h1, h2, h3 {
+      margin: 0;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      font-size: clamp(32px, 5vw, 56px);
+      max-width: 940px;
+    }
+
+    h2 {
+      padding-top: 10px;
+      border-top: 2px solid var(--line);
+      font-size: 25px;
+    }
+
+    h3 {
+      color: var(--gold);
+      font-size: 18px;
+    }
+
+    p, ul, ol {
+      margin: 10px 0 0;
+    }
+
+    ul, ol {
+      padding-left: 1.35em;
+    }
+
+    li + li {
+      margin-top: 5px;
+    }
+
+    code {
+      color: #ffe0a0;
+      background: rgba(0, 0, 0, 0.22);
+      padding: 1px 5px;
+      border: 1px solid rgba(244, 223, 178, 0.12);
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 16px;
+      border-collapse: collapse;
+      background: rgba(0, 0, 0, 0.16);
+      font-size: 15px;
+    }
+
+    th, td {
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      color: var(--gold);
+      background: rgba(0, 0, 0, 0.28);
+    }
+
+    .subtitle {
+      max-width: 940px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .tag {
+      min-height: 30px;
+      padding: 4px 10px;
+      border: 1px solid var(--line);
+      background: rgba(0, 0, 0, 0.22);
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .card {
+      padding: 18px;
+      box-shadow: none;
+    }
+
+    .note {
+      margin-top: 16px;
+      padding: 15px 18px;
+      border-left: 5px solid var(--gold);
+      background: rgba(231, 183, 85, 0.12);
+      color: #f7e8c7;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 2px 8px;
+      border: 1px solid var(--line);
+      background: rgba(0, 0, 0, 0.2);
+      font-size: 12px;
+      color: var(--ink);
+      white-space: nowrap;
+    }
+
+    .priority-high { color: #ffb0a0; }
+    .priority-mid { color: #ffd77a; }
+    .priority-low { color: #b2e7b8; }
+
+    .flow {
+      display: grid;
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .flow-step {
+      padding: 16px 18px;
+      box-shadow: none;
+    }
+
+    .mockups {
+      display: grid;
+      gap: 22px;
+      margin-top: 16px;
+    }
+
+    .mockup {
+      padding: 14px;
+      background: #151219;
+      box-shadow: none;
+    }
+
+    .mock-screen {
+      aspect-ratio: 16 / 9;
+      min-height: 360px;
+      border: 1px solid rgba(244, 223, 178, 0.22);
+      background:
+        linear-gradient(90deg, rgba(79, 131, 194, 0.12), transparent 36%, transparent 64%, rgba(214, 90, 74, 0.12)),
+        #201922;
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+    }
+
+    .status-layout {
+      grid-template-columns: 1fr 1.2fr 1fr 0.72fr;
+      grid-template-rows: 48px 1fr 112px;
+      grid-template-areas:
+        "top top top roster"
+        "guilty crimes innocent roster"
+        "self self self roster";
+    }
+
+    .dialogue-layout {
+      grid-template-columns: 96px 1fr 84px;
+      grid-template-rows: 44px 1fr 132px;
+      grid-template-areas:
+        "top top top"
+        "left scene right"
+        "left dialogue right";
+    }
+
+    .select-layout {
+      grid-template-columns: 0.72fr repeat(3, 1fr);
+      grid-template-rows: 48px 1fr 72px;
+      grid-template-areas:
+        "top top top top"
+        "player npc1 npc2 npc3"
+        "summary summary summary summary";
+    }
+
+    .result-layout {
+      grid-template-columns: 0.8fr 1.4fr 0.8fr;
+      grid-template-rows: 58px 1fr 94px;
+      grid-template-areas:
+        "top top top"
+        "left center right"
+        "bottom bottom bottom";
+    }
+
+    .slot {
+      border: 1px solid rgba(244, 223, 178, 0.20);
+      background: rgba(0, 0, 0, 0.22);
+      padding: 10px;
+      min-height: 48px;
+      color: #f7e8c7;
+      font-size: 14px;
+    }
+
+    .slot strong {
+      display: block;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+
+    .top { grid-area: top; }
+    .guilty { grid-area: guilty; }
+    .crimes { grid-area: crimes; }
+    .innocent { grid-area: innocent; }
+    .roster { grid-area: roster; }
+    .self { grid-area: self; }
+    .left { grid-area: left; }
+    .right { grid-area: right; }
+    .scene { grid-area: scene; }
+    .dialogue { grid-area: dialogue; }
+    .player { grid-area: player; }
+    .npc1 { grid-area: npc1; }
+    .npc2 { grid-area: npc2; }
+    .npc3 { grid-area: npc3; }
+    .summary { grid-area: summary; }
+    .center { grid-area: center; }
+    .bottom { grid-area: bottom; }
+
+    .avatar-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid rgba(244, 223, 178, 0.62);
+      background: #473943;
+      color: #fff6d8;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .avatar.gray {
+      filter: grayscale(1);
+      opacity: 0.62;
+      border-style: dashed;
+    }
+
+    .avatar.dead {
+      filter: grayscale(1);
+      opacity: 0.38;
+      text-decoration: line-through;
+      border-color: rgba(214, 90, 74, 0.78);
+      box-shadow: inset 0 0 0 2px rgba(214, 90, 74, 0.35);
+    }
+
+    .crime-pill {
+      margin-top: 6px;
+      padding: 6px 8px;
+      border: 1px solid rgba(231, 183, 85, 0.38);
+      background: rgba(231, 183, 85, 0.10);
+      color: #ffe7ad;
+      font-size: 13px;
+    }
+
+    @media (max-width: 840px) {
+      main { width: min(100% - 24px, 1180px); }
+      header, section { padding: 22px 18px; }
+      .grid, .grid.two { grid-template-columns: 1fr; }
+      .mock-screen { min-height: 520px; }
+      .status-layout,
+      .dialogue-layout,
+      .select-layout,
+      .result-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: none;
+        grid-template-areas: none;
+      }
+      .slot { grid-area: auto; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>议会玩法 UI 与流程优化计划</h1>
+    <p class="subtitle">基于当前可运行版本的复查计划。目标不是增加复杂度，而是把新玩法真正从旧系统里“剥离干净”：保留大角色、大场景和已有美术资产，隐藏旧玩法残留，把投票、罪行、阵营、对话历史和结算结果图形化。</p>
+    <div class="tags">
+      <span class="tag">目标：第一章完整可玩</span>
+      <span class="tag">重点：状态页全重做</span>
+      <span class="tag">原则：头像化、少文字、少旧系统</span>
+      <span class="tag">新增问题：撤退后候选人退化</span>
+      <span class="tag">新增规则：每局随机罪行且任意两人罪行组合不完全相同</span>
+      <span class="tag">新增目标：前三章完整可玩</span>
+      <span class="tag">新增判定：玩家死亡即失败</span>
+    </div>
+  </header>
+
+  <section>
+    <h2>当前诊断</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>模块</th>
+          <th>当前状态</th>
+          <th>问题</th>
+          <th>处理方向</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>头像使用</td>
+          <td>历史页已初步使用头像；状态页仍以文本行显示投票和议员。</td>
+          <td>没有形成统一视觉语言，投票板不够直观。</td>
+          <td>新增统一圆形头像组件，所有议会相关页面改用同一种圆形头像。</td>
+        </tr>
+        <tr>
+          <td>状态页</td>
+          <td>目前是卡片 + 文本详情。</td>
+          <td>没有按原计划做成“中间罪行、左右投票头像、右侧全员头像”的结构。</td>
+          <td>全重做状态页布局，作为议会玩法的核心信息页。</td>
+        </tr>
+        <tr>
+          <td>投票与意愿</td>
+          <td>文本显示“有罪 / 无罪 / 倾向”。</td>
+          <td>不适合观察 AI 行动，也不够像桌游投票板。</td>
+          <td>正式票用彩色圆头像；倾向用灰色圆头像；按左右阵列显示。</td>
+        </tr>
+        <tr>
+          <td>对话页按钮</td>
+          <td>旧左右侧按钮仍可见，部分按钮是旧语义改名。</td>
+          <td>玩家会误以为仍有旧系统，且“有罪 / 无罪”分成两个按钮不符合现在的动作模型。</td>
+          <td>隐藏无功能按钮；左侧只保留四类会议行动；投票动作进入子页面再选择罪行和票向。</td>
+        </tr>
+        <tr>
+          <td>撤退后的回合流程</td>
+          <td>用户手动撤退后，第二回合回到老逻辑，只能选择一个对手。</td>
+          <td>说明手动行动结束路径没有完整进入议会回合收束，候选池刷新或选择页渲染路径被旧逻辑污染。</td>
+          <td>统一所有结束对话路径：撤退、投票、交易、LLM 结束都必须进入议会状态页，再返回 3 选 1 候选页。</td>
+        </tr>
+        <tr>
+          <td>玩家自己的隐藏罪行</td>
+          <td>当前状态页没有明确显示玩家自己的三条罪行。</td>
+          <td>玩家不知道自己该避免哪些法案，策略不可读。</td>
+          <td>状态页底部新增“我的秘密档案”，显示玩家阵营和三条隐藏罪行。</td>
+        </tr>
+        <tr>
+          <td>章节结构</td>
+          <td>目前主要围绕第一章验证可玩流程。</td>
+          <td>缺少第二章、第三章的数据、过渡和章节结果展示，无法形成完整短流程。</td>
+          <td>补齐前三章：第一章 4 人 2 阵营，第二章 9 人 3 阵营，第三章 12 人 3 阵营，并加入章节结果与章节过渡页。</td>
+        </tr>
+        <tr>
+          <td>罪行分配</td>
+          <td>第一章当前更偏固定测试数据。</td>
+          <td>重复游玩时信息结构不变，且可能出现角色之间罪行重叠过高，降低推理和交易空间。</td>
+          <td>每章开始重新随机罪行；任意两个角色的三条罪行组合不能完全相同，彼此至少有一条罪行不同。</td>
+        </tr>
+        <tr>
+          <td>跨章数据</td>
+          <td>当前章节推进还带有旧成长/旧 NPC 数据思路。</td>
+          <td>议会玩法下，玩家党派应持续固定，但每章罪行要重新随机；不同章节 NPC 数据不互通。</td>
+          <td>玩家隐藏党派开局确定并贯穿三章；玩家每章重新抽 3 条罪行；NPC 只属于当前章节，章节结束后不保留其状态、罪行或对话关系。</td>
+        </tr>
+        <tr>
+          <td>失败判定</td>
+          <td>当前更关注阵营胜负。</td>
+          <td>如果玩家死亡但阵营获胜，语义上仍可能被判胜，和“玩家征服大陆”的目标冲突。</td>
+          <td>玩家一旦被处决/死亡，不管玩家党派是否成为章节主流，游戏立即失败并结束。</td>
+        </tr>
+        <tr>
+          <td>结算页</td>
+          <td>胜利时主要依靠横幅文本，失败沿用死亡页。</td>
+          <td>议会胜负没有图形化总结，阵营揭示和处决链不够清楚。</td>
+          <td>新增议会结算页，展示胜败、获胜阵营、玩家阵营、全员身份、关键投票和处决原因。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>新版游戏流程</h2>
+    <div class="flow">
+      <div class="flow-step">
+        <h3>1. 开局</h3>
+        <p>新游戏开始时先确定玩家隐藏党派，并在前三章保持不变。每一章加载独立 NPC 与罪行库，给玩家与本章 NPC 随机分配三条罪行；任意两个角色的三条罪行组合不能完全相同，彼此至少有一条罪行不同。玩家只在状态页看到自己的隐藏阵营和本章三条隐藏罪行，不看到他人的隐藏信息。</p>
+      </div>
+      <div class="flow-step">
+        <h3>2. 选择会谈议员</h3>
+        <p>每回合固定显示玩家卡片 + 三名可会谈议员。底部只显示公共摘要：存活人数、处决阈值、正式票数量、倾向数量、已公开阵营。</p>
+      </div>
+      <div class="flow-step">
+        <h3>3. 对话与行动</h3>
+        <p>对话页保留大场景、大角色、大对话框。左侧只放四个会议行动按钮：倾向表达、直接投票、政治交易、暂时撤退。右侧只保留真正可用的系统按钮。</p>
+      </div>
+      <div class="flow-step">
+        <h3>4. 操作子页面</h3>
+        <p>点击“直接投票”或“倾向表达”后，不再用单独有罪/无罪按钮，而是打开子页面：先选罪行，再选票向。有罪、无罪、弃权作为同一个操作里的选项。</p>
+      </div>
+      <div class="flow-step">
+        <h3>5. 回合收束</h3>
+        <p>任何对话结束路径，包括手动撤退、AI 撤退、投票、政治交易、达到对话轮数，都强制进入议会状态页。点击继续后，才进入下一回合的三名议员选择页。</p>
+      </div>
+      <div class="flow-step">
+        <h3>6. 处决与连锁</h3>
+        <p>正式有罪票达到阈值后，立刻执行对应罪行。被处决者头像进入死亡状态；遗嘱投票在第二章正式启用，第一章仅记录。</p>
+      </div>
+      <div class="flow-step">
+        <h3>7. 结算</h3>
+        <p>剩余三人强制公开阵营并结算。若玩家被处决或死亡，不管玩家党派是否获胜，游戏失败并结束。若玩家存活且玩家党派成为本章主流，进入章节结果页；前三章全部胜利后进入最终结算页。</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>前三章内容范围</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>章节</th>
+          <th>角色与阵营</th>
+          <th>罪行库</th>
+          <th>章节目标</th>
+          <th>特殊规则</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>第一章</td>
+          <td>总角色 4，包含玩家；2 个党派。</td>
+          <td>5 条罪行，每人随机 3 条。</td>
+          <td>教学式短局：处决任意角色后剩 3 人，强制公开阵营并结算。</td>
+          <td>遗嘱投票记录但不产生实际影响。</td>
+        </tr>
+        <tr>
+          <td>第二章</td>
+          <td>总角色 9，包含玩家；3 个党派。</td>
+          <td>8 条罪行，每人随机 3 条。</td>
+          <td>正式议会局：玩家存活并让自己的固定党派成为本章主流。</td>
+          <td>正式启用遗嘱投票；NPC 数据与第一章不互通。</td>
+        </tr>
+        <tr>
+          <td>第三章</td>
+          <td>总角色 12，包含玩家；3 个党派。</td>
+          <td>10 条罪行，每人随机 3 条。</td>
+          <td>最终地区局：玩家存活并再次推动自己的固定党派获胜。</td>
+          <td>胜利后进入全大陆最终结算页。</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note">章节数据原则：玩家角色跨章保留党派，但不保留上一章罪行；NPC 每章重新加载，身份、罪行、投票、对话历史、死亡状态都不跨章继承。跨章只保留玩家党派、已征服章节结果和总体胜负进度。</div>
+  </section>
+
+  <section>
+    <h2>统一圆形头像规范</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>正式票头像</h3>
+        <p>彩色圆形头像，带清晰边框。表示已经锁定、不可更改。</p>
+        <div class="avatar-row">
+          <span class="avatar">狐</span>
+          <span class="avatar">鹿</span>
+          <span class="avatar">鸦</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>倾向头像</h3>
+        <p>灰色圆形头像，边框虚线或半透明。表示可更改的意愿。</p>
+        <div class="avatar-row">
+          <span class="avatar gray">狐</span>
+          <span class="avatar gray">鹿</span>
+          <span class="avatar gray">鸦</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>处决头像</h3>
+        <p>灰阶、低透明度、红色斜线或破裂边框。不要只靠文字标记死亡。</p>
+        <div class="avatar-row">
+          <span class="avatar dead">狐</span>
+          <span class="avatar dead">鹿</span>
+          <span class="avatar dead">鸦</span>
+        </div>
+      </div>
+    </div>
+    <div class="note">实现建议：做一个共享的 `CouncilAvatar` 小组件或工厂函数，支持 `normal`、`tendency`、`locked`、`dead`、`self` 五种状态。历史页、状态页、结算页、投票子页面都复用它。</div>
+  </section>
+
+  <section>
+    <h2>状态页重做</h2>
+    <p>状态页是议会玩法的信息核心，应该脱离旧的“状态文本抽屉”。新版状态页按照原设计改成四区布局：中间罪行、左侧有罪头像、右侧无罪头像、最右全员头像，底部显示玩家自己的秘密档案。</p>
+    <div class="mockups">
+      <div class="mockup">
+        <h3>议会状态页布局假图</h3>
+        <div class="mock-screen status-layout">
+          <div class="slot top">
+            <strong>顶部摘要</strong>
+            第 2 / 8 回合 · 存活 4 / 4 · 处决阈值 2 · 已公开阵营 0
+          </div>
+          <div class="slot guilty">
+            <strong>左侧：投有罪</strong>
+            每条罪行对应一行头像。彩色头像为正式票，灰色头像为倾向。
+            <div class="avatar-row"><span class="avatar">狐</span><span class="avatar gray">鹿</span></div>
+          </div>
+          <div class="slot crimes">
+            <strong>中间：罪行列表</strong>
+            <div class="crime-pill">挪用公款给鸭子盖湖景房</div>
+            <div class="crime-pill">把封口费伪装成法律账单</div>
+            <div class="crime-pill">收金条后替人办事</div>
+            <div class="crime-pill">禁令期间偷偷开派对</div>
+            <div class="crime-pill">把人生履历写成奇幻小说</div>
+          </div>
+          <div class="slot innocent">
+            <strong>右侧：投无罪</strong>
+            同样使用头像列，不显示长文本姓名。
+            <div class="avatar-row"><span class="avatar">鸦</span><span class="avatar gray">我</span></div>
+          </div>
+          <div class="slot roster">
+            <strong>最右：全体议员</strong>
+            显示所有议员圆头像、存活/处决、阵营是否公开。
+            <div class="avatar-row"><span class="avatar">我</span><span class="avatar">狐</span><span class="avatar dead">鹿</span><span class="avatar">鸦</span></div>
+          </div>
+          <div class="slot self">
+            <strong>底部：我的秘密档案</strong>
+            我的隐藏阵营：蓝领带党。我的三条罪行：挪用公款给鸭子盖湖景房、禁令期间偷偷开派对、把封口费伪装成法律账单。
+          </div>
+        </div>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>区域</th>
+          <th>必须显示</th>
+          <th>不得显示</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>顶部摘要</td>
+          <td>章节、回合、存活人数、处决阈值、当前会谈对象、公开阵营数量。</td>
+          <td>旧能量、等级、背包、统治法器。</td>
+        </tr>
+        <tr>
+          <td>罪行投票板</td>
+          <td>罪行名称、正式有罪头像、正式无罪头像、倾向头像。</td>
+          <td>长段规则说明、无法一眼读懂的文本投票列表。</td>
+        </tr>
+        <tr>
+          <td>全员头像列</td>
+          <td>玩家和所有 NPC，存活/处决，公开阵营标记。</td>
+          <td>隐藏罪行、未公开阵营。</td>
+        </tr>
+        <tr>
+          <td>我的秘密档案</td>
+          <td>玩家自己的隐藏阵营、三条隐藏罪行。</td>
+          <td>其他人的隐藏罪行或隐藏阵营。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>对话页按钮</h2>
+    <p>对话页不重排大角色和大场景，只重做两侧按钮的显示逻辑。</p>
+    <div class="mockups">
+      <div class="mockup">
+        <h3>对话页按钮假图</h3>
+        <div class="mock-screen dialogue-layout">
+          <div class="slot top"><strong>顶部</strong> 当前回合与对象。</div>
+          <div class="slot left"><strong>左侧 4 个会议行动</strong>倾向表达、直接投票、政治交易、暂时撤退。</div>
+          <div class="slot scene"><strong>中间</strong> 保留大场景、大角色。</div>
+          <div class="slot right"><strong>右侧系统按钮</strong>只保留状态、历史、准则、设置等确实可用项。</div>
+          <div class="slot dialogue"><strong>底部</strong> 原对话框位置，不放罪行快捷条。</div>
+        </div>
+      </div>
+    </div>
+    <ul>
+      <li>隐藏旧玩法按钮：背包、礼物、决斗、暗杀、施法等旧语义入口。</li>
+      <li>左侧按钮总数固定为 4 个会议行动，不再额外放“有罪票 / 无罪票”。</li>
+      <li>点击“直接投票”后打开投票子页面，由子页面选择罪行和票向。</li>
+      <li>点击“政治交易”后打开交易子页面，允许绑定多张票。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>操作子页面</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>入口</th>
+          <th>子页面内容</th>
+          <th>确认后结果</th>
+          <th>风险点</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>倾向表达</td>
+          <td>选择一条罪行，再选有罪 / 无罪 / 弃权倾向。</td>
+          <td>灰色头像出现在对应罪行左右侧，允许后续修改。</td>
+          <td>不能误写成正式票。</td>
+        </tr>
+        <tr>
+          <td>直接投票</td>
+          <td>选择一条罪行，再选有罪 / 无罪 / 弃权。</td>
+          <td>彩色头像锁定到对应列，触发处决检测。</td>
+          <td>同一人同一罪行只能正式投票一次。</td>
+        </tr>
+        <tr>
+          <td>政治交易</td>
+          <td>选择双方或多方绑定票。第一章可先做轻量版：玩家选择自己的票，NPC 由 LLM 决策响应。</td>
+          <td>绑定票同时落地，全部成为正式票。</td>
+          <td>需要清晰提示不可撤销。</td>
+        </tr>
+        <tr>
+          <td>暂时撤退</td>
+          <td>确认弹窗即可。</td>
+          <td>本次对话结束，强制显示议会状态页，点击继续后回到 3 选 1。</td>
+          <td class="priority-high">当前已发现撤退后第二回合退化成旧逻辑，必须优先修。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>罪行随机分配规则</h2>
+    <p>罪行分配不应继续写死在章节角色数据里。章节只定义罪行库、角色数量、每人罪行数量和分配约束；每章开始时由规则引擎生成本章隐藏罪行。</p>
+    <table>
+      <thead>
+        <tr>
+          <th>规则</th>
+          <th>说明</th>
+          <th>第一章验收</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>每局随机</td>
+          <td>点击开始新游戏或进入新章节时重新分配，不沿用上一局/上一章结果。</td>
+          <td>连续重开两局，或从第一章进入第二章，玩家和 NPC 的罪行组合大概率不同。</td>
+        </tr>
+        <tr>
+          <td>每人 3 条</td>
+          <td>每个角色从本章罪行库中获得 3 条隐藏罪行。</td>
+          <td>4 名角色均显示/记录 3 条罪行。</td>
+        </tr>
+        <tr>
+          <td>组合不完全相同</td>
+          <td>任意两个角色比较三条罪行时，不能三条都一样，至少要有一条不同。</td>
+          <td>4 名角色之间不存在完全相同的三罪行组合。</td>
+        </tr>
+        <tr>
+          <td>允许部分重叠</td>
+          <td>剩余罪行可以与其他角色重复，从而保留法案处决多人的风险。</td>
+          <td>第一章仍可能出现同一罪行命中多名角色。</td>
+        </tr>
+        <tr>
+          <td>玩家可见范围</td>
+          <td>玩家只知道自己本章的 3 条罪行；NPC 也只知道自己本章的 3 条罪行。</td>
+          <td>状态页“我的秘密档案”显示玩家三条罪行；公开页不泄露 NPC 隐藏罪行。</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note">实现建议：第一章 4 人、5 条罪行、每人 3 条时，可以随机抽取三罪行组合，并在生成后校验组合唯一性。这里不要求每名角色都有全场独有罪行，只要求没有两个角色的三条罪行完全一样；若生成冲突，重新抽取冲突角色即可。</div>
+  </section>
+
+  <section>
+    <h2>选择页还原</h2>
+    <div class="mockups">
+      <div class="mockup">
+        <h3>会谈议员选择页假图</h3>
+        <div class="mock-screen select-layout">
+          <div class="slot top"><strong>标题</strong> 今天和谁聊聊？第 N / 8 回合。</div>
+          <div class="slot player"><strong>最左：我自己</strong> 玩家角色卡，显示公开身份和必要公开信息。</div>
+          <div class="slot npc1"><strong>候选 1</strong> 可会谈议员。</div>
+          <div class="slot npc2"><strong>候选 2</strong> 可会谈议员。</div>
+          <div class="slot npc3"><strong>候选 3</strong> 可会谈议员。</div>
+          <div class="slot summary"><strong>底部公共摘要</strong> 存活、阈值、公开阵营、正式票、倾向。不得显示隐藏罪行。</div>
+        </div>
+      </div>
+    </div>
+    <div class="note">修复重点：所有回合入口都必须调用议会选择页渲染，并重新生成最多三名可选 NPC。不能因为手动撤退或手动投票走进旧的 `finish_round` / 单对手逻辑。</div>
+  </section>
+
+  <section>
+    <h2>历史页</h2>
+    <ul>
+      <li>继续使用头像式对话记录，但头像必须改成统一圆形头像。</li>
+      <li>左侧显示全部议员头像列表，处决者使用死亡头像样式。</li>
+      <li>右侧按回合显示我与其他角色的历史对话文字信息。</li>
+      <li>系统事件单独折叠或置底，不要和角色发言混在一起造成阅读噪音。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>结算页设计</h2>
+    <p>结算页需要独立于旧死亡页。胜利和失败都进入同一个议会结算页，只是视觉色调和主标题不同。</p>
+    <div class="mockups">
+      <div class="mockup">
+        <h3>议会结算页假图</h3>
+        <div class="mock-screen result-layout">
+          <div class="slot top"><strong>结算标题</strong> 蓝领带党成为小镇主流 / 玩家胜利。</div>
+          <div class="slot left"><strong>玩家档案</strong> 玩家头像、玩家阵营、三条罪行、存活/处决状态。</div>
+          <div class="slot center"><strong>全员揭示</strong> 所有角色圆头像、阵营、罪行、最后投票、是否被处决。</div>
+          <div class="slot right"><strong>胜负原因</strong> 获胜阵营、公开支持数、触发规则、关键罪行。</div>
+          <div class="slot bottom"><strong>按钮</strong> 重开本章、查看历史、继续下一章。</div>
+        </div>
+      </div>
+    </div>
+    <ul>
+      <li>第一章结算条件：处决任意一人后剩余 3 人，强制公开阵营并结算。</li>
+      <li>结算页展示完整隐藏信息，因为本章已经结束。</li>
+      <li>章节胜利时显示章节结果，并提供进入下一章按钮。</li>
+      <li>第三章胜利时显示全大陆最终结果。</li>
+      <li>玩家死亡时，不管玩家党派是否获胜，都显示游戏失败并结束。</li>
+      <li>胜利时不再只靠顶部横幅；失败时不再沿用“死亡复盘”语义。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>章节结果与过渡</h2>
+    <p>章节之间需要有明确的结果页和过渡页，让玩家知道本章为什么赢、下章发生在哪里、哪些数据会保留、哪些会重置。</p>
+    <div class="mockups">
+      <div class="mockup">
+        <h3>章节结果 / 过渡页假图</h3>
+        <div class="mock-screen result-layout">
+          <div class="slot top"><strong>章节结果</strong> 第一地区已被蓝领带党拿下。</div>
+          <div class="slot left"><strong>保留</strong> 玩家头像、固定党派、已征服地区数。</div>
+          <div class="slot center"><strong>本章揭示</strong> 本章所有议员阵营、罪行、处决原因、关键投票。</div>
+          <div class="slot right"><strong>重置</strong> 本章 NPC、玩家本章罪行、投票、倾向、对话历史。</div>
+          <div class="slot bottom"><strong>按钮</strong> 查看历史 / 进入下一章 / 重开。</div>
+        </div>
+      </div>
+    </div>
+    <ul>
+      <li>第一章胜利后进入第二章，第二章胜利后进入第三章。</li>
+      <li>章节过渡页明确提示：玩家党派保留，玩家罪行重新随机。</li>
+      <li>NPC 不跨章：上一章 NPC 不进入下一章状态池，也不保留关系、投票或死亡。</li>
+      <li>如果玩家在任意章节被处决，直接进入总失败结算，不再进入章节过渡。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>实施顺序</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>优先级</th>
+          <th>任务</th>
+          <th>原因</th>
+          <th>验收标准</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="priority-high">P0</td>
+          <td>补齐第二章和第三章章节数据与流程。</td>
+          <td>当前只能验证第一章，无法测试完整征服大陆目标。</td>
+          <td>三章都可进入、可随机罪行、可结算；第三章胜利后进入最终结算。</td>
+        </tr>
+        <tr>
+          <td class="priority-high">P0</td>
+          <td>实现跨章数据规则：玩家党派固定、罪行每章随机、NPC 不互通。</td>
+          <td>这是新版本章节制玩法的核心边界。</td>
+          <td>章节过渡后玩家党派不变；玩家罪行改变；上一章 NPC 状态不进入下一章。</td>
+        </tr>
+        <tr>
+          <td class="priority-high">P0</td>
+          <td>玩家死亡即总失败。</td>
+          <td>玩家目标是亲自征服所有地区，死亡后党派胜利也不能算玩家胜利。</td>
+          <td>任何章节玩家被处决后立刻显示游戏失败，不进入下一章。</td>
+        </tr>
+        <tr>
+          <td class="priority-high">P0</td>
+          <td>实现每局随机罪行分配，并保证任意两名角色的三罪行组合不完全相同。</td>
+          <td>固定罪行会削弱重复游玩和博弈变化；组合差异能避免两个角色在罪行层面完全同质化。</td>
+          <td>重开会刷新罪行组合；不存在两名角色拥有完全相同的三条罪行。</td>
+        </tr>
+        <tr>
+          <td class="priority-high">P0</td>
+          <td>修复手动撤退后第二回合退回旧逻辑。</td>
+          <td>这是直接破坏核心循环的流程 bug。</td>
+          <td>手动撤退后必定显示状态页，点击继续后仍显示 3 名候选 NPC。</td>
+        </tr>
+        <tr>
+          <td class="priority-high">P0</td>
+          <td>状态页全重做，并显示玩家自己的三条罪行。</td>
+          <td>玩家需要根据自身罪行判断哪些法案危险。</td>
+          <td>状态页包含罪行投票板、全员头像列、我的秘密档案。</td>
+        </tr>
+        <tr>
+          <td class="priority-high">P0</td>
+          <td>左侧按钮压缩为 4 个会议行动，并隐藏旧按钮。</td>
+          <td>减少旧系统干扰，避免误操作。</td>
+          <td>对话页左侧只有倾向、投票、交易、撤退；右侧只保留可用系统按钮。</td>
+        </tr>
+        <tr>
+          <td class="priority-mid">P1</td>
+          <td>实现投票 / 倾向 / 交易子页面。</td>
+          <td>有罪无罪不应拆成两个主按钮。</td>
+          <td>投票操作能选择罪行和票向，确认后头像落到状态页。</td>
+        </tr>
+        <tr>
+          <td class="priority-mid">P1</td>
+          <td>统一圆形头像组件。</td>
+          <td>状态页、历史页、结算页都依赖该视觉语言。</td>
+          <td>所有议会头像展示处均为圆形，状态一致。</td>
+        </tr>
+        <tr>
+          <td class="priority-mid">P1</td>
+          <td>新增图形化议会结算页。</td>
+          <td>当前结算表达不够清晰。</td>
+          <td>每章跑到结束后进入章节结果页，第三章胜利后进入最终结算页。</td>
+        </tr>
+        <tr>
+          <td class="priority-low">P2</td>
+          <td>历史页细化与系统事件降噪。</td>
+          <td>提升复盘体验。</td>
+          <td>历史页按头像和回合展示对话，系统事件单独区域。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>测试计划</h2>
+    <ol>
+      <li>规则测试：两票处决、死亡后强制公开、玩家阵营胜负判定。</li>
+      <li>罪行生成测试：连续开局会重新随机；每名角色 3 条罪行；任意两名角色的三罪行组合不完全相同。</li>
+      <li>章节推进测试：第一章胜利进入第二章；第二章胜利进入第三章；第三章胜利进入最终结算。</li>
+      <li>跨章数据测试：玩家党派跨章固定；玩家罪行每章重新随机；NPC 状态、投票、罪行和对话不跨章。</li>
+      <li>玩家死亡测试：玩家被处决后直接游戏失败，即使玩家党派在该章结算中获胜也不能继续。</li>
+      <li>手动撤退流程：第一回合选择 NPC，点击撤退，状态页继续后第二回合仍然出现三名候选。</li>
+      <li>手动投票流程：点击投票，选择罪行和票向，状态页头像正确落位。</li>
+      <li>倾向表达流程：灰色头像显示，后续正式投票后彩色头像覆盖或并列规则明确。</li>
+      <li>状态页视觉测试：桌面和移动尺寸下无文字重叠，罪行名称、头像列、我的秘密档案可读。</li>
+      <li>历史页测试：头像均为圆形，玩家和 NPC 发言能按回合复盘。</li>
+      <li>结算页测试：第一章真实 LLM 网页流程跑到结算页，截图确认胜负、阵营、罪行、投票均可读。</li>
+    </ol>
+  </section>
+</main>
+</body>
+</html>

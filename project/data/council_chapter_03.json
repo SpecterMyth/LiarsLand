@@ -1,0 +1,53 @@
+{
+  "mode": "council",
+  "id": "council_chapter_03",
+  "chapter_index": 2,
+  "title": "王冠港议会：最终多数",
+  "summary": "十二名议员、三个党派和十条罪行进入终局。玩家必须活到最后，让固定党派成为整片大陆的主流。",
+  "max_rounds": 12,
+  "max_dialogue_turns": 2,
+  "crimes_per_member": 3,
+  "execution_threshold_mode": "ceil_half",
+  "force_reveal_at_alive": 3,
+  "death_will_enabled": true,
+  "death_will_effective": true,
+  "factions": [
+    {"id": "blue_tie", "name": "蓝领带党", "color": "#4f83c2", "motto": "规则可以错，表格必须填。"},
+    {"id": "red_hat", "name": "红帽子党", "color": "#d65a4a", "motto": "让小镇再次体面，先把袜子找回来。"},
+    {"id": "green_mug", "name": "绿果汁党", "color": "#65a96f", "motto": "所有争端都可以开会，除非果汁凉了。"}
+  ],
+  "crime_pool": [
+    {"id": "hush_money_invoice", "title": "把封口费伪装成律师账单", "source_note": "Donald Trump 纽约封口费案。"},
+    {"id": "gold_bar_favors", "title": "收金条后替金主办事", "source_note": "Bob Menendez 贿赂案。"},
+    {"id": "classified_boxes_bathroom", "title": "把机密箱子堆在浴室旁", "source_note": "美国机密文件处理争议。"},
+    {"id": "campaign_crypto_hole", "title": "把捐款倒进加密钱坑", "source_note": "FTX 与政治捐款争议。"},
+    {"id": "private_jet_green_talk", "title": "坐私人飞机去发表节俭演说", "source_note": "名人与政客气候言行争议。"},
+    {"id": "expense_moat_cleaning", "title": "用公款清理自家护城河", "source_note": "英国议员开支丑闻。"},
+    {"id": "fake_life_resume", "title": "编造人生履历骗选票和捐款", "source_note": "George Santos 欺诈与身份争议。"},
+    {"id": "lockdown_party", "title": "自己禁聚会却在官邸开酒会", "source_note": "英国 Partygate。"},
+    {"id": "charity_money_vacation", "title": "把慈善基金刷成度假预算", "source_note": "多起名人慈善资金挪用争议的游戏化。"},
+    {"id": "sock_neighbor_operation", "title": "组织团队偷邻居袜子做民调", "source_note": "对基层动员、数据滥用和生活欲望的荒诞化。"}
+  ],
+  "player": {
+    "id": "player",
+    "public_name": "边境的灰狐代笔员",
+    "public_identity": "带着两地胜利记录来到王冠港的灰狐代笔员。",
+    "portrait": "player_portrait.png",
+    "portrait_half": "player_portrait_half.png",
+    "scene": "bg_moon_market.png",
+    "max_output_chars": 900
+  },
+  "npcs": [
+    {"id": "npc_panther", "public_name": "沉默黑豹卫士", "public_identity": "只在表决时说话，但每次都很贵。", "territory": "静币岗亭", "portrait": "npc_panther_silent_guard_portrait.png", "portrait_half": "npc_panther_silent_guard_portrait_half.png", "scene": "bg_silent_coin_booth.png", "faction": "red_hat"},
+    {"id": "npc_swan", "public_name": "白羽决斗大使", "public_identity": "外交辞令和剑尖一样亮。", "territory": "使馆花园", "portrait": "npc_swan_embassy_duelist_portrait.png", "portrait_half": "npc_swan_embassy_duelist_portrait_half.png", "scene": "bg_embassy_garden.png", "faction": "blue_tie"},
+    {"id": "npc_eel", "public_name": "排水渠走私鳗", "public_identity": "所有漏洞都说自己是水利工程。", "territory": "走私排水门", "portrait": "npc_eel_drain_smuggler_portrait.png", "portrait_half": "npc_eel_drain_smuggler_portrait_half.png", "scene": "bg_smuggler_drain_gate.png", "faction": "green_mug"},
+    {"id": "npc_frog", "public_name": "毒瓶试味蛙", "public_identity": "发言前总要先闻闻茶杯。", "territory": "解药后室", "portrait": "npc_frog_poison_taster_portrait.png", "portrait_half": "npc_frog_poison_taster_portrait_half.png", "scene": "bg_antidote_backroom.png", "faction": "red_hat"},
+    {"id": "npc_gecko", "public_name": "墙缝偷听蜥", "public_identity": "没有参加会议，却知道会议纪要。", "territory": "雨沟小巷", "portrait": "npc_gecko_wall_listener_portrait.png", "portrait_half": "npc_gecko_wall_listener_portrait_half.png", "scene": "bg_rain_gutter_alley.png", "faction": "green_mug"},
+    {"id": "npc_hare", "public_name": "假信快跑兔", "public_identity": "永远在送一封刚好迟到的信。", "territory": "边境瞭望塔", "portrait": "npc_hare_false_messenger_portrait.png", "portrait_half": "npc_hare_false_messenger_portrait_half.png", "scene": "bg_border_watchtower.png", "faction": "blue_tie"},
+    {"id": "npc_lynx", "public_name": "面具裁缝猞猁", "public_identity": "能把任何丑闻缝成新身份。", "territory": "面具裁缝铺", "portrait": "npc_lynx_mask_tailor_portrait.png", "portrait_half": "npc_lynx_mask_tailor_portrait_half.png", "scene": "bg_mask_tailor_shop.png", "faction": "red_hat"},
+    {"id": "npc_mantis", "public_name": "刀臂法官螳", "public_identity": "判决很短，刀也很短。", "territory": "决斗庭院", "portrait": "npc_mantis_knife_judge_portrait.png", "portrait_half": "npc_mantis_knife_judge_portrait_half.png", "scene": "bg_duelist_courtyard.png", "faction": "green_mug"},
+    {"id": "npc_boar", "public_name": "城门补给野猪", "public_identity": "掌管仓库，也掌管仓库的缺口。", "territory": "城门补给场", "portrait": "npc_boar_gate_supplier_portrait.png", "portrait_half": "npc_boar_gate_supplier_portrait_half.png", "scene": "bg_gate_supply_yard.png", "faction": "blue_tie"},
+    {"id": "npc_crow", "public_name": "墨羽书记官", "public_identity": "旧档案馆书记官，记得别人以为烧掉的字。", "territory": "封存读桌", "portrait": "npc_crow_portrait.png", "portrait_half": "npc_crow_portrait_half.png", "scene": "bg_sealed_reading_desk.png", "faction": "red_hat"},
+    {"id": "npc_deer", "public_name": "白枝使节", "public_identity": "温和外交官，句子像祝福也像警告。", "territory": "誓约花园", "portrait": "npc_deer_portrait.png", "portrait_half": "npc_deer_portrait_half.png", "scene": "bg_treaty_flower_bed.png", "faction": "green_mug"}
+  ]
+}

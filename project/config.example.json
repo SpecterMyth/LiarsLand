@@ -15,6 +15,7 @@
     "model": "gpt-4.1-mini"
   },
   "game": {
+    "mode": "council",
     "use_mock_llm": false,
     "debug_keyword_mode": false,
     "max_turns": 10,

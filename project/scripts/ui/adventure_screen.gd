@@ -1,6 +1,12 @@
 extends Control
 
 const CHAPTER_PATH := "res://data/chapter_01.json"
+const COUNCIL_CHAPTER_PATH := "res://data/council_chapter_01.json"
+const COUNCIL_CHAPTER_PATHS := [
+	"res://data/council_chapter_01.json",
+	"res://data/council_chapter_02.json",
+	"res://data/council_chapter_03.json"
+]
 const DEFAULT_IDENTITY_GUIDELINE := "## 对外身份\n来自边境的灰狐抄写员，替商队整理族谱与债契。\n\n## 对手应如何认知我\n- 以这份公开身份理解我的言行。\n- 不知道我的真实目标，除非我在对话中暴露。\n- 优先把我视为可以交易、试探、被利用或结盟的外来者。"
 const DEFAULT_BEHAVIOR_GUIDELINE := "根据对方的问题进行回复"
 const DEFAULT_GROWTH_GUIDELINE := "## 商店购买\n优先购买能满足当前升华需求或统治需求的法器；其次购买低价、可用于交换或施法的法器。不要花光能量购买无关法器。\n\n## 升华加点\n优先补足生存和交涉能力：生命、魅力、暗杀防御。若准备决斗或刺杀，再提高对应攻击属性。\n\n## 统治选择\n满足统治需求且本章信息收集足够时选择统治；若世界设定证词不足，优先继续成长。"
@@ -9,6 +15,7 @@ const DEFAULT_RULES := DEFAULT_BEHAVIOR_GUIDELINE
 const GameStateScript := preload("res://scripts/core/game_state.gd")
 const ChapterLoaderScript := preload("res://scripts/core/chapter_loader.gd")
 const RulesEngineScript := preload("res://scripts/core/rules_engine.gd")
+const CouncilRulesEngineScript := preload("res://scripts/core/council_rules_engine.gd")
 const LlmClientScript := preload("res://scripts/llm/llm_client.gd")
 const PromptBuilderScript := preload("res://scripts/llm/prompt_builder.gd")
 const AdventureLayoutScript := preload("res://scripts/ui/adventure_layout.gd")
@@ -21,6 +28,7 @@ const RoundSelectPageScene := preload("res://scenes/ui/round_select_page.tscn")
 const ShopPageScene := preload("res://scenes/ui/shop_page.tscn")
 const AscensionPageScene := preload("res://scenes/ui/ascension_page.tscn")
 const DeathPageScene := preload("res://scenes/ui/death_page.tscn")
+const CouncilResultPageScript := preload("res://scripts/ui/council_result_page.gd")
 const RightUtilityButtonsScene := preload("res://scenes/ui/right_utility_buttons.tscn")
 const ArtifactSlotScene := preload("res://scenes/ui/artifact_slot.tscn")
 const CommonModalScene := preload("res://scenes/ui/common_modal.tscn")
@@ -150,6 +158,11 @@ var selected_action_artifact := ""
 var manual_action_resolved := false
 var manual_action_in_progress := false
 var llm_retry_requested := false
+var council_mode := false
+var council_status_continue_button: Button
+var council_status_waiting := false
+var council_result_page: Control
+var council_result_waiting := false
 
 const STATUS_BASE_SIZE := Vector2(1672.0, 941.0)
 const STATUS_PANEL_HEIGHT := 52.0
@@ -219,12 +232,28 @@ func _setup_llm() -> void:
 
 func _load_chapter() -> void:
 	state = GameStateScript.new()
-	var data := ChapterLoaderScript.load_chapter(CHAPTER_PATH)
-	state.load_chapter(data)
+	var game_cfg: Dictionary = config.get("game", {})
+	council_mode = String(game_cfg.get("mode", "council")) == "council"
+	if council_mode:
+		_load_council_chapter(0)
+		behavior_guideline = "## 议会行为文件\n- 优先让自己的隐藏阵营成为小镇主流，并且必须保证自己活着。\n- 只能根据公开投票、公开倾向和自己的隐藏罪行判断局势。\n- 避免推动会处决自己的罪行，除非能换来阵营胜利。\n- 对话时可以表达倾向、直接投票、提出政治交易或暂时撤退。\n- 测试节奏：第一轮可以试探；第二轮必须推动一个不会处决自己的罪行进入正式投票，避免对话无休止拖延。"
+		_apply_council_button_labels()
+	else:
+		var data := ChapterLoaderScript.load_chapter(CHAPTER_PATH)
+		state.load_chapter(data)
 	if identity_guideline == DEFAULT_IDENTITY_GUIDELINE:
 		identity_guideline = _identity_guideline_from_state()
 	_push_guidelines_to_page()
 	_apply_guidelines_to_state()
+
+
+func _load_council_chapter(chapter_index: int) -> void:
+	var index := clampi(chapter_index, 0, COUNCIL_CHAPTER_PATHS.size() - 1)
+	var data := ChapterLoaderScript.load_chapter(String(COUNCIL_CHAPTER_PATHS[index]))
+	CouncilRulesEngineScript.setup_state(state, data, {
+		"chapter_index": index,
+		"max_chapters": COUNCIL_CHAPTER_PATHS.size()
+	})
 
 
 func _identity_guideline_from_state() -> String:
@@ -246,6 +275,30 @@ func _save_guidelines_from_page() -> void:
 	if rules_panel != null and rules_panel.has_method("set_status"):
 		rules_panel.call("set_status", "已保?")
 	_update_state_panel()
+
+
+func _apply_council_button_labels() -> void:
+	var labels := {
+		"invite": "表达倾向",
+		"duel": "直接投票",
+		"gift": "政治交易",
+		"leave": "暂时撤退",
+		"cast": "无罪票",
+		"assassinate": "有罪票"
+	}
+	for key in labels.keys():
+		var button := action_buttons.get(key) as BaseButton
+		if button == null:
+			continue
+		button.tooltip_text = String(labels[key])
+		if button is Button:
+			(button as Button).text = String(labels[key])
+	for hidden_key in ["cast", "assassinate"]:
+		var hidden_button := action_buttons.get(hidden_key) as BaseButton
+		if hidden_button != null:
+			hidden_button.visible = false
+	if bag_button != null:
+		bag_button.visible = false
 
 
 func _sync_guidelines_from_page() -> void:
@@ -412,12 +465,18 @@ func _build_ui() -> void:
 	npc_portrait = controls.get("npc_portrait")
 	start_button.pressed.connect(_on_start_pressed)
 	reset_button.pressed.connect(_on_reset_pressed)
-	history_button.pressed.connect(_show_history)
-	info_button.pressed.connect(_show_intel_panel)
-	bag_button.pressed.connect(_show_inventory_overlay)
-	rules_button.pressed.connect(_toggle_rules)
-	status_button.pressed.connect(_show_status_page)
-	settings_button.pressed.connect(_toggle_settings)
+	if history_button != null:
+		history_button.pressed.connect(_show_history)
+	if info_button != null:
+		info_button.pressed.connect(_show_intel_panel)
+	if bag_button != null:
+		bag_button.pressed.connect(_show_inventory_overlay)
+	if rules_button != null:
+		rules_button.pressed.connect(_toggle_rules)
+	if status_button != null:
+		status_button.pressed.connect(_show_status_page)
+	if settings_button != null:
+		settings_button.pressed.connect(_toggle_settings)
 	if inventory_close_button != null:
 		inventory_close_button.pressed.connect(_hide_inventory_overlay)
 	var inventory_backdrop := controls.get("inventory_backdrop") as BaseButton
@@ -458,6 +517,7 @@ func _build_ui() -> void:
 	_build_shop_panel()
 	_build_ascension_panel()
 	_build_death_page()
+	_build_council_result_page()
 	_wire_button_feedback([start_button, reset_button, history_button, info_button, bag_button, rules_button, status_button, settings_button, continue_button])
 	_wire_button_feedback([llm_retry_button])
 	_wire_button_feedback(action_buttons.values())
@@ -501,6 +561,25 @@ func _build_death_page() -> void:
 		death_page.connect("restart_requested", Callable(self, "_on_death_restart_requested"))
 	if death_page.has_signal("merge_guideline_requested"):
 		death_page.connect("merge_guideline_requested", Callable(self, "_on_death_merge_requested"))
+
+
+func _build_council_result_page() -> void:
+	council_result_page = CouncilResultPageScript.new() as Control
+	council_result_page.visible = false
+	council_result_page.z_index = 4094
+	add_child(council_result_page)
+	council_result_page.call_deferred("_build_base")
+	if council_result_page.has_signal("continue_requested"):
+		council_result_page.connect("continue_requested", func():
+			council_result_waiting = false
+			council_result_page.visible = false
+		)
+	if council_result_page.has_signal("restart_requested"):
+		council_result_page.connect("restart_requested", func():
+			council_result_waiting = false
+			council_result_page.visible = false
+			_on_reset_pressed()
+		)
 
 
 func _wire_world_intel_archive() -> void:
@@ -861,6 +940,9 @@ func _on_reset_pressed() -> void:
 
 
 func _run_chapter() -> void:
+	if council_mode:
+		await _run_council_chapter()
+		return
 	while state.active and not state.ended and running:
 		state.refresh_npc_choices()
 		await _choose_npc_ui()
@@ -881,6 +963,91 @@ func _run_chapter() -> void:
 			_mark_event_cards(event)
 		_update_state_panel()
 	_update_after_end()
+
+
+func _run_council_chapter() -> void:
+	while running:
+		while state.active and not state.ended and running:
+			state.refresh_npc_choices()
+			await _choose_npc_ui()
+			if state.ended or not running:
+				break
+			await _run_council_dialogue()
+			_update_state_panel()
+			if running:
+				await _show_council_status_gate()
+			if state.ended or not running:
+				break
+			var events: Array[String] = []
+			CouncilRulesEngineScript.finish_round(state, events)
+			for event in events:
+				_append_system_log(event)
+			_update_state_panel()
+		if not running:
+			break
+		if state.ended and state.victory and state.chapter_index < COUNCIL_CHAPTER_PATHS.size() - 1:
+			state.council_chapter_results.append(_council_result_snapshot())
+			await _show_council_chapter_result_gate(false)
+			_load_council_chapter(state.chapter_index + 1)
+			state.active = true
+			_update_state_panel()
+			continue
+		if state.ended:
+			state.council_chapter_results.append(_council_result_snapshot())
+			await _show_council_chapter_result_gate(true)
+		break
+	_update_after_end()
+
+
+func _run_council_dialogue() -> void:
+	_set_dialogue_visible(true)
+	manual_action_resolved = false
+	manual_action_in_progress = false
+	state.turn = 0
+	while state.turn < state.max_dialogue_turns and running and not state.ended:
+		state.turn += 1
+		_set_status_text("第 %d 回合：议会会谈 - %s" % [state.chapter_round + 1, _current_dialogue_scene_name()])
+		_update_progress()
+		_set_active_speaker("player")
+		var player_response := await _get_council_player_dialogue()
+		if bool(player_response.get("cancelled", false)):
+			return
+		if player_response.has("error"):
+			_show_error(player_response.get("error", ""))
+			return
+		var speech := String(player_response.get("speech", "我需要先听听你对这些罪名的态度。")).strip_edges()
+		state.add_dialogue("player", speech)
+		await _finish_speech_stream("你方", speech, Color(0.58, 0.82, 1.0, 1.0))
+		var events: Array[String] = []
+		var player_action_applied: bool = CouncilRulesEngineScript.apply_member_action(state, "player", String(player_response.get("action", "declare_tendency")), player_response, events)
+		var progress_crime := CouncilRulesEngineScript.best_progress_crime(state, String(state.current_npc().get("id", "")))
+		if state.turn >= 2 and (not player_action_applied or not _council_has_locked_vote("player", progress_crime)):
+			player_action_applied = CouncilRulesEngineScript.apply_member_action(state, "player", "cast_vote", _council_forced_vote_payload(progress_crime), events)
+		for event in events:
+			_append_system_log(event)
+		if state.ended:
+			break
+		_set_active_speaker("npc")
+		var npc_response := await _get_council_npc_dialogue()
+		if npc_response.has("error"):
+			_show_error(npc_response.get("error", ""))
+			return
+		var npc_speech := String(npc_response.get("speech", "这件事要谨慎，票一旦投下去就收不回来了。")).strip_edges()
+		state.add_dialogue("npc", npc_speech)
+		await _finish_speech_stream("对方", npc_speech, Color(1.0, 0.61, 0.48, 1.0))
+		events.clear()
+		var npc_id := String(state.current_npc().get("id", ""))
+		var npc_action_applied: bool = CouncilRulesEngineScript.apply_member_action(state, npc_id, String(npc_response.get("action", "declare_tendency")), npc_response, events)
+		if state.turn >= 2 and (not npc_action_applied or not _council_has_locked_vote(npc_id, progress_crime)):
+			npc_action_applied = CouncilRulesEngineScript.apply_member_action(state, npc_id, "cast_vote", _council_forced_vote_payload(progress_crime), events)
+		if state.turn >= 2 and not state.ended:
+			CouncilRulesEngineScript.apply_follow_votes(state, progress_crime, "guilty", events)
+		for event in events:
+			_append_system_log(event)
+		_update_state_panel()
+		if state.ended or bool(player_response.get("end_dialogue", false)) or bool(npc_response.get("end_dialogue", false)):
+			break
+		await get_tree().create_timer(0.2).timeout
 
 
 func _choose_npc_ui() -> void:
@@ -963,6 +1130,59 @@ func _populate_round_select_page() -> void:
 			else:
 				_apply_locked_npc_select_card(card)
 	_wire_right_utility_buttons(selection_panel.get_node_or_null("RightUtilityButtons") as Control)
+	if council_mode:
+		_add_council_selection_summary()
+
+
+func _add_council_selection_summary() -> void:
+	if selection_panel == null or state == null:
+		return
+	var panel := PanelContainer.new()
+	panel.name = "CouncilPublicSummary"
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.anchor_left = 0.30
+	panel.anchor_right = 0.885
+	panel.anchor_top = 0.925
+	panel.anchor_bottom = 0.985
+	panel.offset_left = 0
+	panel.offset_right = 0
+	panel.offset_top = 0
+	panel.offset_bottom = 0
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.06, 0.04, 0.035, 0.78)
+	style.border_color = Color(0.98, 0.72, 0.30, 0.65)
+	style.set_border_width_all(2)
+	style.set_corner_radius_all(8)
+	panel.add_theme_stylebox_override("panel", style)
+	var label := Label.new()
+	label.name = "SummaryLabel"
+	label.set_anchors_preset(Control.PRESET_FULL_RECT)
+	label.offset_left = 14
+	label.offset_right = -14
+	label.offset_top = 4
+	label.offset_bottom = -4
+	label.text = _council_public_summary_text()
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.clip_text = true
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	label.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 16)
+	label.add_theme_color_override("font_color", Color(1.0, 0.91, 0.75, 1.0))
+	label.add_theme_color_override("font_outline_color", Color(0.02, 0.01, 0.01, 0.95))
+	label.add_theme_constant_override("outline_size", 2)
+	panel.add_child(label)
+	selection_panel.add_child(panel)
+
+
+func _council_public_summary_text() -> String:
+	var alive := CouncilRulesEngineScript.alive_count(state)
+	var total := CouncilRulesEngineScript.total_members(state)
+	var threshold := CouncilRulesEngineScript.execution_threshold(state)
+	var locked: int = state.council_vote_records.size()
+	var tendency: int = state.council_vote_tendencies.size()
+	return "公开摘要：存活 %d / %d，处决阈值 %d 票，正式票 %d，倾向 %d。隐藏阵营与隐藏罪行仍仅本人可知。" % [alive, total, threshold, locked, tendency]
 
 
 func _apply_round_player_card(root: Control) -> void:
@@ -1411,6 +1631,22 @@ func _on_manual_action_pressed(action: String) -> void:
 	manual_action_in_progress = true
 	if llm_client != null and llm_client.has_method("cancel_section"):
 		llm_client.cancel_section("player_llm")
+	if council_mode:
+		var payload := await _choose_manual_council_payload(action)
+		if payload.is_empty():
+			manual_action_in_progress = false
+			return
+		manual_action_resolved = true
+		var events: Array[String] = []
+		CouncilRulesEngineScript.apply_member_action(state, "player", String(payload.get("action", "declare_tendency")), payload, events)
+		if String(payload.get("action", "")) == "cast_vote" and not state.ended:
+			CouncilRulesEngineScript.apply_follow_votes(state, String(payload.get("target_crime_id", "")), String(payload.get("vote", "guilty")), events)
+		for event in events:
+			_append_system_log(event)
+		_show_result_banner("会议行动：%s" % String(payload.get("label", action)), Color(1.0, 0.82, 0.34, 1.0))
+		_update_state_panel()
+		manual_action_in_progress = false
+		return
 	var normalized := RulesEngineScript.normalize_action(action)
 	var payload := {}
 	if normalized == "gift" or normalized == "cast":
@@ -1422,6 +1658,92 @@ func _on_manual_action_pressed(action: String) -> void:
 	manual_action_resolved = true
 	await _resolve_action(normalized, payload, "手动行动")
 	manual_action_in_progress = false
+
+
+func _manual_council_payload(action: String) -> Dictionary:
+	var crime_id := "duck_house_expense"
+	match action:
+		"leave":
+			return {"action": "retreat", "label": "暂时撤退"}
+		"gift":
+			return {"action": "offer_trade", "target_crime_id": crime_id, "vote": "guilty", "label": "政治交易"}
+		"duel", "assassinate":
+			return {"action": "cast_vote", "target_crime_id": crime_id, "vote": "guilty", "label": "直接投有罪"}
+		"cast":
+			return {"action": "cast_vote", "target_crime_id": crime_id, "vote": "innocent", "label": "直接投无罪"}
+		_:
+			return {"action": "declare_tendency", "target_crime_id": crime_id, "vote": "guilty", "label": "表达有罪倾向"}
+
+
+func _choose_manual_council_payload(action: String) -> Dictionary:
+	match action:
+		"leave":
+			var accepted: bool = await common_modal.call("show_message", "暂时撤退", "结束本次会谈，并在下一回合重新选择议员。", "撤退", "取消")
+			return {"action": "retreat", "label": "暂时撤退"} if accepted else {}
+		"invite":
+			var tendency := await _choose_council_vote_payload("表达倾向", "declare_tendency")
+			if not tendency.is_empty():
+				tendency["label"] = "倾向表达"
+			return tendency
+		"duel", "assassinate":
+			var vote := await _choose_council_vote_payload("直接投票", "cast_vote")
+			if not vote.is_empty():
+				vote["label"] = "直接投票"
+			return vote
+		"gift":
+			var trade := await _choose_council_vote_payload("政治交易", "cast_vote")
+			if not trade.is_empty():
+				trade["action"] = "offer_trade"
+				trade["bound_votes"] = [{"member_id": "player", "crime_id": String(trade.get("target_crime_id", "")), "vote": String(trade.get("vote", "guilty"))}]
+				trade["label"] = "政治交易"
+			return trade
+	return _manual_council_payload(action)
+
+
+func _choose_council_vote_payload(title: String, action_name: String) -> Dictionary:
+	var crime_choices: Array = []
+	for crime in state.council_crime_pool:
+		var crime_id := String(crime.get("id", ""))
+		crime_choices.append({
+			"label": String(crime.get("title", crime_id)),
+			"value": crime_id
+		})
+	var crime_id = await common_modal.call("show_choice_list", title, "选择一条罪行。正式投票不可更改；倾向可以被之后的正式投票覆盖。", crime_choices, "取消")
+	if crime_id == null:
+		return {}
+	var vote = await common_modal.call("show_choice_list", "选择票向", "选择对「%s」的票向。" % CouncilRulesEngineScript.crime_title(state, String(crime_id)), [
+		{"label": "有罪", "value": "guilty"},
+		{"label": "无罪", "value": "innocent"},
+		{"label": "弃权", "value": "abstain"}
+	], "取消")
+	if vote == null:
+		return {}
+	return {
+		"action": action_name,
+		"target_crime_id": String(crime_id),
+		"vote": String(vote),
+		"source": "manual"
+	}
+
+
+func _council_forced_vote_payload(crime_id := "") -> Dictionary:
+	var target := String(crime_id)
+	if target.is_empty():
+		target = CouncilRulesEngineScript.best_progress_crime(state, String(state.current_npc().get("id", "")))
+	return {
+		"action": "cast_vote",
+		"target_crime_id": target,
+		"vote": "guilty",
+		"source": "dialogue_failsafe",
+		"end_dialogue": true
+	}
+
+
+func _council_has_locked_vote(member_id: String, crime_id: String) -> bool:
+	for record in state.council_vote_records:
+		if String(record.get("member_id", "")) == member_id and String(record.get("crime_id", "")) == crime_id:
+			return true
+	return false
 
 
 func _confirm_player_action(action: String, payload: Dictionary, label: String) -> bool:
@@ -3099,6 +3421,71 @@ func _get_player_dialogue() -> Dictionary:
 	)
 
 
+func _get_council_player_dialogue() -> Dictionary:
+	var first_crime := CouncilRulesEngineScript.best_progress_crime(state, String(state.current_npc().get("id", "")))
+	var fallback := {
+		"thinking": "先用倾向试探对方。",
+		"speech": "我想先确认一件事：你是否认为这项罪行已经严重到必须投有罪票？",
+		"action": "declare_tendency",
+		"target_crime_id": first_crime,
+		"vote": "guilty",
+		"end_dialogue": false
+	}
+	if state.turn >= 2 or state.chapter_round >= 1:
+		fallback["thinking"] = "需要推动正式投票，让局势进入结算。"
+		fallback["speech"] = "我不想再只停留在表态了，我会把这张票正式投下去。"
+		fallback["action"] = "cast_vote"
+		fallback["target_crime_id"] = first_crime
+		fallback["vote"] = "guilty"
+	if llm_client.use_mock_llm():
+		_prepare_llm_stream("player_llm", "你方", Color(0.58, 0.82, 1.0, 1.0))
+		await llm_client.chat_json("player_llm", "", "", fallback, true)
+		return fallback
+	return await _request_llm_with_retry(
+		"player_llm",
+		PromptBuilderScript.council_player_system(state),
+		PromptBuilderScript.council_player_user(state, _behavior_guideline_text(), _identity_guideline_text()),
+		fallback,
+		true,
+		"你方",
+		Color(0.58, 0.82, 1.0, 1.0),
+		true,
+		"议会思考中"
+	)
+
+
+func _get_council_npc_dialogue() -> Dictionary:
+	var target_crime := CouncilRulesEngineScript.best_progress_crime(state, String(state.current_npc().get("id", "")))
+	var fallback := {
+		"speech": "我不会急着把票投死，但这条罪名确实值得议会盯紧。",
+		"action": "declare_tendency",
+		"target_crime_id": target_crime,
+		"vote": "guilty",
+		"end_dialogue": false
+	}
+	if state.turn >= 2 or state.chapter_round >= 1:
+		fallback["speech"] = "既然你已经推动到这里，我也投正式有罪票。"
+		fallback["action"] = "cast_vote"
+		fallback["target_crime_id"] = target_crime
+		fallback["vote"] = "guilty"
+		fallback["end_dialogue"] = true
+	if llm_client.use_mock_llm():
+		_prepare_llm_stream("npc_llm", "对方", Color(1.0, 0.61, 0.48, 1.0), false)
+		await llm_client.chat_json("npc_llm", "", "", fallback, true)
+		return fallback
+	return await _request_llm_with_retry(
+		"npc_llm",
+		PromptBuilderScript.council_npc_system_v2(),
+		PromptBuilderScript.council_npc_user_v2(state),
+		fallback,
+		true,
+		"对方",
+		Color(1.0, 0.61, 0.48, 1.0),
+		false,
+		"对方思考中"
+	)
+
+
 func _get_npc_dialogue() -> Dictionary:
 	if llm_client.use_mock_llm():
 		_prepare_llm_stream("npc_llm", "对方", Color(1.0, 0.61, 0.48, 1.0), false)
@@ -3324,6 +3711,9 @@ func _set_current_npc_assets() -> void:
 func _update_state_panel() -> void:
 	if state == null:
 		return
+	if council_mode:
+		_update_council_state_panel()
+		return
 	if player_label != null:
 		player_label.text = _player_short_name()
 	var stats: Dictionary = state.player.get("stats", {})
@@ -3361,6 +3751,19 @@ func _update_state_panel() -> void:
 	_update_card_grid()
 	if intel_panel != null and intel_panel.visible:
 		_update_intel_panel()
+	_update_progress()
+
+
+func _update_council_state_panel() -> void:
+	if player_label != null:
+		player_label.text = String(state.player.get("public_name", "玩家"))
+	if stats_label != null:
+		stats_label.text = CouncilRulesEngineScript.public_board_text(state)
+	if state_view != null:
+		state_view.clear()
+		state_view.append_text(_escape(CouncilRulesEngineScript.public_board_text(state)))
+	if status_page != null and status_page.has_method("bind_state"):
+		status_page.call("bind_state", state)
 	_update_progress()
 
 
@@ -3466,7 +3869,9 @@ func _set_active_speaker(role: String) -> void:
 
 func _show_history() -> void:
 	var summary := "第 %d / %d 章，回合 %d / %d" % [state.chapter_index + 1, state.max_chapters, state.chapter_round + 1, state.max_rounds]
-	if history_dialog != null and history_dialog.has_method("set_history"):
+	if council_mode and history_dialog != null and history_dialog.has_method("set_council_history"):
+		history_dialog.call("set_council_history", _council_history_entries(), _council_history_members(), state.event_log, summary)
+	elif history_dialog != null and history_dialog.has_method("set_history"):
 		history_dialog.call("set_history", state.format_full_history(), state.event_log, summary)
 	elif history_view != null:
 		history_view.clear()
@@ -3493,6 +3898,45 @@ func _show_history() -> void:
 	history_dialog.visible = true
 	_show_modal_backdrop()
 	_slide_in(history_dialog)
+
+
+func _council_history_members() -> Array:
+	var members: Array = []
+	members.append({
+		"id": String(state.player.get("id", "player")),
+		"name": String(state.player.get("public_name", "玩家")),
+		"portrait": String(state.player.get("portrait", "player_portrait.png")),
+		"alive": bool(state.player.get("alive", true))
+	})
+	for npc in state.npcs:
+		members.append({
+			"id": String(npc.get("id", "")),
+			"name": String(npc.get("public_name", "议员")),
+			"portrait": String(npc.get("portrait", "")),
+			"alive": bool(npc.get("alive", true))
+		})
+	return members
+
+
+func _council_history_entries() -> Array:
+	var entries: Array = []
+	for item in state.full_dialogue_history:
+		var role := String(item.get("role", ""))
+		var speaker_id := "player"
+		var speaker_name := String(state.player.get("public_name", "玩家"))
+		var npc_index := int(item.get("npc_index", -1))
+		if role != "player" and npc_index >= 0 and npc_index < state.npcs.size():
+			var npc: Dictionary = state.npcs[npc_index]
+			speaker_id = String(npc.get("id", ""))
+			speaker_name = String(npc.get("public_name", item.get("npc_name", "议员")))
+		entries.append({
+			"round": int(item.get("round", 0)) + 1,
+			"speaker_id": speaker_id,
+			"speaker_name": speaker_name,
+			"npc_name": String(item.get("npc_name", "")),
+			"content": String(item.get("content", ""))
+		})
+	return entries
 
 
 func _show_intel_panel() -> void:
@@ -3570,6 +4014,82 @@ func _show_status_page() -> void:
 	status_page.visible = true
 	_show_modal_backdrop()
 	_slide_in(status_page)
+
+
+func _show_council_status_gate() -> void:
+	_set_dialogue_visible(false)
+	_show_status_page()
+	_ensure_council_continue_button()
+	council_status_waiting = true
+	if council_status_continue_button != null:
+		council_status_continue_button.visible = true
+		council_status_continue_button.disabled = false
+		council_status_continue_button.move_to_front()
+	while council_status_waiting and running:
+		await get_tree().process_frame
+	if council_status_continue_button != null:
+		council_status_continue_button.visible = false
+	if status_page != null:
+		status_page.visible = false
+	_update_modal_backdrop()
+
+
+func _show_council_chapter_result_gate(final_game: bool) -> void:
+	if council_result_page == null:
+		return
+	_set_dialogue_visible(false)
+	_close_float_panels()
+	if council_result_page.has_method("show_result"):
+		council_result_page.call("show_result", state, final_game)
+	council_result_waiting = true
+	_show_modal_backdrop()
+	while council_result_waiting and running:
+		await get_tree().process_frame
+	_update_modal_backdrop()
+
+
+func _council_result_snapshot() -> Dictionary:
+	var members: Array = []
+	var all_members: Array = [state.player]
+	for npc in state.npcs:
+		all_members.append(npc)
+	for member in all_members:
+		members.append({
+			"id": String(member.get("id", "")),
+			"name": String(member.get("public_name", "")),
+			"faction": String(member.get("hidden_faction", "")),
+			"alive": bool(member.get("alive", true)),
+			"crimes": member.get("hidden_crimes", []).duplicate()
+		})
+	return {
+		"chapter_index": state.chapter_index,
+		"title": String(state.chapter.get("title", "")),
+		"victory": state.victory,
+		"reason": state.end_reason,
+		"members": members,
+		"votes": state.council_vote_records.duplicate(true)
+	}
+
+
+func _ensure_council_continue_button() -> void:
+	if council_status_continue_button != null and is_instance_valid(council_status_continue_button):
+		return
+	council_status_continue_button = StandardButtonScript.new()
+	council_status_continue_button.text = "继续"
+	council_status_continue_button.z_index = 4020
+	council_status_continue_button.custom_minimum_size = Vector2(180, 58)
+	council_status_continue_button.anchor_left = 0.5
+	council_status_continue_button.anchor_right = 0.5
+	council_status_continue_button.anchor_top = 1.0
+	council_status_continue_button.anchor_bottom = 1.0
+	council_status_continue_button.offset_left = -90
+	council_status_continue_button.offset_right = 90
+	council_status_continue_button.offset_top = -92
+	council_status_continue_button.offset_bottom = -34
+	council_status_continue_button.pressed.connect(func():
+		council_status_waiting = false
+	)
+	status_page.add_child(council_status_continue_button)
 
 
 func _show_inventory_overlay() -> void:
@@ -4600,7 +5120,7 @@ func _update_after_end() -> void:
 	if state.ended:
 		_set_status_text(state.end_reason)
 		_show_result_banner(state.end_reason, Color(0.62, 1.0, 0.78, 1.0) if state.victory else Color(1.0, 0.36, 0.32, 1.0))
-		if not state.victory:
+		if not state.victory and not council_mode:
 			_show_death_page()
 	start_button.disabled = false
 	if rules_edit != null:
@@ -4856,12 +5376,21 @@ func _set_dialogue_visible(visible: bool) -> void:
 	for node in [status_label, info_button, bag_button, history_button, rules_button, status_button, settings_button]:
 		if node != null:
 			node.visible = visible
+	if council_mode and visible:
+		for node in [info_button, bag_button, rules_button]:
+			if node != null:
+				node.visible = false
 	if llm_retry_button != null and not visible:
 		llm_retry_button.visible = false
 	for action_button in action_buttons.values():
 		var button := action_button as Button
 		if button != null:
 			button.visible = visible
+	if council_mode and visible:
+		for hidden_key in ["cast", "assassinate"]:
+			var hidden_button := action_buttons.get(hidden_key) as Button
+			if hidden_button != null:
+				hidden_button.visible = false
 	if not visible:
 		if upper_box != null:
 			upper_box.visible = false

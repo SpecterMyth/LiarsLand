@@ -43,6 +43,97 @@ static func npc_dialogue_user(state) -> String:
 	]
 
 
+static func council_player_system(_state) -> String:
+	return "你是《骗子大陆》的玩家角色，不是真人用户。你只能根据行为文件行动。只输出 JSON：{\"thinking\":\"...\",\"speech\":\"...\",\"action\":\"declare_tendency\",\"target_crime_id\":\"\",\"vote\":\"guilty\",\"bound_votes\":[],\"end_dialogue\":false}。action 只能是 declare_tendency、cast_vote、offer_trade、retreat、none。vote 只能是 guilty、innocent、abstain。你不能直接结算结果，不能读取其他人的隐藏罪行或隐藏阵营。"
+
+
+static func council_player_user(state, behavior_guideline: String, identity_guideline := "") -> String:
+	return "你的公开身份规则：\n%s\n\n你的行为文件：\n%s\n\n你的隐藏信息与公开局势：\n%s\n\n当前会谈对象公开信息：\n%s\n\n当前对话：\n%s\n\n请围绕罪行投票进行政治会谈。优先自保，其次让自己的隐藏阵营获胜。至少给出一句自然发言；如果要行动，请填 action、target_crime_id 和 vote。" % [
+		identity_guideline,
+		behavior_guideline,
+		JSON.stringify(_council_snapshot(state, "player")),
+		JSON.stringify(state.public_npc_snapshot()),
+		state.format_history()
+	]
+
+
+static func council_npc_system() -> String:
+	return "你是《骗子大陆》议会玩法中的 NPC 议员。只输出 JSON：{\"speech\":\"...\",\"action\":\"declare_tendency\",\"target_crime_id\":\"\",\"vote\":\"guilty\",\"bound_votes\":[],\"end_dialogue\":false}。action 只能是 declare_tendency、cast_vote、offer_trade、retreat、none。vote 只能是 guilty、innocent、abstain。你只能知道公开信息和自己的隐藏信息，不能假装知道别人犯了什么罪或属于什么阵营，不能直接结算游戏。"
+
+
+static func council_npc_user(state) -> String:
+	var npc: Dictionary = state.current_npc()
+	return "你的隐藏信息与公开局势：\n%s\n\n玩家公开信息：\n%s\n\n当前对话：\n%s\n\n请像小镇议员一样发言。你的策略：优先避免自己因隐藏罪行被处决，其次帮助自己的隐藏阵营获胜。你可以劝说、试探、表达倾向、正式投票、提出政治交易或撤退。" % [
+		JSON.stringify(_council_snapshot(state, String(npc.get("id", "")))),
+		JSON.stringify(_council_public_player(state)),
+		state.format_history()
+	]
+
+
+static func _council_snapshot(state, viewer_id: String) -> Dictionary:
+	var self_member := {}
+	if String(state.player.get("id", "player")) == viewer_id:
+		self_member = state.player
+	else:
+		for npc in state.npcs:
+			if String(npc.get("id", "")) == viewer_id:
+				self_member = npc
+				break
+	var public_members: Array = []
+	var all_members: Array = [state.player]
+	for npc in state.npcs:
+		all_members.append(npc)
+	for member in all_members:
+		public_members.append({
+			"id": member.get("id", ""),
+			"public_name": member.get("public_name", ""),
+			"public_identity": member.get("public_identity", ""),
+			"alive": member.get("alive", true),
+			"faction_revealed": member.get("faction_revealed", false),
+			"public_support": member.get("public_support", "")
+		})
+	return {
+		"round": state.chapter_round + 1,
+		"execution_threshold": int(ceil(float(public_members.size()) / 2.0)),
+		"crime_pool": state.council_crime_pool,
+		"vote_records": state.council_vote_records,
+		"vote_tendencies": state.council_vote_tendencies,
+		"public_members": public_members,
+		"self": {
+			"id": self_member.get("id", ""),
+			"public_name": self_member.get("public_name", ""),
+			"hidden_faction": self_member.get("hidden_faction", ""),
+			"hidden_crimes": self_member.get("hidden_crimes", [])
+		}
+	}
+
+
+static func _council_public_player(state) -> Dictionary:
+	return {
+		"id": state.player.get("id", "player"),
+		"public_name": state.player.get("public_name", "玩家"),
+		"public_identity": state.player.get("public_identity", ""),
+		"alive": state.player.get("alive", true),
+		"faction_revealed": state.player.get("faction_revealed", false)
+	}
+
+
+static func council_npc_system_v2() -> String:
+	return "你是《骗子大陆》议会玩法中的 NPC 议员。只输出 JSON：{\"speech\":\"...\",\"action\":\"declare_tendency\",\"target_crime_id\":\"\",\"vote\":\"guilty\",\"bound_votes\":[],\"end_dialogue\":false}。action 只能是 declare_tendency、cast_vote、offer_trade、retreat、none。vote 只能是 guilty、innocent、abstain。你只能知道公开信息和自己的隐藏信息，不能假装知道别人犯了什么罪或属于什么阵营，不能直接结算游戏。\n\n重要生存策略：self.hidden_crimes / self_death_risk_crime_ids 是你自己犯过的罪行。如果 target_crime_id 命中这些罪行，投 guilty 可能导致你自己被处决；不要对这些罪行投 guilty，也不要在政治交易中承诺投 guilty。你应该改投 innocent、abstain、retreat，或者提出交易保护自己。"
+
+
+static func council_npc_user_v2(state) -> String:
+	var npc: Dictionary = state.current_npc()
+	var snapshot := _council_snapshot(state, String(npc.get("id", "")))
+	snapshot["self_death_risk_crime_ids"] = snapshot.get("self", {}).get("hidden_crimes", [])
+	snapshot["survival_vote_rule"] = "Never vote guilty on any crime_id in self_death_risk_crime_ids; choose innocent, abstain, retreat, or trade instead."
+	return "你的隐藏信息与公开局势：\n%s\n\n玩家公开信息：\n%s\n\n当前对话：\n%s\n\n请像小镇议员一样发言。你的策略：优先避免自己因为隐藏罪行被处决，其次帮助自己的隐藏阵营获胜。\n投票策略：\n- self.hidden_crimes / self_death_risk_crime_ids 是你本章真正犯过的罪行。\n- 只要 target_crime_id 命中这些罪行，绝不输出 vote:guilty，因为这会把你自己处决。\n- 当玩家说服你支持你自己的罪行有罪时，应该拒绝、撤退、改投 innocent/abstain，或提出政治交易保护自己。\n- 如果要投 guilty，优先选择不在 self.hidden_crimes 中的罪行。\n你可以劝说、试探、表达倾向、正式投票、提出政治交易或撤退。" % [
+		JSON.stringify(snapshot),
+		JSON.stringify(_council_public_player(state)),
+		state.format_history()
+	]
+
+
 static func post_action_system() -> String:
 	return "你是玩家角色的行动决策模块。只输出 JSON：{\"thinking\":\"...\",\"action\":\"leave\",\"artifact_id\":\"\"}。action 只能是 invite、assassinate、duel、leave、gift、cast。gift 和 cast 必须填写 artifact_id。你不能直接结算结果，也不能提交世界设定档案；提交答案只能由真人用户操作。"
 

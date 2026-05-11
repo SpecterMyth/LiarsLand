@@ -85,6 +85,79 @@ func set_history(history_text: String, event_log: Array, summary := "") -> void:
 	footer_label.text = "共 %d 条记录 / %s" % [count, summary if not summary.is_empty() else "当前进度"]
 
 
+func set_council_history(entries: Array, members: Array, event_log: Array, summary := "") -> void:
+	if history_view == null:
+		return
+	_clear_children(summary_box)
+	summary_box.add_child(_make_label("议员头像", 22, Color(1.0, 0.84, 0.38, 1.0), 2))
+	summary_box.add_child(_make_label(summary if not summary.is_empty() else "当前议会", 16, Color(0.94, 0.90, 0.78, 1.0), 2))
+	for member in members:
+		summary_box.add_child(_make_member_row(member))
+
+	var portrait_by_id := {}
+	for member in members:
+		portrait_by_id[String(member.get("id", ""))] = _portrait_bbcode_path(String(member.get("portrait", "")))
+
+	history_view.clear()
+	if entries.is_empty():
+		history_view.append_text("[color=#f5d889]暂无议会对话记录。[/color]")
+	else:
+		history_view.append_text("[color=#ffd77a][b]议会对话[/b][/color]\n\n")
+		for entry in entries:
+			var speaker_id := String(entry.get("speaker_id", ""))
+			var portrait_path := String(portrait_by_id.get(speaker_id, ""))
+			if not portrait_path.is_empty():
+				history_view.append_text("[img=36x36]%s[/img] " % portrait_path)
+			history_view.append_text("[color=#ffd77a][b]第%d轮 · %s[/b][/color]\n%s\n\n" % [
+				int(entry.get("round", 0)),
+				_escape(String(entry.get("speaker_name", "议员"))),
+				_escape(String(entry.get("content", "")))
+			])
+	if not event_log.is_empty():
+		history_view.append_text("\n[color=#e99755][b]议会事件[/b][/color]\n")
+		for item in event_log:
+			history_view.append_text("[color=#f0c0a0]- %s[/color]\n" % _escape(String(item)))
+	footer_label.text = "共 %d 条记录 / %s" % [entries.size() + event_log.size(), summary if not summary.is_empty() else "当前进度"]
+
+
+func _make_member_row(member: Dictionary) -> Control:
+	var row := HBoxContainer.new()
+	row.custom_minimum_size = Vector2(0, 48)
+	row.add_theme_constant_override("separation", 8)
+	var portrait := TextureRect.new()
+	portrait.custom_minimum_size = Vector2(42, 42)
+	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	var portrait_path := _portrait_avatar_path(String(member.get("portrait", "")))
+	if ResourceLoader.exists(portrait_path):
+		portrait.texture = load(portrait_path)
+	row.add_child(portrait)
+	var suffix := "" if bool(member.get("alive", true)) else "（已处决）"
+	var label := _make_label("%s%s" % [String(member.get("name", "议员")), suffix], 16, Color(0.94, 0.90, 0.78, 1.0), 2)
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	row.add_child(label)
+	return row
+
+
+func _portrait_bbcode_path(portrait_name: String) -> String:
+	return _portrait_avatar_path(portrait_name)
+
+
+func _portrait_avatar_path(portrait_name: String) -> String:
+	if portrait_name.is_empty():
+		portrait_name = "player_portrait.png"
+	var circle_name := portrait_name.replace("_portrait.png", "_circle_avatar.png")
+	var circle_path := "res://assets/generated/%s" % circle_name
+	if ResourceLoader.exists(circle_path):
+		return circle_path
+	var head_name := portrait_name.replace("_portrait.png", "_head_avatar.png")
+	var head_path := "res://assets/generated/%s" % head_name
+	if ResourceLoader.exists(head_path):
+		return head_path
+	return "res://assets/generated/%s" % portrait_name
+
+
 func _summary_items(summary: String, history_text: String, event_log: Array) -> Array[String]:
 	var items: Array[String] = []
 	items.append(summary if not summary.is_empty() else "当前章节：等待开始")

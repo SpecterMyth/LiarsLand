@@ -47,6 +47,18 @@ var dialogue_history: Array[Dictionary] = []
 var full_dialogue_history: Array[Dictionary] = []
 var event_log: Array[String] = []
 var pending_trade_offer: Dictionary = {}
+var council_mode := false
+var council_members: Array = []
+var council_factions: Array = []
+var council_crime_pool: Array = []
+var council_vote_records: Array = []
+var council_vote_tendencies: Array = []
+var council_death_wills: Array = []
+var council_public_support: Dictionary = {}
+var council_executed_crimes: Array[String] = []
+var council_player_faction := ""
+var council_chapter_results: Array = []
+var council_total_chapters := 3
 
 
 func load_chapter(data: Dictionary) -> void:
@@ -83,6 +95,15 @@ func load_chapter(data: Dictionary) -> void:
 	full_dialogue_history.clear()
 	event_log.clear()
 	pending_trade_offer.clear()
+	council_mode = bool(data.get("mode", "") == "council")
+	council_members.clear()
+	council_factions.clear()
+	council_crime_pool.clear()
+	council_vote_records.clear()
+	council_vote_tendencies.clear()
+	council_death_wills.clear()
+	council_public_support.clear()
+	council_executed_crimes.clear()
 	_setup_actor(player)
 	for i in range(npcs.size()):
 		var npc: Dictionary = npcs[i]
@@ -436,7 +457,7 @@ func public_snapshot() -> Dictionary:
 
 func public_npc_snapshot() -> Dictionary:
 	var npc := current_npc()
-	var hidden := ["true_stance", "affinity", "friend_judgement", "intel", "identity_info", "join_threshold", "stats", "inventory", "artifact_history", "dominion_requirement", "ascension_requirement"]
+	var hidden := ["true_stance", "affinity", "friend_judgement", "intel", "identity_info", "join_threshold", "stats", "inventory", "artifact_history", "dominion_requirement", "ascension_requirement", "hidden_faction", "hidden_crimes"]
 	var visible := npc.duplicate(true)
 	for key in hidden:
 		visible.erase(key)

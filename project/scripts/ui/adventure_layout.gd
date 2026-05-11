@@ -678,11 +678,13 @@ func _make_icon_button(label: String, icon_name: String) -> Button:
 
 
 func _load_common_texture(name: String) -> Texture2D:
+	if ResourceLoader.exists(COMMON_UI_ROOT + name):
+		return load(COMMON_UI_ROOT + name)
+	if OS.has_feature("web"):
+		return null
 	var image := Image.load_from_file(ProjectSettings.globalize_path(COMMON_UI_ROOT + name))
 	if image != null:
 		return ImageTexture.create_from_image(image)
-	if ResourceLoader.exists(COMMON_UI_ROOT + name):
-		return load(COMMON_UI_ROOT + name)
 	var fallback := name.replace("icon_tile_", "icon_")
 	return _load_texture(fallback)
 

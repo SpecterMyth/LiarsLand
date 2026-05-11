@@ -1,0 +1,1162 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>《骗子大陆》议会玩法重构执行计划</title>
+  <style>
+    :root {
+      --bg: #111015;
+      --panel: #1c1820;
+      --panel-2: #241e27;
+      --ink: #f4dfb2;
+      --muted: #b8a985;
+      --line: rgba(244, 223, 178, 0.18);
+      --red: #d65a4a;
+      --blue: #4f83c2;
+      --green: #65a96f;
+      --gold: #e7b755;
+      --shadow: rgba(0, 0, 0, 0.34);
+      font-family: "Microsoft YaHei", "Noto Sans SC", "PingFang SC", system-ui, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(135deg, rgba(79, 131, 194, 0.18), transparent 32%),
+        linear-gradient(225deg, rgba(214, 90, 74, 0.16), transparent 30%),
+        var(--bg);
+      line-height: 1.72;
+    }
+
+    main {
+      width: min(1180px, calc(100% - 42px));
+      margin: 0 auto;
+      padding: 38px 0 64px;
+    }
+
+    header,
+    section,
+    .card,
+    .phase {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(36, 30, 39, 0.96), rgba(28, 24, 32, 0.96));
+      box-shadow: 0 20px 54px var(--shadow);
+    }
+
+    header {
+      padding: 34px 38px;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      font-size: clamp(32px, 5vw, 58px);
+      max-width: 900px;
+    }
+
+    h2 {
+      padding-top: 10px;
+      border-top: 2px solid var(--line);
+      font-size: 25px;
+    }
+
+    h3 {
+      font-size: 18px;
+      color: var(--gold);
+    }
+
+    p,
+    ul,
+    ol {
+      margin: 10px 0 0;
+    }
+
+    ul,
+    ol {
+      padding-left: 1.35em;
+    }
+
+    li + li {
+      margin-top: 4px;
+    }
+
+    code {
+      color: #ffe0a0;
+      background: rgba(0, 0, 0, 0.22);
+      padding: 1px 5px;
+      border: 1px solid rgba(244, 223, 178, 0.12);
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    section {
+      margin-top: 24px;
+      padding: 26px 30px;
+    }
+
+    .subtitle {
+      max-width: 900px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 4px 10px;
+      color: var(--ink);
+      background: rgba(0, 0, 0, 0.22);
+      border: 1px solid var(--line);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .card {
+      padding: 18px;
+      min-height: 100%;
+      box-shadow: none;
+    }
+
+    .note {
+      margin-top: 16px;
+      padding: 15px 18px;
+      border-left: 5px solid var(--gold);
+      background: rgba(231, 183, 85, 0.12);
+      color: #f7e8c7;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 16px;
+      border-collapse: collapse;
+      background: rgba(0, 0, 0, 0.16);
+      font-size: 15px;
+    }
+
+    th,
+    td {
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      color: var(--gold);
+      background: rgba(0, 0, 0, 0.28);
+    }
+
+    .phase-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .phase {
+      padding: 18px 20px;
+      box-shadow: none;
+    }
+
+    .phase-title {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .phase-title span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 2px 8px;
+      border: 1px solid var(--line);
+      font-size: 12px;
+      color: var(--ink);
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .blue { color: #9fc5ff; }
+    .red { color: #ffac9e; }
+    .green { color: #b2e7b8; }
+
+    .mockups {
+      display: grid;
+      gap: 22px;
+      margin-top: 16px;
+    }
+
+    .mockup {
+      border: 1px solid var(--line);
+      background: #151219;
+      padding: 14px;
+    }
+
+    .mock-screen {
+      aspect-ratio: 16 / 9;
+      min-height: 360px;
+      border: 1px solid rgba(244, 223, 178, 0.2);
+      background:
+        linear-gradient(90deg, rgba(79, 131, 194, 0.14), transparent 36%, transparent 64%, rgba(214, 90, 74, 0.12)),
+        #201922;
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+    }
+
+    .mock-dialogue {
+      grid-template-columns: 150px 1fr 128px;
+      grid-template-rows: 44px 1fr 108px;
+      grid-template-areas:
+        "top top top"
+        "left center right"
+        "left bottom right";
+    }
+
+    .mock-select {
+      grid-template-columns: 1fr;
+      grid-template-rows: 48px 1fr 120px;
+    }
+
+    .mock-status {
+      grid-template-columns: 1fr 1.2fr 1fr 0.7fr;
+      grid-template-rows: 46px 1fr 128px;
+      grid-template-areas:
+        "top top top side"
+        "guilty board innocent side"
+        "log log log side";
+    }
+
+    .mock-history {
+      grid-template-columns: 180px 1fr;
+      grid-template-rows: 48px 1fr;
+      grid-template-areas:
+        "top top"
+        "people transcript";
+    }
+
+    .mock-end {
+      grid-template-columns: 0.9fr 1.1fr;
+      grid-template-rows: 54px 1fr 118px;
+      grid-template-areas:
+        "top top"
+        "reveal chain"
+        "summary summary";
+    }
+
+    .mock-box {
+      border: 1px solid rgba(244, 223, 178, 0.2);
+      background: rgba(0, 0, 0, 0.22);
+      padding: 10px;
+      overflow: hidden;
+    }
+
+    .mock-top { grid-area: top; }
+    .mock-left { grid-area: left; }
+    .mock-center { grid-area: center; }
+    .mock-right { grid-area: right; }
+    .mock-bottom { grid-area: bottom; }
+    .mock-board { grid-area: board; }
+    .mock-guilty { grid-area: guilty; }
+    .mock-innocent { grid-area: innocent; }
+    .mock-side { grid-area: side; }
+    .mock-log { grid-area: log; }
+    .mock-people { grid-area: people; }
+    .mock-transcript { grid-area: transcript; }
+    .mock-reveal { grid-area: reveal; }
+    .mock-chain { grid-area: chain; }
+    .mock-summary { grid-area: summary; }
+
+    .mock-label {
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .mock-button {
+      min-height: 36px;
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(244, 223, 178, 0.22);
+      background: rgba(231, 183, 85, 0.12);
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .mock-sys {
+      background: rgba(79, 131, 194, 0.12);
+    }
+
+    .mock-line {
+      height: 12px;
+      margin-top: 8px;
+      background: rgba(244, 223, 178, 0.16);
+    }
+
+    .mock-line.short {
+      width: 64%;
+    }
+
+    .mock-card-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      height: 100%;
+    }
+
+    .mock-card {
+      border: 1px solid rgba(244, 223, 178, 0.18);
+      background: rgba(0, 0, 0, 0.2);
+      padding: 8px;
+      min-height: 116px;
+    }
+
+    .mock-avatar {
+      height: 52px;
+      background: linear-gradient(135deg, rgba(244, 223, 178, 0.28), rgba(214, 90, 74, 0.12));
+      margin-bottom: 8px;
+    }
+
+    .mock-face-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .mock-face {
+      width: 38px;
+      height: 38px;
+      border: 2px solid rgba(244, 223, 178, 0.28);
+      background: linear-gradient(135deg, rgba(244, 223, 178, 0.34), rgba(79, 131, 194, 0.18));
+      position: relative;
+    }
+
+    .mock-face.gray {
+      filter: grayscale(1);
+      opacity: 0.56;
+    }
+
+    .mock-face.dead {
+      filter: grayscale(1);
+      opacity: 0.42;
+      background:
+        linear-gradient(45deg, transparent 45%, rgba(214, 90, 74, 0.9) 47%, rgba(214, 90, 74, 0.9) 53%, transparent 55%),
+        linear-gradient(135deg, rgba(244, 223, 178, 0.22), rgba(0, 0, 0, 0.2));
+    }
+
+    .mock-face.dead::after {
+      content: "处";
+      position: absolute;
+      right: -6px;
+      bottom: -7px;
+      width: 18px;
+      height: 18px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(244, 223, 178, 0.3);
+      background: rgba(214, 90, 74, 0.9);
+      color: #fff4dc;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .mock-vote-row {
+      display: grid;
+      grid-template-columns: 1.2fr 0.7fr 0.7fr 0.8fr;
+      gap: 8px;
+      margin-top: 8px;
+      align-items: center;
+    }
+
+    .mock-cell {
+      min-height: 28px;
+      border: 1px solid rgba(244, 223, 178, 0.14);
+      background: rgba(0, 0, 0, 0.16);
+      padding: 5px 7px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .mock-pill {
+      display: inline-block;
+      margin: 4px 4px 0 0;
+      padding: 3px 7px;
+      border: 1px solid rgba(244, 223, 178, 0.18);
+      font-size: 12px;
+    }
+
+    @media (max-width: 860px) {
+      main {
+        width: min(100% - 24px, 1180px);
+        padding-top: 18px;
+      }
+
+      header,
+      section {
+        padding: 22px;
+      }
+
+      .grid,
+      .grid.two {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        display: block;
+        overflow-x: auto;
+      }
+
+      .mock-dialogue,
+      .mock-status,
+      .mock-history,
+      .mock-end {
+        grid-template-columns: 1fr;
+        grid-template-rows: none;
+        grid-template-areas: none;
+      }
+
+      .mock-top,
+      .mock-left,
+      .mock-center,
+      .mock-right,
+      .mock-bottom,
+      .mock-board,
+      .mock-guilty,
+      .mock-innocent,
+      .mock-side,
+      .mock-log,
+      .mock-people,
+      .mock-transcript,
+      .mock-reveal,
+      .mock-chain,
+      .mock-summary {
+        grid-area: auto;
+      }
+
+      .mock-card-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>议会玩法重构执行计划</h1>
+      <p class="subtitle">
+        这份计划把脑暴方案转成当前 Godot 原型的落地路径。目标是在保留现有美术、角色、场景和大部分界面资产的前提下，把核心循环从“法器统治/情报解谜”替换为“议会罪行投票/阵营博弈”。
+      </p>
+      <div class="meta">
+        <span class="tag">状态：待讨论</span>
+        <span class="tag">不立即开工</span>
+        <span class="tag">目标引擎：Godot 4.6.2</span>
+        <span class="tag">日期：2026-05-11</span>
+      </div>
+    </header>
+
+    <section>
+      <h2>一、方案判断</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>应该保留</h3>
+          <ul>
+            <li>现有角色立绘、NPC 选择卡、对话场景和背景资产。</li>
+            <li>现有对话 UI、历史记录、状态页、设置页、结算页的视觉框架。</li>
+            <li>LLM 调用层：<code>llm_client.gd</code> 和 prompt 构建的基本结构。</li>
+            <li>章节 JSON 加载模式和测试脚本组织方式。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>应该替换</h3>
+          <ul>
+            <li>法器、背包、商店、升级、统治需求作为核心玩法。</li>
+            <li>世界情报卡作为主要胜负条件。</li>
+            <li>暗杀、决斗、赠送法器、施法等旧行动按钮。</li>
+            <li>NPC 围绕法器需求和好感度推进的旧策略。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>应该新增</h3>
+          <ul>
+            <li>阵营、罪行、公开投票、投票倾向、政治交易、处决连锁。</li>
+            <li>对等信息模型：所有角色只知道公开信息和自己的隐藏信息。</li>
+            <li>前三章固定规模：4 人、9 人、12 人。</li>
+            <li>可读的投票板、罪行板、公开信仰板和遗嘱投票日志。</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note">
+        最重要的设计转向：不要让玩家猜 LLM 心里有什么剧本，而是让玩家观察公开记录、推断谁害怕哪条罪、谁在保护哪个阵营。
+      </div>
+    </section>
+
+    <section>
+      <h2>二、目标体验</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>玩家看到的东西</th>
+            <th>玩家做的判断</th>
+            <th>系统提供的反馈</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>本章罪行库、全部议员、公开投票、公开倾向。</td>
+            <td>某个 NPC 是否害怕某条罪行，是否在保护同阵营者。</td>
+            <td>投票板立即更新，处决阈值清晰可见。</td>
+          </tr>
+          <tr>
+            <td>NPC 在对话里劝说、撤退、表态、要求交易。</td>
+            <td>这句话是软承诺、真威胁，还是诱导玩家先投票。</td>
+            <td>倾向可改，正式投票不可改，交易绑定不可撤销。</td>
+          </tr>
+          <tr>
+            <td>有人被处决，身份暂不公开，只留下遗嘱投票。</td>
+            <td>刚才杀掉的是盟友、敌人，还是关键摇摆票。</td>
+            <td>第二章起，遗嘱投票可能触发新处决，形成可复盘的连锁。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>三、数据模型</h2>
+      <p>建议新增一套议会玩法数据字段，先与旧字段并存，再逐步替换 UI 读取来源。</p>
+      <table>
+        <thead>
+          <tr>
+            <th>对象</th>
+            <th>新增字段</th>
+            <th>说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>GameState</code></td>
+            <td><code>council_members</code>、<code>crime_pool</code>、<code>factions</code>、<code>vote_records</code>、<code>vote_tendencies</code>、<code>public_faction_support</code></td>
+            <td>替代旧的 artifacts、world_intel、shop 核心循环。</td>
+          </tr>
+          <tr>
+            <td>议员</td>
+            <td><code>id</code>、<code>public_name</code>、<code>portrait</code>、<code>scene</code>、<code>hidden_faction</code>、<code>hidden_crimes</code>、<code>alive</code>、<code>faction_revealed</code></td>
+            <td>玩家也是议员，和 NPC 使用同一种数据结构。</td>
+          </tr>
+          <tr>
+            <td>罪行</td>
+            <td><code>id</code>、<code>title</code>、<code>topics</code>、<code>source_note</code>、<code>chapter_tags</code></td>
+            <td>罪行标题用于 UI 和投票，source_note 只用于文档/调试，不一定进正式游戏文本。</td>
+          </tr>
+          <tr>
+            <td>投票</td>
+            <td><code>crime_id</code>、<code>member_id</code>、<code>vote</code>、<code>locked</code>、<code>source</code>、<code>round</code></td>
+            <td><code>vote</code> 为 guilty / innocent / abstain；正式投票 locked=true。</td>
+          </tr>
+          <tr>
+            <td>交易</td>
+            <td><code>offer_id</code>、<code>members</code>、<code>bound_votes</code>、<code>accepted</code></td>
+            <td>政治交易本质是一次批量锁定投票。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>四、章节配置</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>章节</th>
+            <th>配置</th>
+            <th>验收目标</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>第一章</td>
+            <td>4 名角色，2 个阵营，5 条罪行，每人 5 选 3；2 票处决。处决发生后剩余 3 人强制公开阵营并结算。</td>
+            <td>10 分钟内完成一局，玩家能理解投票会直接杀人，并理解“少于等于 3 人强制公开”的终局规则。</td>
+          </tr>
+          <tr>
+            <td>第二章</td>
+            <td>9 名角色，3 个阵营，8 条罪行，每人抽 3 条。</td>
+            <td>玩家开始通过交易和投票行为推断阵营。</td>
+          </tr>
+          <tr>
+            <td>第三章</td>
+            <td>12 名角色，3 个阵营，10 条罪行，每人抽 3 条，强化遗嘱投票和连锁压力。</td>
+            <td>大局仍然可读，投票板不会淹没玩家。</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        计划新增 <code>project/data/council_chapter_01.json</code>、<code>council_chapter_02.json</code>、<code>council_chapter_03.json</code>。旧 <code>chapter_01.json</code> 保留，直到新模式稳定。
+      </p>
+    </section>
+
+    <section>
+      <h2>五、规则引擎</h2>
+      <p>建议新增 <code>CouncilRulesEngine</code>，不要在旧 <code>RulesEngine</code> 上直接硬改。旧引擎可作为回滚路径。</p>
+      <div class="grid two">
+        <div class="card">
+          <h3>核心 API</h3>
+          <ul>
+            <li><code>start_council_chapter(state, chapter_data)</code></li>
+            <li><code>record_tendency(member_id, crime_id, tendency)</code></li>
+            <li><code>cast_vote(member_id, crime_id, vote, source)</code></li>
+            <li><code>accept_trade(trade_offer)</code></li>
+            <li><code>check_executions()</code></li>
+            <li><code>apply_death_will(member_id)</code></li>
+            <li><code>check_faction_victory()</code></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>关键规则</h3>
+          <ul>
+            <li>正式投票不可更改，倾向可更改但保留历史。</li>
+            <li>处决阈值为总议员人数的一半向上取整；4 人局即 2 票处决。</li>
+            <li>处决某罪行时，所有拥有该隐藏罪行的存活议员死亡。</li>
+            <li>死亡议员留下全罪行遗嘱投票。第一章会记录但无实际影响，因为死亡后立即结算；第二章起正式参与连锁。</li>
+            <li>存活者公开支持某阵营超过半数则该阵营胜利。</li>
+            <li>任意结算检查时，若存活议员小于等于 3 人，强制公开阵营并结算。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>六、LLM 改造</h2>
+      <p>LLM 不再负责“自由地推进剧情”，而是负责在公开信息约束下选择清晰行动。</p>
+      <table>
+        <thead>
+          <tr>
+            <th>模块</th>
+            <th>改造内容</th>
+            <th>输出 JSON</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>PromptBuilder.npc_dialogue_*</code></td>
+            <td>注入 NPC 自己的隐藏阵营、隐藏罪行，以及所有公开投票/倾向。不注入任何其他人的隐藏信息。</td>
+            <td><code>speech</code>、<code>action</code>、<code>target_crime_id</code>、<code>vote</code>、<code>trade_offer</code></td>
+          </tr>
+          <tr>
+            <td>玩家角色 LLM</td>
+            <td>正式玩法只能通过行为文件驱动玩家角色。玩家本人不直接替角色投票或发言；玩家角色 LLM 同样只看公开信息和自身隐藏信息。</td>
+            <td><code>speech</code>、<code>action</code>、<code>target_member_id</code>、<code>target_crime_id</code>、<code>vote</code></td>
+          </tr>
+          <tr>
+            <td>动作约束</td>
+            <td>允许四类行动：撤退、直接投票、政治交易、倾向表达。旧 invite / duel / assassinate / gift / cast 暂停。</td>
+            <td><code>retreat</code>、<code>cast_vote</code>、<code>offer_trade</code>、<code>declare_tendency</code></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note">
+        LLM 输出必须被规则引擎校验。比如 NPC 不能投不存在的罪行，不能改已锁定投票，不能知道别人隐藏罪行，不能直接宣布胜负。
+      </div>
+    </section>
+
+    <section>
+      <h2>七、UI 改造</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>现有界面</th>
+            <th>新用途</th>
+            <th>优先级</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>NPC 选择页</td>
+            <td>保留现有基础布局。最左侧仍然是玩家自己的角色卡片；每回合从 3 个候选角色中选择 1 个会谈；底部新增公共摘要条，显示危险罪行、公开阵营数、最近投票。</td>
+            <td>第一阶段必须</td>
+          </tr>
+          <tr>
+            <td>对话页</td>
+            <td>不改动现有游戏内主体布局，继续保持大角色、大场景、对话框。只替换左右两侧按钮：左侧四类会议行动，右侧系统按钮。</td>
+            <td>第一阶段必须</td>
+          </tr>
+          <tr>
+            <td>状态页</td>
+            <td>改造成议会状态页：罪行库、投票头像板、倾向记录、阵营公开人数。每回合对话结束后强制显示一次，点击“继续”后回到对手选择页。</td>
+            <td>第一阶段必须</td>
+          </tr>
+          <tr>
+            <td>历史页</td>
+            <td>改为头像式历史对话页：左侧显示我和其他角色头像，右侧按选中头像显示历史对话文字信息，并可穿插投票事件。</td>
+            <td>第一阶段必须</td>
+          </tr>
+          <tr>
+            <td>背包/商店/升级</td>
+            <td>暂时隐藏，但保留系统和资源，不参与议会玩法；未来可作为 meta 成长系统再评估。</td>
+            <td>第一阶段处理</td>
+          </tr>
+          <tr>
+            <td>死亡页/结算页</td>
+            <td>改为章节结算：公开所有隐藏阵营和罪行，展示关键投票链。</td>
+            <td>第二阶段</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note">
+        已确认布局约束：对话页主体不重排，不改变大角色、大场景、对话框的既有体验。底部区域仍然是对话窗口，不放当前罪行快捷条。常规流程下，会议行动由玩家角色 LLM 根据行为文件触发；开发调试时可以临时允许手动点击这些按钮验证规则。
+      </div>
+    </section>
+
+    <section>
+      <h2>八、UI 假图</h2>
+      <p>以下是假图，用来确认信息层级和布局方向。它们不是最终美术，只说明哪些页面要改、哪些区域承担什么功能。</p>
+      <div class="mockups">
+        <div class="mockup">
+          <h3>1. 对话页：主体布局保持，只替换两侧按钮</h3>
+          <div class="mock-screen mock-dialogue">
+            <div class="mock-box mock-top">
+              <div class="mock-label">顶部状态条</div>
+              <span class="mock-pill blue">第 1 章</span>
+              <span class="mock-pill red">处决阈值 2 票</span>
+              <span class="mock-pill green">存活 4 / 4</span>
+              <span class="mock-pill">当前会谈：狐狸夜市贵族</span>
+            </div>
+            <div class="mock-box mock-left">
+              <div class="mock-label">左侧：会议行动</div>
+              <div class="mock-button">表达倾向</div>
+              <div class="mock-button">直接投票</div>
+              <div class="mock-button">政治交易</div>
+              <div class="mock-button">暂时撤退</div>
+            </div>
+            <div class="mock-box mock-center">
+              <div class="mock-label">保留现有主体：大场景 + 大角色 + 对话框</div>
+              <div class="mock-avatar" style="height:120px;width:34%;float:left;margin-right:12px;"></div>
+              <div class="mock-avatar" style="height:120px;width:34%;float:right;margin-left:12px;"></div>
+              <div class="mock-line"></div>
+              <div class="mock-line short"></div>
+              <div class="mock-line"></div>
+              <div class="mock-line short"></div>
+              <div class="mock-line"></div>
+              <div class="mock-line short"></div>
+            </div>
+            <div class="mock-box mock-right">
+              <div class="mock-label">右侧：系统按钮</div>
+              <div class="mock-button mock-sys">议会状态</div>
+              <div class="mock-button mock-sys">会议记录</div>
+              <div class="mock-button mock-sys">行为文件</div>
+              <div class="mock-button mock-sys">设置</div>
+            </div>
+            <div class="mock-box mock-bottom">
+              <div class="mock-label">底部：保留现有对话窗口</div>
+              <div class="mock-line"></div>
+              <div class="mock-line short"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mockup">
+          <h3>2. 选择会谈议员页：左侧玩家卡 + 三选一 + 底部摘要</h3>
+          <div class="mock-screen mock-select">
+            <div class="mock-box">
+              <div class="mock-label">选择本回合会谈对象</div>
+              <span class="mock-pill">只显示公开信息</span>
+              <span class="mock-pill">隐藏罪行不可见</span>
+              <span class="mock-pill">隐藏阵营不可见，除非公开</span>
+            </div>
+            <div class="mock-card-grid">
+              <div class="mock-card"><div class="mock-avatar"></div><div class="mock-label">我的角色卡</div><div class="mock-line short"></div><div class="mock-line"></div></div>
+              <div class="mock-card"><div class="mock-avatar"></div><div class="mock-label">狐狸夜市贵族</div><div class="mock-line short"></div><div class="mock-line"></div></div>
+              <div class="mock-card"><div class="mock-avatar"></div><div class="mock-label">乌鸦书记官</div><div class="mock-line short"></div><div class="mock-line"></div></div>
+              <div class="mock-card"><div class="mock-avatar"></div><div class="mock-label">白鹿使节</div><div class="mock-line short"></div><div class="mock-line"></div></div>
+            </div>
+            <div class="mock-box">
+              <div class="mock-label">底部新增：公共摘要</div>
+              <span class="mock-pill">最近投票：狐狸对 C03 有罪</span>
+              <span class="mock-pill">公开阵营：无</span>
+              <span class="mock-pill">危险罪行：C01 已 1/2</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mockup">
+          <h3>3. 议会状态页：回合结束强制显示，继续后返回选择页</h3>
+          <div class="mock-screen mock-status">
+            <div class="mock-box mock-top">
+              <div class="mock-label">议会状态总览：每回合对话结束后强制显示</div>
+              <span class="mock-pill blue">蓝领带党公开 0</span>
+              <span class="mock-pill red">红帽子党公开 0</span>
+              <span class="mock-pill green">绿果汁党未启用</span>
+              <span class="mock-pill">点击继续返回会谈选择</span>
+            </div>
+            <div class="mock-box mock-guilty">
+              <div class="mock-label">左侧：有罪票</div>
+              <div class="mock-face-row">
+                <div class="mock-face"></div>
+                <div class="mock-face gray"></div>
+              </div>
+              <div class="mock-label" style="margin-top:18px;">灰色头像 = 倾向</div>
+              <div class="mock-label">彩色头像 = 已投票</div>
+            </div>
+            <div class="mock-box mock-side">
+              <div class="mock-label">右侧：全体议员头像</div>
+              <div class="mock-face-row">
+                <div class="mock-face"></div>
+                <div class="mock-face"></div>
+                <div class="mock-face dead"></div>
+                <div class="mock-face"></div>
+                <div class="mock-face gray"></div>
+                <div class="mock-face"></div>
+              </div>
+              <div class="mock-label" style="margin-top:16px;">处决表现</div>
+              <span class="mock-pill red">灰化 + 红色斜线 + “处”印章</span>
+            </div>
+            <div class="mock-box mock-board">
+              <div class="mock-label">中间：罪行列表</div>
+              <div class="mock-cell">C01 把封口费伪装成律师账单 1/2</div>
+              <div class="mock-cell">C02 收金条后替金主办事 0/2</div>
+              <div class="mock-cell">C03 自己禁聚会却在官邸开酒会 1/2</div>
+              <div class="mock-cell">C04 派人闯进对手办公室偷听 0/2</div>
+            </div>
+            <div class="mock-box mock-innocent">
+              <div class="mock-label">右侧：无罪票</div>
+              <div class="mock-face-row">
+                <div class="mock-face"></div>
+                <div class="mock-face gray"></div>
+                <div class="mock-face"></div>
+              </div>
+              <div class="mock-label" style="margin-top:18px;">按当前选中罪行刷新</div>
+            </div>
+            <div class="mock-box mock-log">
+              <div class="mock-label">最近会议记录</div>
+              <span class="mock-pill">R1 狐狸表达 C01 有罪倾向</span>
+              <span class="mock-pill">R1 玩家正式投 C03 有罪</span>
+              <div class="mock-button mock-sys" style="width:140px;margin-top:14px;">继续</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mockup">
+          <h3>4. 历史页：头像式历史对话</h3>
+          <div class="mock-screen mock-history">
+            <div class="mock-box mock-top">
+              <div class="mock-label">历史对话与公开事件</div>
+              <span class="mock-pill">选择头像查看对话</span>
+              <span class="mock-pill">投票和交易插入时间线</span>
+            </div>
+            <div class="mock-box mock-people">
+              <div class="mock-label">我和其他角色</div>
+              <div class="mock-face-row">
+                <div class="mock-face"></div>
+                <div class="mock-face"></div>
+                <div class="mock-face gray"></div>
+                <div class="mock-face dead"></div>
+              </div>
+            </div>
+            <div class="mock-box mock-transcript">
+              <div class="mock-label">选中头像：狐狸夜市贵族</div>
+              <div class="mock-line"></div>
+              <div class="mock-line short"></div>
+              <span class="mock-pill">R1 狐狸表达 C01 有罪倾向</span>
+              <div class="mock-line"></div>
+              <div class="mock-line short"></div>
+              <span class="mock-pill red">R2 玩家角色正式投 C03 有罪</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mockup">
+          <h3>5. 章节结算页：强制公开与复盘</h3>
+          <div class="mock-screen mock-end">
+            <div class="mock-box mock-top">
+              <div class="mock-label">章节结算</div>
+              <span class="mock-pill red">第一章：处决触发，剩余 3 人强制公开</span>
+              <span class="mock-pill">胜利阵营：红帽子党</span>
+            </div>
+            <div class="mock-box mock-reveal">
+              <div class="mock-label">身份公开</div>
+              <div class="mock-line"></div>
+              <div class="mock-line"></div>
+              <div class="mock-line short"></div>
+              <div class="mock-label" style="margin-top:14px;">隐藏罪行公开</div>
+              <span class="mock-pill">玩家：C01 / C03 / C04</span>
+              <span class="mock-pill">狐狸：C02 / C03 / C05</span>
+            </div>
+            <div class="mock-box mock-chain">
+              <div class="mock-label">关键投票链</div>
+              <div class="mock-line"></div>
+              <div class="mock-line short"></div>
+              <div class="mock-line"></div>
+              <div class="mock-line short"></div>
+            </div>
+            <div class="mock-box mock-summary">
+              <div class="mock-label">复盘摘要</div>
+              <span class="mock-pill">谁推动了处决</span>
+              <span class="mock-pill">谁被误杀</span>
+              <span class="mock-pill">遗嘱投票：第一章记录但不改变结算</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>九、执行阶段</h2>
+      <div class="phase-list">
+        <div class="phase">
+          <div class="phase-title">
+            <h3>阶段 0：模式开关与旧系统隔离</h3>
+            <span class="status">半天</span>
+          </div>
+          <ul>
+            <li>新增配置 <code>game.mode = "council"</code> 或启动常量，允许旧模式回滚。</li>
+            <li>主流程根据模式加载旧 <code>chapter_01.json</code> 或新 <code>council_chapter_01.json</code>。</li>
+            <li>隐藏新模式中无关的商店、背包、升级入口，但不删除系统和资源。</li>
+          </ul>
+        </div>
+
+        <div class="phase">
+          <div class="phase-title">
+            <h3>阶段 1：无 LLM 纸面模拟版</h3>
+            <span class="status">1-2 天</span>
+          </div>
+          <ul>
+            <li>实现议会数据模型和 <code>CouncilRulesEngine</code>。</li>
+            <li>用测试脚本模拟玩家角色和 NPC 的投票、倾向、交易、处决；正式 UI 不提供玩家本人直接投票入口。</li>
+            <li>完成第一章 4 人局，先不接入真实 LLM。</li>
+            <li>新增规则测试：阈值、锁票、处决、第一章立即结算。</li>
+          </ul>
+        </div>
+
+        <div class="phase">
+          <div class="phase-title">
+            <h3>阶段 2：最小可玩 UI</h3>
+            <span class="status">2-3 天</span>
+          </div>
+          <ul>
+            <li>改造 NPC 选择页和对话页按钮。</li>
+            <li>新增或改造状态页为投票板。</li>
+            <li>议会状态页按“中间罪行、左侧有罪头像、右侧无罪头像、最右全员状态头像”实现；倾向用灰色头像，已投票用彩色头像。</li>
+            <li>每回合对话结束后强制进入议会状态页，玩家点击“继续”后再回到对手选择页。</li>
+            <li>完成第一章从开局到结算的完整手动流程。</li>
+          </ul>
+        </div>
+
+        <div class="phase">
+          <div class="phase-title">
+            <h3>阶段 3：LLM 决策接入</h3>
+            <span class="status">2-4 天</span>
+          </div>
+          <ul>
+            <li>重写 NPC prompt：自保优先、阵营胜利其次、只看公开信息。</li>
+            <li>LLM 输出四类行动 JSON，规则引擎做合法性校验。</li>
+            <li>对非法输出做降级：只保留 speech，并记录“无有效行动”。</li>
+            <li>完成第一章真实 LLM 可玩测试。</li>
+          </ul>
+        </div>
+
+        <div class="phase">
+          <div class="phase-title">
+            <h3>阶段 4：第二章和第三章内容扩展</h3>
+            <span class="status">2-3 天</span>
+          </div>
+          <ul>
+            <li>新增 9 人局和 12 人局章节 JSON。</li>
+            <li>接入蓝领带党、红帽子党、绿果汁党三阵营随机分配。</li>
+            <li>从 20 条罪行库中为章节选择 8 条和 10 条。</li>
+            <li>第二章正式启用遗嘱投票；第三章进行连锁处决压力测试。</li>
+          </ul>
+        </div>
+
+        <div class="phase">
+          <div class="phase-title">
+            <h3>阶段 5：体验打磨与复盘</h3>
+            <span class="status">持续</span>
+          </div>
+          <ul>
+            <li>优化投票板可读性，减少大局信息噪音。</li>
+            <li>结算页展示隐藏罪行、隐藏阵营、关键误杀和背叛链。</li>
+            <li>调整罪行库标题，让每条罪行都像可以被议会审判。</li>
+            <li>根据实测调整 LLM 行动概率，避免 NPC 过早锁死局面。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>十、测试计划</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>测试类型</th>
+            <th>覆盖点</th>
+            <th>建议文件</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>规则单测</td>
+            <td>投票锁定、阈值、处决多人、遗嘱连锁、公开阵营胜利。</td>
+            <td><code>project/tests/test_council_rules.gd</code></td>
+          </tr>
+          <tr>
+            <td>章节加载测试</td>
+            <td>角色数、阵营数、罪行数、每人 3 罪、第一章 5 选 3。</td>
+            <td><code>project/tests/test_council_chapters.gd</code></td>
+          </tr>
+          <tr>
+            <td>Prompt 输出测试</td>
+            <td>LLM mock 输出各种行动，规则引擎能接受或拒绝。</td>
+            <td><code>project/tests/test_council_prompt_contract.gd</code></td>
+          </tr>
+          <tr>
+            <td>视觉检查</td>
+            <td>投票板在 1280x720 下不溢出，按钮文字不重叠。</td>
+            <td>沿用现有 visual check 风格。</td>
+          </tr>
+          <tr>
+            <td>真实 LLM 冒烟测试</td>
+            <td>第一章完成 3 局，记录是否能自然产生投票和交易。</td>
+            <td>沿用 <code>real_llm_*_probe.gd</code> 命名风格。</td>
+          </tr>
+          <tr>
+            <td>网页发布版第一章视觉测试</td>
+            <td>导出并启动 Web 版，从开始游戏进入第一章，完成会谈选择、对话、强制议会状态页、继续、处决、强制公开、结算页完整流程；检查所有关键页面无文字溢出、头像错位、按钮遮挡、空白场景或异常跳转。</td>
+            <td>建议新增 <code>project/tests/web_chapter_01_visual_flow_check.gd</code> 或配套 Playwright/浏览器脚本；运行目标为 <code>http://127.0.0.1:8097/index.html</code>。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>十一、风险与对策</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>信息过载</h3>
+          <p>第二、三章投票记录可能太多。对策：默认只显示每条罪行的摘要，点击展开投票人和历史倾向。</p>
+        </div>
+        <div class="card">
+          <h3>LLM 乱编隐藏信息</h3>
+          <p>对策：prompt 明确禁止，规则引擎只接受结构化行动，UI 只显示系统确认过的公开事实。</p>
+        </div>
+        <div class="card">
+          <h3>第一章太快结束</h3>
+          <p>对策：这是教学目标，但可以要求至少经过 1 次会谈后才能正式投票。</p>
+        </div>
+        <div class="card">
+          <h3>NPC 过度自保</h3>
+          <p>对策：策略权重里加入阵营胜利和交易收益，避免所有人永远只投无罪。</p>
+        </div>
+        <div class="card">
+          <h3>玩家缺少行动感</h3>
+          <p>对策：把“直接投票”和“政治交易”做成强反馈按钮，投票后立刻刷新阈值和危险提示。</p>
+        </div>
+        <div class="card">
+          <h3>旧系统牵连太深</h3>
+          <p>对策：以新模式并行实现，不在第一轮删除旧字段和旧 UI 资源。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>十二、已确认决策</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>问题</th>
+            <th>决策</th>
+            <th>执行影响</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>第一章处决后如何结算</td>
+            <td>处决发生后只剩 3 人，因此强制公开阵营并结算。</td>
+            <td>第一章不需要额外“被处决者阵营失败”规则，统一走小于等于 3 人强制公开流程。</td>
+          </tr>
+          <tr>
+            <td>处决阈值</td>
+            <td>阈值为总人数一半向上取整；四人局 2 票处决。</td>
+            <td>规则引擎统一使用 <code>ceil(total_members / 2)</code>。</td>
+          </tr>
+          <tr>
+            <td>玩家控制方式</td>
+            <td>玩家只能通过行为文件驱动玩家角色。</td>
+            <td>正式 UI 不提供“真人直接投票/发言”的主流程按钮，会议行动由玩家角色 LLM 根据行为文件触发。</td>
+          </tr>
+          <tr>
+            <td>遗嘱投票</td>
+            <td>第一章会进行但没有实际作用；第二章正式启用。</td>
+            <td>第一章可记录遗嘱投票用于教学和复盘，但不再触发实际连锁。第二章起参与处决循环。</td>
+          </tr>
+          <tr>
+            <td>现实事件罪行</td>
+            <td>正式进入游戏文本。</td>
+            <td>罪行标题可以直接进入章节数据；原始事件备注可保留在内部文档或调试信息，不一定展示给玩家。</td>
+          </tr>
+          <tr>
+            <td>旧背包/法器/商店系统</td>
+            <td>暂时隐藏并保留系统。</td>
+            <td>实现时不要删除旧资源和逻辑，使用模式开关隔离。</td>
+          </tr>
+          <tr>
+            <td>对话页布局</td>
+            <td>主体保持现有大角色、大场景、对话框布局；底部仍是对话窗口；左侧为四类会议行动按钮，右侧为系统按钮。</td>
+            <td>后续 UI 实现只替换两侧按钮，不重排对话页主体，不把罪行快捷条放到底部。</td>
+          </tr>
+          <tr>
+            <td>回合结束流程</td>
+            <td>每回合对话结束时强制显示议会状态页；点击“继续”后回到对手选择页。</td>
+            <td>流程从“对话结束直接选人”改为“对话结束 → 状态复盘 → 继续 → 三选一”。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>十三、建议的第一步</h2>
+      <p>
+        如果这份计划方向确认，第一步不要直接大改 UI，而是先做“阶段 1：无 LLM 纸面模拟版”。也就是新增议会状态和规则引擎，用测试脚本跑第一章 4 人局，确认投票、处决、结算真的成立。等规则跑顺，再接 UI 和 LLM。
+      </p>
+    </section>
+  </main>
+</body>
+</html>

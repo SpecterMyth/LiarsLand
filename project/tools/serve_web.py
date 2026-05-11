@@ -21,6 +21,7 @@ class LiarsLandHandler(BaseHTTPRequestHandler):
 
     def log_message(self, fmt: str, *args) -> None:
         sys.stdout.write("%s - %s\n" % (self.address_string(), fmt % args))
+        sys.stdout.flush()
 
     def do_OPTIONS(self) -> None:
         self.send_response(204)

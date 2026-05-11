@@ -1,0 +1,39 @@
+{
+  "mode": "council",
+  "id": "council_chapter_01",
+  "chapter_index": 0,
+  "title": "袜子镇议会：第一场清算",
+  "summary": "四名议员围绕五条荒唐罪行互相试探。任一罪行获得两张有罪票即处决，处决后剩余三人强制公开阵营并结算。",
+  "max_rounds": 8,
+  "max_dialogue_turns": 2,
+  "crimes_per_member": 3,
+  "execution_threshold_mode": "ceil_half",
+  "force_reveal_at_alive": 3,
+  "death_will_enabled": true,
+  "death_will_effective": false,
+  "factions": [
+    {"id": "blue_tie", "name": "蓝领带党", "color": "#4f83c2", "motto": "规则可以错，表格必须填。"},
+    {"id": "red_hat", "name": "红帽子党", "color": "#d65a4a", "motto": "小镇以前很伟大，直到有人开始偷邻居袜子。"}
+  ],
+  "crime_pool": [
+    {"id": "hush_money_invoice", "title": "把封口费伪装成律师账单", "source_note": "Donald Trump 纽约封口费案。"},
+    {"id": "gold_bar_favors", "title": "收金条后替金主办事", "source_note": "Bob Menendez 贿赂案。"},
+    {"id": "lockdown_party", "title": "自己禁聚会却在官邸开酒会", "source_note": "英国 Partygate。"},
+    {"id": "duck_house_expense", "title": "用公款给鸭子盖湖景房", "source_note": "英国议员开支丑闻中的鸭屋报销。"},
+    {"id": "fake_life_resume", "title": "编造人生履历骗选票和捐款", "source_note": "George Santos 欺诈与身份争议。"}
+  ],
+  "player": {
+    "id": "player",
+    "public_name": "边境的灰狐代笔员",
+    "public_identity": "来自边境的灰狐代笔员，被临时推上议会席位。",
+    "portrait": "player_portrait.png",
+    "portrait_half": "player_portrait_half.png",
+    "scene": "bg_moon_market.png",
+    "max_output_chars": 900
+  },
+  "npcs": [
+    {"id": "npc_fox", "public_name": "绯尾侯爵", "public_identity": "夜市贵族，擅长把债务包装成礼物。", "territory": "债契拍卖台", "portrait": "npc_fox_portrait.png", "portrait_half": "npc_fox_portrait_half.png", "scene": "bg_debt_auction_stage.png", "faction": "red_hat"},
+    {"id": "npc_crow", "public_name": "墨羽书记官", "public_identity": "旧档案馆书记官，记得别人以为烧掉的字。", "territory": "烧证目录室", "portrait": "npc_crow_portrait.png", "portrait_half": "npc_crow_portrait_half.png", "scene": "bg_burned_catalog_room.png", "faction": "blue_tie"},
+    {"id": "npc_deer", "public_name": "白枝使节", "public_identity": "温和外交官，句子像祝福也像警告。", "territory": "誓约花园", "portrait": "npc_deer_portrait.png", "portrait_half": "npc_deer_portrait_half.png", "scene": "bg_treaty_flower_bed.png", "faction": "red_hat"}
+  ]
+}
