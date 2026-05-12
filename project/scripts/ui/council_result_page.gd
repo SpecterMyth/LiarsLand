@@ -261,24 +261,27 @@ func _make_member_row(state, member: Dictionary) -> Control:
 	row.add_child(_make_icon_rect(_faction_icon_path(_member_faction_id(member)), Vector2(32, 32), "FactionIcon"))
 
 	var text_box := VBoxContainer.new()
+	text_box.custom_minimum_size = Vector2(0, 40 if alive else 50)
 	text_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	text_box.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	text_box.alignment = BoxContainer.ALIGNMENT_CENTER
+	text_box.alignment = BoxContainer.ALIGNMENT_BEGIN
 	text_box.add_theme_constant_override("separation", 2)
 	row.add_child(text_box)
 
 	var name_row := HBoxContainer.new()
-	name_row.custom_minimum_size = Vector2(0, 18)
+	name_row.custom_minimum_size = Vector2(0, 22)
 	name_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	name_row.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	name_row.add_theme_constant_override("separation", 8)
 	text_box.add_child(name_row)
 
-	var name_label := _make_panel_label(String(member.get("public_name", member.get("id", ""))), 13)
-	name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var name_label := _make_panel_label(_member_display_name(member), 13)
+	name_label.custom_minimum_size = Vector2(0, 22)
+	name_label.autowrap_mode = TextServer.AUTOWRAP_OFF
 	name_label.clip_text = true
 	name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	name_label.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	name_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	name_row.add_child(name_label)
 
@@ -440,7 +443,7 @@ func _configure_scene_backdrop_only() -> void:
 	var veil := get_node_or_null("Veil") as ColorRect
 	if veil != null:
 		veil.visible = true
-		veil.color = Color(0.0, 0.0, 0.0, 0.72)
+		veil.color = Color(0.0, 0.0, 0.0, 0.82)
 	if main_panel != null:
 		CommonFrameScript.apply_background_panel(main_panel, panel_color)
 		main_panel.draw_center = true
@@ -512,13 +515,21 @@ func _make_panel_label(text: String, font_size: int, color := PANEL_TEXT) -> Lab
 	return label
 
 
+func _member_display_name(member: Dictionary) -> String:
+	for key in ["public_name", "name", "display_name", "id"]:
+		var value := String(member.get(key, "")).strip_edges()
+		if not value.is_empty():
+			return value
+	return "议员"
+
+
 func _make_member_avatar(state, member: Dictionary, min_size: Vector2, node_name := "Avatar") -> Control:
 	var holder := PanelContainer.new()
 	holder.name = node_name
 	holder.custom_minimum_size = min_size
 	holder.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	holder.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	holder.tooltip_text = String(member.get("public_name", "议员"))
+	holder.tooltip_text = _member_display_name(member)
 
 	var radius := int(min(min_size.x, min_size.y) * 0.5)
 	var style := StyleBoxFlat.new()

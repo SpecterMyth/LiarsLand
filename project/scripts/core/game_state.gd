@@ -57,6 +57,7 @@ var council_public_support: Dictionary = {}
 var council_faction_public_crimes: Dictionary = {}
 var council_executed_crimes: Array[String] = []
 var council_contacted_member_ids: Array[String] = []
+var council_execution_timeline: Array = []
 var council_player_faction := ""
 var council_chapter_results: Array = []
 var council_total_chapters := 3
@@ -110,6 +111,7 @@ func load_chapter(data: Dictionary) -> void:
 	council_faction_public_crimes.clear()
 	council_executed_crimes.clear()
 	council_contacted_member_ids.clear()
+	council_execution_timeline.clear()
 	_setup_actor(player)
 	for i in range(npcs.size()):
 		var npc: Dictionary = npcs[i]

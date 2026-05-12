@@ -50,6 +50,7 @@ static func setup_state(state, data: Dictionary, options := {}) -> void:
 	state.council_faction_public_crimes = {}
 	state.council_executed_crimes.clear()
 	state.council_contacted_member_ids.clear()
+	state.council_execution_timeline.clear()
 	state.council_members = []
 	if String(state.council_player_faction).is_empty():
 		state.council_player_faction = String(options.get("player_faction", _random_faction_id(data)))
@@ -1022,23 +1023,73 @@ static func _crime_already_executed(state, crime_id: String) -> bool:
 static func _execute_crime(state, crime_id: String, events: Array[String]) -> void:
 	state.council_executed_crimes.append(crime_id)
 	var victims: Array = []
+	var death_will_records: Array = []
 	for member in all_members(state):
 		if bool(member.get("alive", true)) and crime_id in member.get("hidden_crimes", []):
 			member["alive"] = false
 			victims.append(member)
 			events.append("Event resolved.")
 			if String(member.get("id", "")) == "player":
+				_record_execution_timeline_step(state, crime_id, victims, death_will_records)
 				_end_player_dead(state, events, "player executed")
 				return
 			if bool(state.chapter.get("death_will_enabled", true)):
 				var will_votes := choose_death_will_votes(state, member)
-				state.council_death_wills.append({"member_id": member.get("id", ""), "votes": will_votes})
+				var death_will := {"member_id": member.get("id", ""), "votes": will_votes}
+				state.council_death_wills.append(death_will)
+				death_will_records.append(death_will)
 				events.append("Event resolved.")
 				if bool(state.chapter.get("death_will_effective", false)):
 					for will in will_votes:
 						state.council_vote_records.append(will)
+	_record_execution_timeline_step(state, crime_id, victims, death_will_records)
 	if victims.is_empty():
 		events.append("Event resolved.")
+
+
+static func _record_execution_timeline_step(state, crime_id: String, victims: Array, death_will_records: Array) -> void:
+	if victims.is_empty():
+		return
+	var step := {
+		"round": state.chapter_round,
+		"crime_id": crime_id,
+		"crime_title": crime_title(state, crime_id),
+		"guilty_count": guilty_count(state, crime_id),
+		"innocent_count": innocent_count(state, crime_id),
+		"threshold": execution_threshold(state),
+		"votes": _votes_for_crime_snapshot(state, crime_id),
+		"victims": [],
+		"death_wills": death_will_records.duplicate(true)
+	}
+	var step_victims: Array = step["victims"]
+	var victim_ids: Array[String] = []
+	for member in victims:
+		if typeof(member) != TYPE_DICTIONARY:
+			continue
+		var member_id := String(member.get("id", ""))
+		if member_id.is_empty() or member_id in victim_ids:
+			continue
+		victim_ids.append(member_id)
+		step_victims.append({
+			"member_id": member_id,
+			"name": String(member.get("public_name", member_id)),
+			"portrait": String(member.get("portrait", "")),
+			"portrait_half": String(member.get("portrait_half", "")),
+			"hidden_crimes": member.get("hidden_crimes", []).duplicate()
+		})
+	step["victims"] = step_victims
+	state.council_execution_timeline.append(step)
+
+
+static func _votes_for_crime_snapshot(state, crime_id: String) -> Array:
+	var votes: Array = []
+	for record in state.council_vote_records:
+		if typeof(record) != TYPE_DICTIONARY:
+			continue
+		if String(record.get("crime_id", "")) != crime_id:
+			continue
+		votes.append(record.duplicate(true))
+	return votes
 
 
 static func _check_forced_reveal_or_victory(state, events: Array[String]) -> void:

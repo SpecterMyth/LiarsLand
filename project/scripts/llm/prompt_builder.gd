@@ -105,6 +105,12 @@ static func _council_snapshot(state, viewer_id: String) -> Dictionary:
 		"self": {
 			"id": self_member.get("id", ""),
 			"public_name": self_member.get("public_name", ""),
+			"public_identity": self_member.get("public_identity", ""),
+			"territory": self_member.get("territory", ""),
+			"character_profile": self_member.get("character_profile", ""),
+			"speech_style": self_member.get("speech_style", ""),
+			"social_texture": self_member.get("social_texture", ""),
+			"scene_prompt": self_member.get("scene_prompt", ""),
 			"hidden_faction": self_member.get("hidden_faction", ""),
 			"hidden_crimes": self_member.get("hidden_crimes", []),
 			"faction_public_guilty_crime_id": faction_info.get("shared_crime_id", ""),
@@ -139,7 +145,7 @@ static func council_npc_user_v2(state) -> String:
 	snapshot["self_death_risk_crime_ids"] = snapshot.get("self", {}).get("hidden_crimes", [])
 	snapshot["survival_vote_rule"] = "Never vote guilty on any crime_id in self_death_risk_crime_ids or faction_public_guilty_crime_id; choose innocent, no action, or trade instead. faction_public_innocent_crime_id means nobody in your faction has that crime, so it is a safe guilty target against other factions. NPCs cannot actively retreat. Abstain is not a legal vote."
 	snapshot["player_trust_analysis"] = _npc_player_trust_analysis(state, String(npc.get("id", "")))
-	return "Your hidden info, public board, and player trust analysis:\n%s\n\nPlayer public info:\n%s\n\nCurrent dialogue:\n%s\n\nSpeak like a council member. Prioritize survival, then your hidden faction. Probe before committing. Keep the speech brief: one or two short sentences and no more than three small dialogue-box lines. Treat the trust analysis as your private inference, not as public truth." % [
+	return "Your hidden info, public board, stable character bible, and player trust analysis:\n%s\n\nPlayer public info:\n%s\n\nCurrent dialogue:\n%s\n\nSpeak like a council member. Use self.character_profile, self.speech_style, self.social_texture, and self.scene_prompt only as stable performance and scene texture, never as a fixed political agenda. Prioritize survival, then your hidden faction. Probe before committing. Keep the speech brief: one or two short sentences and no more than three small dialogue-box lines. Treat the trust analysis as your private inference, not as public truth." % [
 		JSON.stringify(snapshot),
 		JSON.stringify(_council_public_player(state)),
 		state.format_history()

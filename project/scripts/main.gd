@@ -63,6 +63,10 @@ func _play_action_animation_visual_sequence(overlay: Control, state, single_acti
 		artifact_id = String(state.artifacts[0].get("id", ""))
 	var sequence := [
 		["leave", "player", "", "success"],
+		["retreat", "player", "", "success", {"action": "retreat"}],
+		["declare_tendency", "player", "", "success", {"action": "declare_tendency", "target_crime_id": "duck_house_expense", "vote": "guilty"}],
+		["cast_vote", "player", "", "success", {"action": "cast_vote", "target_crime_id": "duck_house_expense", "vote": "guilty"}],
+		["offer_trade", "player", "", "success", {"action": "offer_trade", "target_crime_id": "duck_house_expense", "vote": "guilty"}],
 		["gift", "player", artifact_id, "victory"],
 		["cast", "player", artifact_id, "failure"],
 		["invite", "player", "", "victory"],
@@ -74,13 +78,13 @@ func _play_action_animation_visual_sequence(overlay: Control, state, single_acti
 			if item[0] == single_action:
 				await get_tree().create_timer(0.6).timeout
 				print("VISUAL_ACTION_START:%s" % single_action)
-				await overlay.call("play_action", item[0], item[1], item[2], item[3], state)
+				await overlay.call("play_action", item[0], item[1], item[2], item[3], state, null, null, item[4] if item.size() > 4 else {})
 				print("VISUAL_ACTION_DONE:%s" % single_action)
 				return
 	while true:
 		for item in sequence:
 			print("VISUAL_ACTION_START:%s" % item[0])
-			await overlay.call("play_action", item[0], item[1], item[2], item[3], state)
+			await overlay.call("play_action", item[0], item[1], item[2], item[3], state, null, null, item[4] if item.size() > 4 else {})
 			print("VISUAL_ACTION_DONE:%s" % item[0])
 			await get_tree().create_timer(0.45).timeout
 

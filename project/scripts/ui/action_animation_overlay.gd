@@ -11,6 +11,10 @@ const PlayerGrabRigScene := preload("res://scenes/ui/player_grab_rig.tscn")
 
 const ACTION_DURATION := {
 	"leave": 3.2,
+	"retreat": 3.2,
+	"declare_tendency": 3.4,
+	"cast_vote": 3.8,
+	"offer_trade": 4.2,
 	"gift": 5.0,
 	"cast": 5.0,
 	"invite": 5.0,
@@ -42,6 +46,7 @@ var _result_label: Label
 var _transient_vfx: Array = []
 var _vfx_textures: Dictionary = {}
 var _particle_palettes: Dictionary = {}
+var _action_payload: Dictionary = {}
 
 
 func _ready() -> void:
@@ -53,26 +58,35 @@ func _ready() -> void:
 	_load_vfx_textures()
 
 
-func play_action(action: String, actor_role: String, artifact_id: String, outcome: String, state, player_actor: Control = null, npc_actor: Control = null) -> void:
+func play_action(action: String, actor_role: String, artifact_id: String, outcome: String, state, player_actor: Control = null, npc_actor: Control = null, action_payload: Dictionary = {}) -> void:
 	if state == null:
 		return
 	var normalized := action.strip_edges().to_lower()
 	if normalized.is_empty() or normalized == "none":
 		return
+	_action_payload = action_payload.duplicate(true)
+	var actor_state := _capture_prebind_actor_state(player_actor, npc_actor)
 	_bind_actor_nodes(player_actor, npc_actor)
-	var actor_state := _capture_actor_state()
-	if actor_role != "npc":
+	if actor_role != "npc" and _uses_player_grab_intro(normalized):
 		_use_player_grab_rig()
 	_reset_nodes()
 	_configure_text(normalized, actor_role, artifact_id, outcome, state)
 	_configure_textures(normalized, artifact_id, state)
 	visible = true
 	move_to_front()
-	if actor_role != "npc":
+	if actor_role != "npc" and _uses_player_grab_intro(normalized):
 		await _play_player_grab_intro()
 	match normalized:
 		"leave":
 			await _play_leave(outcome)
+		"retreat":
+			await _play_leave(outcome)
+		"declare_tendency":
+			await _play_declare_tendency(actor_role, outcome)
+		"cast_vote":
+			await _play_council_vote(actor_role, outcome)
+		"offer_trade":
+			await _play_council_trade(actor_role, outcome)
 		"gift":
 			await _play_gift(actor_role, outcome)
 		"cast":
@@ -85,15 +99,17 @@ func play_action(action: String, actor_role: String, artifact_id: String, outcom
 			await _play_assassinate(actor_role, outcome)
 		_:
 			await get_tree().create_timer(0.35).timeout
+	await _finish_text_to_status_icon()
 	visible = false
 	_cleanup_transient_vfx()
 	_restore_actor_state(actor_state)
+	_action_payload = {}
 
 
 func _build() -> void:
 	_blocker = ColorRect.new()
 	_blocker.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_blocker.color = Color(0.025, 0.018, 0.026, 0.78)
+	_blocker.color = Color(0.0, 0.0, 0.0, 0.5)
 	_blocker.mouse_filter = Control.MOUSE_FILTER_STOP
 	add_child(_blocker)
 
@@ -147,33 +163,33 @@ func _build() -> void:
 	_vfx_layer.add_child(_action_icon)
 
 	_title = Label.new()
-	_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	_title.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_title.add_theme_font_size_override("font_size", 42)
 	_title.add_theme_color_override("font_color", Color(1.0, 0.86, 0.44, 1.0))
 	_title.add_theme_constant_override("outline_size", 6)
 	_title.add_theme_color_override("font_outline_color", Color(0.03, 0.015, 0.02, 1.0))
-	_place(_title, Rect2(456, 72, 760, 70))
+	_place(_title, Rect2(680, 54, 900, 70))
 	_ui_layer.add_child(_title)
 
 	_subtitle = Label.new()
-	_subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	_subtitle.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_subtitle.add_theme_font_size_override("font_size", 22)
 	_subtitle.add_theme_color_override("font_color", Color(1.0, 0.88, 0.65, 1.0))
 	_subtitle.add_theme_constant_override("outline_size", 4)
 	_subtitle.add_theme_color_override("font_outline_color", Color(0.03, 0.015, 0.02, 1.0))
-	_place(_subtitle, Rect2(376, 140, 920, 46))
+	_place(_subtitle, Rect2(680, 122, 940, 50))
 	_ui_layer.add_child(_subtitle)
 
 	_result_label = Label.new()
-	_result_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_result_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	_result_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_result_label.add_theme_font_size_override("font_size", 34)
 	_result_label.add_theme_color_override("font_color", Color(1.0, 0.90, 0.62, 1.0))
 	_result_label.add_theme_constant_override("outline_size", 6)
 	_result_label.add_theme_color_override("font_outline_color", Color(0.03, 0.015, 0.02, 1.0))
-	_place(_result_label, Rect2(456, 788, 760, 62))
+	_place(_result_label, Rect2(680, 180, 900, 62))
 	_ui_layer.add_child(_result_label)
 
 
@@ -208,6 +224,10 @@ func _player_grab_rig_ready() -> bool:
 	return bool(_player_grab_rig.call("has_required_assets"))
 
 
+func _uses_player_grab_intro(action: String) -> bool:
+	return action in ["leave", "retreat", "gift", "cast", "invite", "duel", "assassinate"]
+
+
 func _use_player_grab_rig() -> void:
 	if not _player_grab_rig_ready():
 		_player = _fallback_player
@@ -236,7 +256,13 @@ func _load_vfx_textures() -> void:
 		"vfx_smoke_wisp", "vfx_gold_spark", "vfx_red_spark", "vfx_shadow_slash",
 		"vfx_magic_ring", "vfx_contract_knot", "vfx_crack_mark", "leave_speed_streaks",
 		"gift_offering_aura", "cast_beam_core", "duel_cross_flash", "assassinate_bloodline",
-		"vfx_artifact_frame", "vfx_defense_ring", "vfx_impact_burst", "vfx_result_seal"
+		"vfx_artifact_frame", "vfx_defense_ring", "vfx_impact_burst", "vfx_result_seal",
+		"council_action_symbols", "council_action_effects", "council_ballot_guilty",
+		"council_ballot_innocent", "council_ballot_abstain", "council_seal_locked",
+		"council_seal_tendency", "council_seal_rejected_broken", "council_wax_stamp",
+		"council_crime_dossier", "council_wave_gold", "council_wave_teal",
+		"council_vote_burst_red", "council_seal_burst_gold", "council_contract_line",
+		"council_contract_line_broken", "council_trade_three_nodes", "council_sparkle_cluster"
 	]:
 		var path: String = ACTION_VFX_ROOT + name + ".png"
 		if ResourceLoader.exists(path):
@@ -308,6 +334,17 @@ func _capture_actor_state() -> Dictionary:
 	}
 
 
+func _capture_prebind_actor_state(player_actor: Control, npc_actor: Control) -> Dictionary:
+	var player_node := player_actor if player_actor != null and is_instance_valid(player_actor) else _fallback_player
+	var npc_node := npc_actor if npc_actor != null and is_instance_valid(npc_actor) else _fallback_npc
+	return {
+		"player": _capture_control_state(player_node),
+		"npc": _capture_control_state(npc_node),
+		"stage_position": _stage.position,
+		"stage_rotation": _stage.rotation_degrees
+	}
+
+
 func _capture_control_state(node: Control) -> Dictionary:
 	if node == null or not is_instance_valid(node):
 		return {}
@@ -365,7 +402,7 @@ func _reset_nodes() -> void:
 	_cleanup_transient_vfx()
 	_stage.position = Vector2.ZERO
 	_stage.rotation_degrees = 0.0
-	for node in [_fallback_player, _fallback_npc, _player_grab_slot, _artifact, _artifact_frame, _action_icon, _result_label]:
+	for node in [_fallback_player, _fallback_npc, _player_grab_slot, _artifact, _artifact_frame, _action_icon, _title, _subtitle, _result_label]:
 		if node == null:
 			continue
 		var canvas := node as CanvasItem
@@ -393,6 +430,9 @@ func _reset_nodes() -> void:
 	_place(_artifact_frame, Rect2(732, 366, 208, 208))
 	_artifact_frame.visible = false
 	_place(_action_icon, Rect2(760, 178, 152, 152))
+	_place(_title, Rect2(680, 54, 900, 70))
+	_place(_subtitle, Rect2(680, 122, 940, 50))
+	_place(_result_label, Rect2(680, 180, 900, 62))
 	_fallback_player.visible = _player == _fallback_player
 	_fallback_npc.visible = _npc == _fallback_npc
 	if _player_grab_slot != null:
@@ -405,6 +445,8 @@ func _configure_text(action: String, actor_role: String, artifact_id: String, ou
 	var artifact_text := ""
 	if not artifact_id.is_empty():
 		artifact_text = " · %s" % state.artifact_name(artifact_id)
+	var display_actor_name := "我方" if actor_role != "npc" else String(state.current_npc().get("public_name", "对方"))
+	_title.text = "%s：%s" % [display_actor_name, _action_name(action)]
 	_subtitle.text = _subtitle_for_action(action) + artifact_text
 	_result_label.text = _result_text(action, outcome)
 	_result_label.modulate = Color(1, 1, 1, 0)
@@ -444,6 +486,143 @@ func _play_leave(outcome: String) -> void:
 	tween.tween_property(_pulse, "color:a", 0.0, 0.75).set_delay(2.62)
 	tween.tween_property(_result_label, "modulate:a", 1.0, 0.35).set_delay(2.62)
 	await get_tree().create_timer(float(ACTION_DURATION["leave"])).timeout
+
+
+func _play_declare_tendency(actor_role: String, outcome: String) -> void:
+	_artifact.visible = false
+	_artifact_frame.visible = false
+	_action_icon.visible = false
+	var speaker := _player if actor_role != "npc" else _npc
+	var start := _actor_center(speaker) + Vector2(92.0 if actor_role != "npc" else -92.0, -46.0)
+	var anchor := _actor_effect_anchor(actor_role, -78.0)
+	var wave_name := "council_wave_teal" if _payload_vote() == "innocent" else "council_wave_gold"
+	var wave_rect := Rect2(anchor.x - 158.0, anchor.y - 120.0, 316.0, 240.0)
+	var wave := _spawn_sprite_vfx(wave_name, wave_rect, Color(1, 1, 1, 0.0), 2.2, _foreground_layer, false)
+	var seal := _spawn_sprite_vfx("council_seal_tendency", Rect2(anchor.x - 116.0, anchor.y - 116.0, 232.0, 232.0), _vote_tint(0.0), 2.7, _foreground_layer, false)
+	var crime_icon := _spawn_crime_icon(Rect2(anchor.x - 48.0, anchor.y + 58.0, 96.0, 96.0), 2.6, Color(1, 1, 1, 0.94))
+	_pose_actor(speaker, -4.0 if actor_role == "npc" else 4.0, Vector2(1.01, 0.99), _vote_tint(1.0), 0.65)
+	_spawn_particle_trail("gold_oath", start, anchor, 16, 32.0, _vote_tint(0.78), _vfx_layer)
+	if wave != null:
+		if wave is TextureRect:
+			(wave as TextureRect).flip_h = actor_role == "npc"
+		var wave_tween := create_tween().set_parallel(true)
+		wave_tween.tween_property(wave, "modulate:a", 0.92, 0.24)
+		wave_tween.tween_property(wave, "position", wave.position + Vector2(54.0 if actor_role != "npc" else -54.0, -8.0), 1.12).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		wave_tween.tween_property(wave, "scale", Vector2(1.08, 1.08), 1.12).set_trans(Tween.TRANS_SINE)
+	if seal != null:
+		seal.scale = Vector2(0.72, 0.72)
+		var seal_tween := create_tween().set_parallel(true)
+		seal_tween.tween_property(seal, "modulate:a", 0.66, 0.38).set_delay(0.72)
+		seal_tween.tween_property(seal, "scale", Vector2(1.0, 1.0), 0.58).set_delay(0.72).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		seal_tween.tween_property(seal, "rotation_degrees", 18.0, 1.55).set_delay(0.72)
+	if crime_icon != null:
+		var icon_tween := create_tween().set_parallel(true)
+		icon_tween.tween_property(crime_icon, "position:y", crime_icon.position.y - 24.0, 0.76).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		icon_tween.tween_property(crime_icon, "scale", Vector2(1.28, 1.28), 0.5).set_delay(0.5).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	await get_tree().create_timer(1.45).timeout
+	_spawn_particle_ring("gold_oath", anchor, 112.0, 24, _vote_tint(0.82), _foreground_layer)
+	_spawn_sprite_vfx("council_sparkle_cluster", Rect2(anchor.x - 85.0, anchor.y - 92.0, 170.0, 138.0), _vote_tint(0.9), 1.4, _foreground_layer, false)
+	_finish_reveal(outcome, 0.55)
+	await get_tree().create_timer(float(ACTION_DURATION["declare_tendency"]) - 1.45).timeout
+
+
+func _play_council_vote(actor_role: String, outcome: String) -> void:
+	_artifact.visible = false
+	_artifact_frame.visible = false
+	_action_icon.visible = false
+	var speaker := _player if actor_role != "npc" else _npc
+	var start := _actor_center(speaker) + Vector2(78.0 if actor_role != "npc" else -78.0, -22.0)
+	var anchor := _actor_effect_anchor(actor_role, -58.0)
+	var vote := _payload_vote()
+	var ballot_name := "council_ballot_innocent" if vote == "innocent" else "council_ballot_abstain" if vote == "abstain" else "council_ballot_guilty"
+	var ballot := _spawn_sprite_vfx(ballot_name, Rect2(start.x - 72.0, start.y - 86.0, 144.0, 174.0), Color(1, 1, 1, 1), 3.0, _foreground_layer, false)
+	var dossier := _spawn_sprite_vfx("council_crime_dossier", Rect2(anchor.x - 130.0, anchor.y - 124.0, 260.0, 304.0), Color(1, 1, 1, 0.0), 3.2, _vfx_layer, false)
+	var crime_icon := _spawn_crime_icon(Rect2(anchor.x - 48.0, anchor.y + 54.0, 96.0, 96.0), 3.1, Color(1, 1, 1, 0.98))
+	_pose_actor(speaker, 5.0 if actor_role != "npc" else -5.0, Vector2(1.02, 0.985), _vote_tint(1.0), 0.72)
+	if dossier != null:
+		var dossier_tween := create_tween().set_parallel(true)
+		dossier_tween.tween_property(dossier, "modulate:a", 0.72, 0.42)
+		dossier_tween.tween_property(dossier, "scale", Vector2(1.03, 1.03), 1.2).set_trans(Tween.TRANS_SINE)
+	if ballot != null:
+		ballot.rotation_degrees = -9.0 if actor_role != "npc" else 9.0
+		var ballot_tween := create_tween().set_parallel(true)
+		ballot_tween.tween_property(ballot, "position", Vector2(anchor.x - 72.0, anchor.y - 112.0), 1.08).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		ballot_tween.tween_property(ballot, "rotation_degrees", 0.0, 1.08)
+		ballot_tween.tween_property(ballot, "scale", Vector2(1.18, 1.18), 1.08).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	if crime_icon != null:
+		var crime_tween := create_tween().set_parallel(true)
+		crime_tween.tween_property(crime_icon, "position:y", crime_icon.position.y - 18.0, 0.56).set_delay(0.48).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		crime_tween.tween_property(crime_icon, "rotation_degrees", -8.0 if actor_role != "npc" else 8.0, 0.64).set_delay(0.48)
+	_spawn_particle_trail("gold_oath", start, anchor, 18, 30.0, _vote_tint(0.82), _vfx_layer)
+	await get_tree().create_timer(1.2).timeout
+	var stamp := _spawn_sprite_vfx("council_wax_stamp", Rect2(anchor.x - 54.0, anchor.y - 208.0, 108.0, 112.0), Color(1, 1, 1, 0.0), 1.25, _foreground_layer, false)
+	if stamp != null:
+		var stamp_tween := create_tween().set_parallel(true)
+		stamp_tween.tween_property(stamp, "modulate:a", 1.0, 0.12)
+		stamp_tween.tween_property(stamp, "position:y", anchor.y - 74.0, 0.34).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+		stamp_tween.tween_property(stamp, "scale", Vector2(1.18, 0.86), 0.16).set_delay(0.34)
+	await get_tree().create_timer(0.36).timeout
+	_camera_shake(10.0 if outcome != "death" else 16.0, 0.32)
+	_spawn_sprite_vfx("council_seal_locked", Rect2(anchor.x - 120.0, anchor.y - 120.0, 240.0, 248.0), _vote_tint(0.96), 2.1, _foreground_layer, false)
+	_spawn_sprite_vfx("council_seal_burst_gold", Rect2(anchor.x - 162.0, anchor.y - 158.0, 324.0, 318.0), Color(1.0, 0.86, 0.42, 0.86), 1.45, _foreground_layer, false)
+	if outcome == "death":
+		_spawn_sprite_vfx("council_vote_burst_red", Rect2(anchor.x - 186.0, anchor.y - 190.0, 372.0, 382.0), Color(1, 0.2, 0.1, 0.9), 1.6, _foreground_layer, false)
+		_spawn_particle_burst_sized("red_rupture", anchor, 30, 170.0, 210.0, 0.9, Color(1.0, 0.14, 0.06, 0.88), _foreground_layer, Vector2(18.0, 42.0))
+	else:
+		_spawn_particle_ring("gold_oath", anchor, 120.0, 24, _vote_tint(0.86), _foreground_layer)
+	_finish_reveal(outcome, 0.5)
+	await get_tree().create_timer(float(ACTION_DURATION["cast_vote"]) - 1.56).timeout
+
+
+func _play_council_trade(actor_role: String, outcome: String) -> void:
+	_artifact.visible = false
+	_artifact_frame.visible = false
+	_action_icon.visible = false
+	var proposer := _player if actor_role != "npc" else _npc
+	var counterpart := _npc if actor_role != "npc" else _player
+	var proposer_start := _actor_center(proposer) + Vector2(80.0 if actor_role != "npc" else -80.0, -12.0)
+	var counterpart_start := _actor_center(counterpart) + Vector2(-80.0 if actor_role != "npc" else 80.0, -12.0)
+	var proposal_center := Vector2(836, 456)
+	_pose_actor(proposer, 4.5 if actor_role != "npc" else -4.5, Vector2(1.02, 0.99), Color(1.0, 0.82, 0.48, 1.0), 0.7)
+	_pose_actor(counterpart, -3.0 if actor_role != "npc" else 3.0, Vector2(1.01, 0.995), Color(0.72, 1.0, 0.94, 1.0), 0.7)
+	var left_ballot := _spawn_sprite_vfx(_ballot_texture_name(), Rect2(proposer_start.x - 64.0, proposer_start.y - 78.0, 128.0, 156.0), Color(1, 1, 1, 1), 3.2, _foreground_layer, false)
+	var right_ballot := _spawn_sprite_vfx(_ballot_texture_name(), Rect2(counterpart_start.x - 64.0, counterpart_start.y - 78.0, 128.0, 156.0), Color(1, 1, 1, 1), 3.2, _foreground_layer, false)
+	var crime_icon := _spawn_crime_icon(Rect2(proposal_center.x - 52.0, proposal_center.y - 126.0, 104.0, 104.0), 3.7, Color(1, 1, 1, 0.98))
+	_spawn_particle_trail("gold_oath", proposer_start, Vector2(730, 460), 12, 28.0, Color(1.0, 0.78, 0.28, 0.82), _vfx_layer)
+	_spawn_particle_trail("cyan_escape", counterpart_start, Vector2(942, 460), 12, 28.0, Color(0.45, 0.95, 0.94, 0.72), _vfx_layer)
+	var fly := create_tween().set_parallel(true)
+	if left_ballot != null:
+		fly.tween_property(left_ballot, "position", Vector2(654, 352), 1.04).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		fly.tween_property(left_ballot, "rotation_degrees", -7.0, 1.04)
+	if right_ballot != null:
+		fly.tween_property(right_ballot, "position", Vector2(890, 352), 1.04).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		fly.tween_property(right_ballot, "rotation_degrees", 7.0, 1.04)
+	if crime_icon != null:
+		fly.tween_property(crime_icon, "position", Vector2(proposal_center.x - 52.0, proposal_center.y - 146.0), 1.04).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		fly.tween_property(crime_icon, "scale", Vector2(1.24, 1.24), 1.04).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	await get_tree().create_timer(1.12).timeout
+	var line_name := "council_contract_line_broken" if outcome == "failure" else "council_contract_line"
+	var line := _spawn_sprite_vfx(line_name, Rect2(650, 458, 372, 112), Color(1, 1, 1, 0.0), 2.4, _foreground_layer, false)
+	var nodes := _spawn_sprite_vfx("council_trade_three_nodes", Rect2(642, 382, 388, 160), Color(1, 1, 1, 0.0), 2.6, _foreground_layer, false)
+	if line != null:
+		var line_tween := create_tween().set_parallel(true)
+		line_tween.tween_property(line, "modulate:a", 1.0, 0.22)
+		line_tween.tween_property(line, "scale:x", 1.04, 1.0).set_trans(Tween.TRANS_SINE)
+	if nodes != null:
+		var node_tween := create_tween().set_parallel(true)
+		node_tween.tween_property(nodes, "modulate:a", 1.0, 0.38).set_delay(0.22)
+		node_tween.tween_property(nodes, "scale", Vector2(1.08, 1.08), 0.72).set_delay(0.22).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	await get_tree().create_timer(0.92).timeout
+	if outcome == "failure":
+		_spawn_sprite_vfx("council_seal_rejected_broken", Rect2(722, 284, 228, 236), Color(1, 0.34, 0.24, 0.9), 1.5, _foreground_layer, false)
+		_spawn_particle_burst("red_rupture", Vector2(836, 456), 24, 150.0, 160.0, 0.86, Color(1.0, 0.18, 0.08, 0.88), _foreground_layer)
+		_camera_shake(7.0, 0.28)
+	else:
+		_spawn_sprite_vfx("council_seal_burst_gold", Rect2(708, 274, 256, 250), Color(1.0, 0.86, 0.42, 0.88), 1.5, _foreground_layer, false)
+		_spawn_particle_ring("gold_oath", Vector2(836, 456), 128.0, 30, Color(1.0, 0.82, 0.28, 0.9), _foreground_layer)
+		_camera_shake(8.0, 0.24)
+	_finish_reveal(outcome, 0.55)
+	await get_tree().create_timer(float(ACTION_DURATION["offer_trade"]) - 2.04).timeout
 
 
 func _play_gift(actor_role: String, outcome: String) -> void:
@@ -627,6 +806,111 @@ func _finish_reveal(outcome: String, delay := 0.0) -> void:
 	tween.tween_property(_pulse, "color", _pulse_color(outcome), 0.18).set_delay(delay)
 	tween.tween_property(_pulse, "color:a", 0.0, 0.85).set_delay(delay + 0.28)
 	tween.tween_property(_result_label, "modulate:a", 1.0, 0.35).set_delay(delay + 0.32)
+
+
+func _finish_text_to_status_icon() -> void:
+	var target := _action_payload.get("status_icon_target", Vector2(BASE_SIZE.x - 86.0, BASE_SIZE.y - 94.0)) as Vector2
+	var tween := create_tween().set_parallel(true)
+	for node in [_title, _subtitle, _result_label]:
+		if node == null:
+			continue
+		var control := node as Control
+		if control == null:
+			continue
+		control.pivot_offset = control.size * 0.5
+		tween.tween_property(control, "position", target - control.size * 0.5, 0.42).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+		tween.tween_property(control, "scale", Vector2(0.06, 0.06), 0.42).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+		tween.tween_property(control, "modulate:a", 0.0, 0.26).set_delay(0.16)
+	await get_tree().create_timer(0.46).timeout
+
+
+func _actor_center(actor: Control) -> Vector2:
+	if actor == null or not is_instance_valid(actor):
+		return Vector2(836, 470)
+	return actor.position + actor.size * 0.5
+
+
+func _actor_effect_anchor(actor_role: String, y_offset := -62.0) -> Vector2:
+	var actor := _player if actor_role != "npc" else _npc
+	var direction := 1.0 if actor_role != "npc" else -1.0
+	var center := _actor_center(actor)
+	var anchor := center + Vector2(156.0 * direction, y_offset)
+	anchor.x = clamp(anchor.x, 300.0, BASE_SIZE.x - 300.0)
+	anchor.y = clamp(anchor.y, 210.0, BASE_SIZE.y - 250.0)
+	return anchor
+
+
+func _payload_crime_id() -> String:
+	var crime_id := String(_action_payload.get("target_crime_id", _action_payload.get("crime_id", ""))).strip_edges()
+	if crime_id.is_empty():
+		for key in ["bound_votes", "proposal_votes", "votes"]:
+			var records = _action_payload.get(key, [])
+			if typeof(records) != TYPE_ARRAY:
+				continue
+			for record in records:
+				if typeof(record) != TYPE_DICTIONARY:
+					continue
+				crime_id = String(record.get("target_crime_id", record.get("crime_id", ""))).strip_edges()
+				if not crime_id.is_empty():
+					return crime_id
+	return crime_id
+
+
+func _crime_icon_texture() -> Texture2D:
+	var crime_id := _payload_crime_id()
+	if not crime_id.is_empty():
+		var path := "res://assets/generated/ui/council_icons/crime_%s.png" % crime_id
+		if ResourceLoader.exists(path):
+			return load(path)
+	return _vfx_textures.get("council_crime_dossier") as Texture2D
+
+
+func _spawn_crime_icon(rect: Rect2, lifetime: float, color := Color(1, 1, 1, 1)) -> Control:
+	var texture := _crime_icon_texture()
+	if texture == null:
+		return _spawn_sprite_vfx("council_crime_dossier", rect, color, lifetime, _foreground_layer, false)
+	var node := TextureRect.new()
+	node.texture = texture
+	node.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	node.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	node.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	node.modulate = color
+	_place(node, rect)
+	_foreground_layer.add_child(node)
+	_register_transient(node)
+	var tween := create_tween().set_parallel(true)
+	tween.tween_property(node, "scale", Vector2(1.16, 1.16), min(0.5, lifetime * 0.3)).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.tween_property(node, "rotation_degrees", 8.0, min(0.62, lifetime * 0.34)).set_trans(Tween.TRANS_SINE)
+	tween.tween_property(node, "modulate:a", 0.0, lifetime * 0.3).set_delay(lifetime * 0.64)
+	_queue_transient_free(node, lifetime)
+	return node
+
+
+func _payload_vote() -> String:
+	var vote := String(_action_payload.get("vote", "guilty")).strip_edges().to_lower()
+	if vote in ["innocent", "abstain"]:
+		return vote
+	return "guilty"
+
+
+func _ballot_texture_name() -> String:
+	match _payload_vote():
+		"innocent":
+			return "council_ballot_innocent"
+		"abstain":
+			return "council_ballot_abstain"
+		_:
+			return "council_ballot_guilty"
+
+
+func _vote_tint(alpha := 1.0) -> Color:
+	match _payload_vote():
+		"innocent":
+			return Color(0.48, 1.0, 0.94, alpha)
+		"abstain":
+			return Color(0.82, 0.78, 0.68, alpha)
+		_:
+			return Color(1.0, 0.34, 0.22, alpha)
 
 
 func _spawn_magic_rings(center: Vector2, outcome: String, alpha_scale := 1.0) -> void:
@@ -908,6 +1192,14 @@ func _free_transient_vfx(node) -> void:
 
 func _action_name(action: String) -> String:
 	match action:
+		"retreat":
+			return "暂时撤退"
+		"declare_tendency":
+			return "公开倾向"
+		"cast_vote":
+			return "正式投票"
+		"offer_trade":
+			return "政治交易"
 		"invite":
 			return "邀请"
 		"assassinate":
@@ -924,6 +1216,14 @@ func _action_name(action: String) -> String:
 
 func _subtitle_for_action(action: String) -> String:
 	match action:
+		"retreat":
+			return "撤离会场，动画完成后再进入下一阶段"
+		"declare_tendency":
+			return "公开表达立场，记录倾向但不锁定投票"
+		"cast_vote":
+			return "正式投下选票，罪行议案同步入档"
+		"offer_trade":
+			return "提出政治交易，把相关票意绑定成协议"
 		"invite":
 			return "盟约在中线编织，回应将在光环合拢时揭晓"
 		"assassinate":

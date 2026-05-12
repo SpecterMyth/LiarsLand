@@ -1,0 +1,767 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>议会行动动画恢复与扩展计划</title>
+  <style>
+    :root {
+      --bg: #100b10;
+      --panel: #1b1219;
+      --panel-2: #241923;
+      --ink: #f5dfb3;
+      --muted: #bba57d;
+      --line: rgba(245, 223, 179, 0.18);
+      --gold: #efbd58;
+      --red: #d8584a;
+      --teal: #57c2b9;
+      --violet: #9c73dd;
+      --green: #75d28a;
+      --blue: #62b7e8;
+      font-family: "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 18% 8%, rgba(216, 88, 74, 0.18), transparent 30%),
+        radial-gradient(circle at 82% 4%, rgba(87, 194, 185, 0.14), transparent 28%),
+        linear-gradient(135deg, #09070b, var(--bg) 48%, #150e14);
+      line-height: 1.75;
+    }
+
+    .page {
+      width: min(1180px, calc(100vw - 40px));
+      margin: 0 auto;
+      padding: 34px 0 54px;
+    }
+
+    header, section {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(36, 25, 35, 0.94), rgba(20, 13, 19, 0.96));
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.34);
+    }
+
+    header {
+      padding: 30px;
+      margin-bottom: 20px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      font-size: clamp(34px, 5vw, 58px);
+      line-height: 1.08;
+      letter-spacing: 0;
+      margin-bottom: 18px;
+    }
+
+    h2 {
+      font-size: 27px;
+      margin-bottom: 14px;
+      color: #ffe8b6;
+    }
+
+    h3 {
+      font-size: 18px;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+
+    p, li, td {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    code {
+      color: #ffe4a0;
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid rgba(245, 223, 179, 0.10);
+      padding: 1px 5px;
+    }
+
+    section {
+      padding: 26px;
+      margin-top: 20px;
+    }
+
+    .tagline {
+      color: var(--teal);
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .hero-note {
+      max-width: 720px;
+      margin-bottom: 0;
+      font-size: 16px;
+    }
+
+    .status-card {
+      border: 1px solid var(--line);
+      background: rgba(0, 0, 0, 0.22);
+      padding: 18px;
+      min-height: 100%;
+    }
+
+    .status-card strong {
+      display: block;
+      color: #fff2c9;
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .grid.two { grid-template-columns: repeat(2, 1fr); }
+
+    .card {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(43, 30, 41, 0.84), rgba(14, 10, 14, 0.72));
+      padding: 18px;
+      min-height: 100%;
+    }
+
+    .card p:last-child { margin-bottom: 0; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      color: #fff1c8;
+      background: rgba(239, 189, 88, 0.12);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .step {
+      border: 1px solid var(--line);
+      background: rgba(0, 0, 0, 0.24);
+      padding: 12px;
+      min-height: 116px;
+      position: relative;
+    }
+
+    .step b {
+      color: var(--ink);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .step small {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .anim-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .stage {
+      position: relative;
+      min-height: 230px;
+      border: 1px solid rgba(245, 223, 179, 0.14);
+      background:
+        linear-gradient(90deg, rgba(216, 88, 74, 0.16), transparent 42%, rgba(87, 194, 185, 0.14)),
+        linear-gradient(180deg, #21151f, #0d0a0f);
+      overflow: hidden;
+      margin: 12px 0;
+    }
+
+    .actor {
+      position: absolute;
+      bottom: 22px;
+      width: 86px;
+      height: 118px;
+      border: 2px solid rgba(245, 223, 179, 0.20);
+      background: linear-gradient(145deg, #6a2635, #21131b 70%);
+      box-shadow: 0 18px 30px rgba(0, 0, 0, 0.38);
+    }
+
+    .actor.left { left: 46px; }
+    .actor.right {
+      right: 46px;
+      background: linear-gradient(145deg, #254d54, #10151a 72%);
+    }
+
+    .actor::before {
+      content: "";
+      position: absolute;
+      left: 22px;
+      top: 16px;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #dfb171;
+      box-shadow: inset -10px -8px 0 rgba(0, 0, 0, 0.18);
+    }
+
+    .actor::after {
+      content: "";
+      position: absolute;
+      left: 17px;
+      top: 70px;
+      width: 52px;
+      height: 34px;
+      background: rgba(245, 223, 179, 0.18);
+      clip-path: polygon(15% 0, 85% 0, 100% 100%, 0 100%);
+    }
+
+    .beam, .trail, .seal, .contract, .ballot, .wave, .chain {
+      position: absolute;
+      pointer-events: none;
+    }
+
+    .trail {
+      left: 28px;
+      bottom: 72px;
+      width: 240px;
+      height: 58px;
+      background: linear-gradient(90deg, rgba(98, 183, 232, 0.0), rgba(98, 183, 232, 0.85), rgba(87, 194, 185, 0.0));
+      filter: blur(1px);
+      transform: skewX(-20deg);
+    }
+
+    .escape .actor.left { opacity: 0.45; transform: translateX(-42px) rotate(-5deg); }
+
+    .wave {
+      left: 118px;
+      top: 78px;
+      width: 210px;
+      height: 78px;
+      border: 2px solid rgba(239, 189, 88, 0.72);
+      border-left-color: transparent;
+      border-right-color: transparent;
+      border-radius: 50%;
+      transform: rotate(-10deg);
+      box-shadow: 0 0 28px rgba(239, 189, 88, 0.32);
+    }
+
+    .seal {
+      left: calc(50% - 44px);
+      top: calc(50% - 44px);
+      width: 88px;
+      height: 88px;
+      border: 2px solid rgba(239, 189, 88, 0.70);
+      border-radius: 50%;
+      box-shadow: 0 0 28px rgba(239, 189, 88, 0.36), inset 0 0 22px rgba(216, 88, 74, 0.24);
+    }
+
+    .ballot {
+      left: calc(50% - 34px);
+      top: 76px;
+      width: 68px;
+      height: 88px;
+      background: #f3dfb2;
+      border: 3px solid #8d332e;
+      box-shadow: 0 18px 28px rgba(0, 0, 0, 0.34);
+      transform: rotate(-8deg);
+    }
+
+    .ballot::after {
+      content: "";
+      position: absolute;
+      left: 16px;
+      top: 28px;
+      width: 36px;
+      height: 18px;
+      border-bottom: 5px solid var(--red);
+      border-left: 5px solid var(--red);
+      transform: rotate(-45deg);
+    }
+
+    .contract {
+      left: calc(50% - 98px);
+      top: 90px;
+      width: 196px;
+      height: 54px;
+      border-top: 3px solid var(--gold);
+      border-bottom: 3px solid var(--teal);
+      box-shadow: 0 0 28px rgba(117, 210, 138, 0.28);
+    }
+
+    .contract::before,
+    .contract::after {
+      content: "";
+      position: absolute;
+      top: -23px;
+      width: 58px;
+      height: 96px;
+      border: 2px solid rgba(245, 223, 179, 0.52);
+      background: rgba(0, 0, 0, 0.24);
+    }
+
+    .contract::before { left: 10px; transform: rotate(-8deg); }
+    .contract::after { right: 10px; transform: rotate(8deg); }
+
+    .chain {
+      left: 170px;
+      right: 170px;
+      top: 112px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--red), var(--gold), var(--teal));
+      box-shadow: 0 0 24px rgba(239, 189, 88, 0.46);
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      background: rgba(0, 0, 0, 0.24);
+      color: var(--ink);
+      padding: 6px 10px;
+      font-size: 13px;
+    }
+
+    .note {
+      border-left: 3px solid var(--teal);
+      background: rgba(87, 194, 185, 0.08);
+      padding: 12px 14px;
+      color: #d8c8a6;
+      margin-top: 14px;
+    }
+
+    @media (max-width: 900px) {
+      header, .grid, .grid.two, .anim-grid, .flow {
+        grid-template-columns: 1fr;
+      }
+
+      .page {
+        width: min(100vw - 24px, 1180px);
+        padding-top: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <div>
+        <p class="tagline">LiarsLand · 议会模式行动动画计划</p>
+        <h1>恢复撤离动画，并给倾向、投票、政治交易补齐舞台动画</h1>
+        <p class="hero-note">
+          当前项目里旧的行动动画层仍然存在：<code>project/scripts/ui/action_animation_overlay.gd</code> 已有 <code>leave</code> 撤离动画和青色撤离粒子资产。
+          问题主要在议会模式的新行动结算路径没有等待动画播放；同时新动作 <code>retreat</code>、<code>declare_tendency</code>、<code>cast_vote</code>、<code>offer_trade</code> 还没有专属视觉语言。
+        </p>
+      </div>
+      <div class="status-card">
+        <strong>目标规则</strong>
+        <p>所有会结束对话或推进阶段的行动，都必须先播放动画。动画完成后，才进入议会状态页、下一阶段、下一句对话或 NPC 选择页。</p>
+        <div class="legend">
+          <span class="pill">撤离：恢复旧 leave</span>
+          <span class="pill">倾向：公开软承诺</span>
+          <span class="pill">投票：锁票落印</span>
+          <span class="pill">交易：契约绑定</span>
+        </div>
+      </div>
+    </header>
+
+    <section>
+      <h2>一、现状判断</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>撤离动画还在</h3>
+          <p><code>ActionAnimationOverlay.play_action("leave", ...)</code> 会隐藏 UI chrome、显示玩家/NPC 肖像、生成青色烟雾、速度线和残影，然后等待约 3.2 秒结束。</p>
+        </div>
+        <div class="card">
+          <h3>议会手动行动绕过动画</h3>
+          <p><code>_on_manual_action_pressed</code> 在 <code>council_mode</code> 分支里调用规则、刷新状态后直接返回，没有调用 <code>_play_action_animation</code>。</p>
+        </div>
+        <div class="card">
+          <h3>动作命名不一致</h3>
+          <p>规则层使用 <code>retreat / declare_tendency / cast_vote / offer_trade</code>，动画层使用旧动作 <code>leave / invite / duel / gift</code>。需要新增议会动作映射或让 overlay 原生支持新动作。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>二、要改哪些东西</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>文件</th>
+            <th>改动</th>
+            <th>目的</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>project/scripts/ui/adventure_screen.gd</code></td>
+            <td>在议会模式玩家手动行动结算后、刷新状态/进入下一阶段前，统一调用 <code>await _play_council_action_animation(...)</code>。</td>
+            <td>恢复“动画播完以后再进入下一阶段”的主流程。</td>
+          </tr>
+          <tr>
+            <td><code>project/scripts/ui/adventure_screen.gd</code></td>
+            <td>NPC 回合中，<code>declare_tendency</code>、<code>cast_vote</code>、<code>offer_trade</code> 生效后也进入同一动画入口；如果 NPC 提案需要玩家确认，则接受后播放交易动画。</td>
+            <td>玩家和 NPC 使用同一种公开行动反馈，避免系统事件突然跳字。</td>
+          </tr>
+          <tr>
+            <td><code>project/scripts/ui/action_animation_overlay.gd</code></td>
+            <td>新增议会动作：<code>retreat</code> 复用/包装 <code>leave</code>；新增 <code>declare_tendency</code>、<code>cast_vote</code>、<code>offer_trade</code> 的动画分支、文案、时长和粒子组合。</td>
+            <td>让动画层原生认识新玩法，不再靠旧动作硬套。</td>
+          </tr>
+          <tr>
+            <td><code>project/scripts/ui/action_animation_overlay.gd</code></td>
+            <td>给 <code>play_action</code> 增加可选 <code>payload</code> 参数，读取 <code>target_crime_id</code>、<code>vote</code>、<code>bound_votes</code>、<code>counterpart_id</code>。</td>
+            <td>动画能显示“哪条罪行、什么票向、几张绑定票”。</td>
+          </tr>
+          <tr>
+            <td><code>project/scripts/core/council_rules_engine.gd</code></td>
+            <td>原则上不改规则。只在必要时让事件文字更具体，例如“某人表达倾向/锁定投票/交易成立”。</td>
+            <td>动画只表现结果，不改变规则判定。</td>
+          </tr>
+          <tr>
+            <td><code>project/tests/action_animation_overlay_check.gd</code></td>
+            <td>加入三种新议会动作的 overlay 烟测。</td>
+            <td>保证动画分支可独立播放并自动收尾。</td>
+          </tr>
+          <tr>
+            <td><code>project/tests/action_animation_integration_check.gd</code></td>
+            <td>扩展议会手动撤退、倾向、投票、交易流程检查：调用后 overlay 必须可见，等待后才恢复 UI。</td>
+            <td>防止以后又把动画从流程里绕掉。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>三、流程接入方式</h2>
+      <p>核心不是让动画“同时播一下”，而是把它做成行动结算后的阻塞步骤。伪流程如下：</p>
+      <div class="flow">
+        <div class="step"><b>1. 选择行动</b><small>玩家点撤退、倾向、投票、交易，或 NPC JSON 返回行动。</small></div>
+        <div class="step"><b>2. 规则结算</b><small>调用 <code>CouncilRulesEngine.apply_member_action</code>，得到事件和胜负/处决状态。</small></div>
+        <div class="step"><b>3. 播放动画</b><small><code>await _play_council_action_animation(action, actor, payload, events)</code>。</small></div>
+        <div class="step"><b>4. 写入 UI</b><small>动画结束后追加系统日志、刷新状态面板、显示结果 banner。</small></div>
+        <div class="step"><b>5. 推进阶段</b><small>如果行动结束对话，再进入议会状态页或下一名议员选择。</small></div>
+      </div>
+      <div class="note">
+        关键验收：撤退、正式投票、政治交易、LLM 达到对话结束条件，都不允许在 overlay 结束前调用下一阶段入口。
+      </div>
+    </section>
+
+    <section>
+      <h2>四、动画设计</h2>
+      <div class="anim-grid">
+        <div class="card">
+          <h3>1. 暂时撤退 / retreat</h3>
+          <div class="stage escape">
+            <div class="trail"></div>
+            <div class="actor left"></div>
+            <div class="actor right"></div>
+          </div>
+          <p>沿用旧 <code>leave</code>：场景压暗，玩家向左后撤，青色烟雾和速度线拉出残影，NPC 立在远端消失在暗场。最后出现“暂时撤退完成”。</p>
+          <p>节奏：0.35 秒压暗起势，1.85 秒角色离场，2.6 秒结果字出现，总长约 3.2 秒。</p>
+        </div>
+
+        <div class="card">
+          <h3>2. 倾向表达 / declare_tendency</h3>
+          <div class="stage">
+            <div class="actor left"></div>
+            <div class="actor right"></div>
+            <div class="wave"></div>
+            <div class="seal"></div>
+          </div>
+          <p>发言者身前推出一圈金色声波，声波穿过中线后变成半透明议会印章。印章根据票向染色：有罪偏红，无罪偏青，弃权偏灰金。</p>
+          <p>视觉含义：这不是锁票，而是一句公开承诺。印章只半亮，最后化成灰色头像/倾向记录的粒子。</p>
+        </div>
+
+        <div class="card">
+          <h3>3. 直接投票 / cast_vote</h3>
+          <div class="stage">
+            <div class="actor left"></div>
+            <div class="actor right"></div>
+            <div class="ballot"></div>
+            <div class="seal"></div>
+          </div>
+          <p>一张羊皮票从行动者手边飞到屏幕中央，票面落下红/青票向符号，随后被金色圆印重重盖住。盖印时做一次短促震屏。</p>
+          <p>视觉含义：正式票不可更改。若触发处决，盖印后追加红色裂纹和更重的低频闪光；若只是普通落票，则用短金光收尾。</p>
+        </div>
+
+        <div class="card">
+          <h3>4. 政治交易 / offer_trade</h3>
+          <div class="stage">
+            <div class="actor left"></div>
+            <div class="actor right"></div>
+            <div class="contract"></div>
+            <div class="chain"></div>
+          </div>
+          <p>双方各抛出一张票据，中线出现契约线，把 1 到 3 个议案串成发光节点。玩家接受后，节点依次盖印；拒绝则契约线断裂成灰尘。</p>
+          <p>视觉含义：交易是绑定票，不是单票。多议案时用 1、2、3 个节点从左到右依次亮起，最后形成一条红金青混色链。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>五、动作到动画的映射</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>规则动作</th>
+            <th>动画动作</th>
+            <th>主色</th>
+            <th>结果表现</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>retreat</code></td>
+            <td><code>retreat</code> 或内部复用 <code>leave</code></td>
+            <td>青蓝</td>
+            <td>角色离场；结束后进入议会状态/下一轮选择。</td>
+          </tr>
+          <tr>
+            <td><code>declare_tendency</code></td>
+            <td><code>declare_tendency</code></td>
+            <td>金色声波 + 票向色</td>
+            <td>半透明印章；状态页落灰色倾向头像。</td>
+          </tr>
+          <tr>
+            <td><code>cast_vote</code></td>
+            <td><code>cast_vote</code></td>
+            <td>红/青 + 金色盖印</td>
+            <td>正式票锁定；如果触发处决，追加红裂纹。</td>
+          </tr>
+          <tr>
+            <td><code>offer_trade</code></td>
+            <td><code>offer_trade</code></td>
+            <td>金色契约 + 双方阵营色</td>
+            <td>接受：多票依次落印；拒绝：契约断裂，不落票。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>六、新增图素清单</h2>
+      <p>
+        本轮已用 imagegen 生成两张平面卡通风格图素表，并用 chroma-key 后处理导出透明背景 PNG。所有最终可用图素都放在
+        <code>project/assets/generated/action_vfx</code>。后续实现时优先引用单个 PNG；两张 sheet 保留给人工预览和重新切图。
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>用途</th>
+            <th>文件</th>
+            <th>使用方式</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>投有罪票</td>
+            <td><code>council_ballot_guilty.png</code></td>
+            <td>投票动画中从行动者侧飞入中央，落下红色票向符号。</td>
+          </tr>
+          <tr>
+            <td>投无罪票</td>
+            <td><code>council_ballot_innocent.png</code></td>
+            <td>投票动画中使用青色盾形票向，表现保护/无罪。</td>
+          </tr>
+          <tr>
+            <td>弃权票</td>
+            <td><code>council_ballot_abstain.png</code></td>
+            <td>倾向或交易里出现弃权时使用，灰色、低亮度。</td>
+          </tr>
+          <tr>
+            <td>正式锁票印章</td>
+            <td><code>council_seal_locked.png</code></td>
+            <td>正式票落定后盖印，搭配短震屏和金色闪光。</td>
+          </tr>
+          <tr>
+            <td>倾向印章</td>
+            <td><code>council_seal_tendency.png</code></td>
+            <td>倾向表达动画收尾，半透明、软承诺感。</td>
+          </tr>
+          <tr>
+            <td>拒绝/破约印章</td>
+            <td><code>council_seal_rejected_broken.png</code></td>
+            <td>交易被拒绝或非法提案时短暂弹出并碎裂。</td>
+          </tr>
+          <tr>
+            <td>蜡封盖章</td>
+            <td><code>council_wax_stamp.png</code></td>
+            <td>投票盖印动作的道具层，可上下快速压下。</td>
+          </tr>
+          <tr>
+            <td>罪行档案牌</td>
+            <td><code>council_crime_dossier.png</code></td>
+            <td>动画中央承载目标罪行标题，必要时可叠加 Godot 文本。</td>
+          </tr>
+          <tr>
+            <td>金色倾向声波</td>
+            <td><code>council_wave_gold.png</code></td>
+            <td>倾向表达时从说话者身前向中线展开。</td>
+          </tr>
+          <tr>
+            <td>青色回应声波</td>
+            <td><code>council_wave_teal.png</code></td>
+            <td>无罪/保护类倾向或 NPC 回应时使用。</td>
+          </tr>
+          <tr>
+            <td>红色投票冲击</td>
+            <td><code>council_vote_burst_red.png</code></td>
+            <td>有罪票落印、处决触发前的强反馈。</td>
+          </tr>
+          <tr>
+            <td>金色盖印爆点</td>
+            <td><code>council_seal_burst_gold.png</code></td>
+            <td>正式票或交易成立的最终闪光。</td>
+          </tr>
+          <tr>
+            <td>契约线</td>
+            <td><code>council_contract_line.png</code></td>
+            <td>政治交易中连接双方票据和议案节点。</td>
+          </tr>
+          <tr>
+            <td>断裂契约线</td>
+            <td><code>council_contract_line_broken.png</code></td>
+            <td>交易拒绝、撤销或非法时替换契约线。</td>
+          </tr>
+          <tr>
+            <td>三议案交易节点</td>
+            <td><code>council_trade_three_nodes.png</code></td>
+            <td>政治交易最多 3 个议案，从左到右依次点亮。</td>
+          </tr>
+          <tr>
+            <td>小闪光粒子簇</td>
+            <td><code>council_sparkle_cluster.png</code></td>
+            <td>盖章、倾向记录、交易成立后的轻量补光。</td>
+          </tr>
+          <tr>
+            <td>符号图素表</td>
+            <td><code>council_action_symbols.png</code></td>
+            <td>透明 sheet，供预览、重切图或工具化导入。</td>
+          </tr>
+          <tr>
+            <td>特效图素表</td>
+            <td><code>council_action_effects.png</code></td>
+            <td>透明 sheet，供预览、重切图或工具化导入。</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note">
+        生成约束：平面卡通、轮廓清楚、细节克制、无文字、无水印；最终 PNG 已验证为 RGBA，四角透明。
+      </div>
+    </section>
+
+    <section>
+      <h2>七、实现顺序</h2>
+      <div class="grid two">
+        <div class="card">
+          <h3>第一步：恢复撤离动画</h3>
+          <p>先只改 <code>adventure_screen.gd</code>，让议会手动 <code>retreat</code> 调用 overlay 的 <code>leave</code> 动画，并在 <code>await</code> 结束后再刷新和跳转。这个改动风险最低，能立刻验证用户感知。</p>
+        </div>
+        <div class="card">
+          <h3>第二步：补动作映射层</h3>
+          <p>新增 <code>_council_animation_action</code>、<code>_play_council_action_animation</code>，避免每个调用点自己判断旧动作/新动作。</p>
+        </div>
+        <div class="card">
+          <h3>第三步：扩展 overlay</h3>
+          <p>在 <code>ACTION_DURATION</code> 和 <code>match normalized</code> 中加入三种新动作；复用已有 <code>gold_oath</code>、<code>red_rupture</code>、<code>cyan_escape</code>、<code>white_clash</code> 粒子。</p>
+        </div>
+        <div class="card">
+          <h3>第四步：NPC 和交易确认接入</h3>
+          <p>NPC 动作生效后播放对应动画。交易弹窗接受后播“契约成立”；拒绝时只播短断裂动画或不播完整行动动画，避免误导为已落票。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>八、测试与验收</h2>
+      <ul>
+        <li>运行 <code>project/tests/action_animation_overlay_check.gd</code>：撤离、倾向、投票、交易都能单独播放并自动隐藏。</li>
+        <li>运行 <code>project/tests/action_animation_integration_check.gd</code>：议会手动撤退必须让 overlay 可见，并且耗时不低于撤离动画时长。</li>
+        <li>补一个议会交易接受测试：接受政治交易后先播契约动画，再刷新状态页的正式票。</li>
+        <li>补一个投票处决测试：正式票触发处决时，动画结果使用处决/死亡强反馈，然后再进入结果或状态页。</li>
+        <li>导出网页视觉截图：至少覆盖 <code>retreat</code>、<code>declare_tendency</code>、<code>cast_vote</code>、<code>offer_trade</code> 四张关键帧。</li>
+      </ul>
+      <div class="note">
+        最小可交付版本：先恢复撤离动画和等待流程。完整版本：四个议会行动都有专属动画，并且玩家/NPC 都走同一套等待逻辑。
+      </div>
+    </section>
+
+    <section>
+      <h2>九、执行结果</h2>
+      <p>
+        已完成实现：撤退、倾向表达、直接投票、政治交易都接入 <code>ActionAnimationOverlay</code>，并通过
+        <code>AdventureScreen._play_council_action_animation</code> 在规则结算后阻塞播放。动画结束后才恢复对话 UI、刷新日志和继续下一阶段。
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>项目</th>
+            <th>结果</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>核心脚本</td>
+            <td><code>project/scripts/ui/action_animation_overlay.gd</code>、<code>project/scripts/ui/adventure_screen.gd</code>、<code>project/scripts/main.gd</code></td>
+          </tr>
+          <tr>
+            <td>测试脚本</td>
+            <td><code>project/tests/action_animation_overlay_check.gd</code>、<code>project/tests/action_animation_integration_check.gd</code>、<code>project/tests/action_animation_council_integration_check.gd</code>、<code>project/tests/action_animation_council_visual_export.gd</code></td>
+          </tr>
+          <tr>
+            <td>截图目录</td>
+            <td><code>ui/visual_tests/action_animation_council</code>，每个议会动作导出 prepare / burst / result 三张关键帧，以及 <code>contact_sheet.png</code> 总览图。</td>
+          </tr>
+          <tr>
+            <td>验证命令</td>
+            <td>Overlay 全量播放测试通过；AdventureScreen 议会集成测试通过；非 headless Godot 视觉截图导出通过。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>十、2026-05-12 修正补充</h2>
+      <ul>
+        <li>修正动画结束后的层级恢复：角色节点在动画中临时置前，结束后恢复动画前的原始 <code>z_index</code> 与可见状态，避免压住对话框。</li>
+        <li>修正手动撤离顺序：点击撤离后先弹出确认框，确认后才应用撤离规则、播放撤离动画，动画完成后再回到议员选择/状态流程。</li>
+        <li>投票与公开倾向表达改为在发起者身体附近播放，不再统一飞到右侧或中心区域。</li>
+        <li>议案相关动画都会同步显示罪行图标，并给罪行图标增加缩放、旋转、上浮与淡出动效。</li>
+        <li>右上说明文字改为中文；动作完成后，标题、副标题、结果大字会缩小飞向会议状态图标区域并消失。</li>
+        <li>已重新导出 <code>ui/visual_tests/action_animation_council/contact_sheet.png</code>，确认四类议会动画均无遮挡、无裁切，且完整播放。</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

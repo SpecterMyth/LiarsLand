@@ -1,0 +1,898 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>议会投票与处决动画页面计划</title>
+  <style>
+    :root {
+      --bg: #070506;
+      --ink: #f7e4b4;
+      --muted: #bda77a;
+      --dim: #7e6a48;
+      --line: rgba(247, 228, 180, 0.18);
+      --gold: #efbd58;
+      --red: #d75245;
+      --teal: #57c2b9;
+      --violet: #9b73dc;
+      --green: #74d28a;
+      --panel: #181014;
+      --panel2: #23171f;
+      font-family: "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 16% 8%, rgba(215, 82, 69, 0.16), transparent 30%),
+        radial-gradient(circle at 86% 7%, rgba(87, 194, 185, 0.12), transparent 28%),
+        linear-gradient(135deg, #09070a, #130d12 46%, #080607);
+      line-height: 1.75;
+    }
+
+    .page {
+      width: min(1280px, calc(100vw - 40px));
+      margin: 0 auto;
+      padding: 28px 0 54px;
+    }
+
+    header, section {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(35, 23, 31, 0.94), rgba(15, 10, 14, 0.96));
+      box-shadow: 0 22px 70px rgba(0, 0, 0, 0.42);
+    }
+
+    header {
+      padding: 28px;
+      margin-bottom: 20px;
+      display: grid;
+      grid-template-columns: 0.92fr 1.08fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      margin-bottom: 14px;
+      font-size: clamp(34px, 5vw, 56px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      color: #ffe6b1;
+      font-size: 26px;
+      margin-bottom: 12px;
+    }
+
+    h3 {
+      color: var(--gold);
+      font-size: 17px;
+      margin-bottom: 7px;
+    }
+
+    p, li, td {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    code {
+      color: #ffe1a2;
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid rgba(247, 228, 180, 0.1);
+      padding: 1px 5px;
+    }
+
+    section {
+      padding: 26px;
+      margin-top: 20px;
+    }
+
+    .tagline {
+      color: var(--teal);
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .hero-copy {
+      max-width: 650px;
+      font-size: 16px;
+      margin-bottom: 0;
+    }
+
+    .status {
+      border: 1px solid var(--line);
+      background: rgba(0, 0, 0, 0.24);
+      padding: 16px;
+    }
+
+    .status b {
+      display: block;
+      color: #fff0c5;
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .stage-shell {
+      border: 1px solid rgba(247, 228, 180, 0.14);
+      background: #000;
+      padding: 10px;
+      min-height: 100%;
+    }
+
+    .stage-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .stage-toolbar button {
+      border: 1px solid rgba(239, 189, 88, 0.62);
+      color: #22160b;
+      background: linear-gradient(180deg, #ffd772, #d99b37);
+      padding: 7px 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .execution-stage {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      min-height: 390px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 18%, rgba(239, 189, 88, 0.08), transparent 28%),
+        linear-gradient(180deg, #030303, #000);
+      isolation: isolate;
+    }
+
+    .execution-stage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(215, 82, 69, 0.18), transparent 28%, transparent 72%, rgba(87, 194, 185, 0.15)),
+        radial-gradient(circle at 50% 58%, rgba(239, 189, 88, 0.08), transparent 33%);
+      opacity: 0;
+      animation: stageGlow 24s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .stage-title {
+      position: absolute;
+      left: 50%;
+      top: 20px;
+      transform: translateX(-50%);
+      color: #ffe9b8;
+      font-size: 18px;
+      font-weight: 700;
+      text-shadow: 0 2px 10px #000;
+      opacity: 0;
+      animation: titleBeat 24s linear infinite;
+      z-index: 6;
+      white-space: nowrap;
+    }
+
+    .current-crime {
+      position: absolute;
+      left: 50%;
+      top: 40%;
+      transform: translate(-50%, -50%);
+      display: grid;
+      grid-template-columns: 86px minmax(180px, 280px);
+      align-items: center;
+      gap: 16px;
+      padding: 14px 18px;
+      border: 1px solid rgba(239, 189, 88, 0.38);
+      background: linear-gradient(90deg, rgba(13, 9, 12, 0.88), rgba(34, 21, 21, 0.9), rgba(13, 9, 12, 0.88));
+      box-shadow: 0 0 34px rgba(239, 189, 88, 0.2), 0 20px 48px rgba(0, 0, 0, 0.62);
+      opacity: 0;
+      z-index: 7;
+      animation: currentCrime 24s linear infinite;
+    }
+
+    .current-crime img {
+      width: 78px;
+      height: 78px;
+      object-fit: cover;
+      border: 2px solid rgba(239, 189, 88, 0.68);
+      background: #120d10;
+      box-shadow: 0 0 22px rgba(239, 189, 88, 0.3);
+    }
+
+    .current-crime span {
+      color: var(--muted);
+      display: block;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .current-crime b {
+      color: #ffe9b8;
+      display: block;
+      font-size: 22px;
+      line-height: 1.18;
+      margin-top: 2px;
+    }
+
+    .bust {
+      position: absolute;
+      bottom: -8%;
+      width: 27%;
+      height: 78%;
+      opacity: 0;
+      filter: drop-shadow(0 20px 28px rgba(0, 0, 0, 0.8));
+      animation: bustEnter 24s cubic-bezier(.22,.8,.2,1) infinite;
+      z-index: 2;
+    }
+
+    .bust img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: bottom center;
+    }
+
+    .bust.player { left: 4%; }
+    .bust.npc {
+      right: 3.5%;
+      animation-name: bustEnterRight;
+    }
+
+    .bust .nameplate {
+      position: absolute;
+      left: 50%;
+      bottom: 8%;
+      transform: translateX(-50%);
+      color: #fff2c8;
+      background: rgba(0, 0, 0, 0.62);
+      border: 1px solid rgba(247, 228, 180, 0.22);
+      padding: 5px 10px;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .bust.executed {
+      animation: bustExecuted 24s linear infinite;
+    }
+
+    .npc-row {
+      position: absolute;
+      left: 50%;
+      top: 58px;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 9px;
+      z-index: 4;
+    }
+
+    .head {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid rgba(247, 228, 180, 0.35);
+      background: #151015;
+      object-fit: cover;
+      box-shadow: 0 7px 16px rgba(0, 0, 0, 0.55);
+      opacity: 0;
+      animation: headAppear 24s linear infinite;
+    }
+
+    .head.dead {
+      animation: headDead 24s linear infinite;
+    }
+
+    .head.top-victim {
+      animation: topVictimHead 24s linear infinite;
+    }
+
+    .crime-board {
+      position: absolute;
+      left: 50%;
+      top: 70%;
+      transform: translate(-50%, -50%);
+      width: min(48%, 560px);
+      display: grid;
+      gap: 10px;
+      z-index: 3;
+    }
+
+    .crime {
+      position: relative;
+      display: grid;
+      grid-template-columns: 60px 1fr;
+      align-items: center;
+      gap: 12px;
+      min-height: 66px;
+      padding: 8px 12px;
+      border: 1px solid rgba(247, 228, 180, 0.18);
+      background: linear-gradient(90deg, rgba(28, 18, 24, 0.92), rgba(12, 9, 11, 0.9));
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.44);
+      opacity: 0;
+      transform: translateY(12px);
+      animation: crimeAppear 24s linear infinite;
+    }
+
+    .crime img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border: 1px solid rgba(239, 189, 88, 0.32);
+      background: #120d10;
+    }
+
+    .crime b {
+      color: #ffe9b8;
+      font-size: 15px;
+      display: block;
+      line-height: 1.25;
+    }
+
+    .crime small {
+      color: var(--muted);
+      display: block;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .crime.target {
+      animation: crimeTarget 24s linear infinite;
+    }
+
+    .vote-slot {
+      position: absolute;
+      top: 50%;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 2px solid rgba(239, 189, 88, 0.62);
+      background: rgba(0, 0, 0, 0.56);
+      opacity: 0;
+      overflow: hidden;
+      animation: voteSlotShow 24s linear infinite;
+    }
+
+    .vote-slot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .vote-left { left: -42px; transform: translateY(-50%); }
+    .vote-right { right: -42px; transform: translateY(-50%); }
+    .fly {
+      position: absolute;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: 2px solid rgba(239, 189, 88, 0.75);
+      object-fit: cover;
+      z-index: 8;
+      opacity: 0;
+      box-shadow: 0 0 22px rgba(239, 189, 88, 0.4);
+    }
+
+    .fly.player-vote { animation: flyPlayerVote 24s cubic-bezier(.2,.78,.2,1) infinite; }
+    .fly.npc-vote { animation: flyNpcVote 24s cubic-bezier(.2,.78,.2,1) infinite; }
+    .crime-projectile {
+      position: absolute;
+      left: 47%;
+      top: 53%;
+      width: 62px;
+      height: 62px;
+      border: 2px solid rgba(215, 82, 69, 0.85);
+      object-fit: cover;
+      opacity: 0;
+      z-index: 9;
+      animation: crimeProjectile 24s cubic-bezier(.22,.78,.18,1) infinite;
+      box-shadow: 0 0 30px rgba(215, 82, 69, 0.55);
+    }
+
+    .crime-pin {
+      position: absolute;
+      right: 18.5%;
+      top: 49%;
+      width: 76px;
+      height: 76px;
+      border: 2px solid rgba(239, 189, 88, 0.75);
+      object-fit: cover;
+      opacity: 0;
+      z-index: 9;
+      animation: crimePin 24s linear infinite;
+      box-shadow: 0 0 24px rgba(239, 189, 88, 0.34), 0 14px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    .top-crime-projectile {
+      position: absolute;
+      left: 49%;
+      top: 54%;
+      width: 44px;
+      height: 44px;
+      border: 2px solid rgba(215, 82, 69, 0.85);
+      object-fit: cover;
+      opacity: 0;
+      z-index: 9;
+      animation: topCrimeProjectile 24s cubic-bezier(.22,.78,.18,1) infinite;
+      box-shadow: 0 0 24px rgba(215, 82, 69, 0.55);
+    }
+
+    .top-crime-pin {
+      position: absolute;
+      left: calc(50% + 35px);
+      top: 60px;
+      width: 38px;
+      height: 38px;
+      border: 2px solid rgba(239, 189, 88, 0.7);
+      object-fit: cover;
+      opacity: 0;
+      z-index: 10;
+      animation: topCrimePin 24s linear infinite;
+      box-shadow: 0 0 18px rgba(239, 189, 88, 0.35);
+    }
+
+    .top-execution-burst {
+      position: absolute;
+      left: calc(50% + 13px);
+      top: 38px;
+      width: 86px;
+      height: 86px;
+      border-radius: 50%;
+      opacity: 0;
+      z-index: 11;
+      animation: topExecutionBurst 24s linear infinite;
+      background:
+        radial-gradient(circle, rgba(255, 239, 180, 0.9), rgba(215, 82, 69, 0.72) 32%, transparent 66%),
+        conic-gradient(from 20deg, transparent, rgba(255,255,255,.72), transparent, rgba(215,82,69,.86), transparent);
+      mix-blend-mode: screen;
+    }
+
+    .victim-note {
+      position: absolute;
+      left: 50%;
+      top: 25%;
+      transform: translateX(-50%);
+      color: #ffe9b8;
+      border: 1px solid rgba(247, 228, 180, 0.22);
+      background: rgba(0, 0, 0, 0.62);
+      padding: 5px 10px;
+      font-size: 13px;
+      opacity: 0;
+      z-index: 12;
+      animation: victimNote 24s linear infinite;
+      white-space: nowrap;
+    }
+
+    .execution-burst {
+      position: absolute;
+      right: 16%;
+      top: 34%;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      opacity: 0;
+      z-index: 10;
+      animation: executionBurst 24s linear infinite;
+      background:
+        radial-gradient(circle, rgba(255, 239, 180, 0.95), rgba(215, 82, 69, 0.78) 30%, transparent 68%),
+        conic-gradient(from 20deg, transparent, rgba(255,255,255,.82), transparent, rgba(215,82,69,.9), transparent);
+      mix-blend-mode: screen;
+    }
+
+    .last-word {
+      position: absolute;
+      right: 20%;
+      top: 42%;
+      color: #fff0bf;
+      border: 1px solid rgba(247, 228, 180, 0.25);
+      background: rgba(0, 0, 0, 0.7);
+      padding: 8px 12px;
+      font-size: 13px;
+      width: 180px;
+      opacity: 0;
+      z-index: 11;
+      animation: lastWord 24s linear infinite;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.55);
+    }
+
+    .result-card {
+      position: absolute;
+      left: 50%;
+      bottom: 34px;
+      transform: translateX(-50%);
+      color: #ffe9b8;
+      border: 1px solid rgba(247, 228, 180, 0.25);
+      background: rgba(9, 6, 8, 0.82);
+      padding: 10px 18px;
+      text-align: center;
+      opacity: 0;
+      z-index: 12;
+      animation: resultHold 24s linear infinite;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .grid.two { grid-template-columns: repeat(2, 1fr); }
+
+    .card {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(37, 25, 34, 0.82), rgba(10, 7, 10, 0.72));
+      padding: 17px;
+      min-height: 100%;
+    }
+
+    .card p:last-child { margin-bottom: 0; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--line);
+      margin-top: 12px;
+    }
+
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      padding: 12px 13px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      color: #fff0c5;
+      background: rgba(239, 189, 88, 0.12);
+      font-size: 14px;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    ol, ul { padding-left: 21px; }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .step {
+      border: 1px solid var(--line);
+      background: rgba(0, 0, 0, 0.24);
+      padding: 12px;
+      min-height: 126px;
+    }
+
+    .step b {
+      display: block;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .step small {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @keyframes stageGlow {
+      0%, 7%, 95%, 100% { opacity: 0; }
+      9%, 88% { opacity: 1; }
+    }
+
+    @keyframes titleBeat {
+      0%, 5%, 95%, 100% { opacity: 0; transform: translate(-50%, -8px); }
+      8%, 88% { opacity: 1; transform: translate(-50%, 0); }
+    }
+
+    @keyframes bustEnter {
+      0%, 5% { opacity: 0; transform: translateX(-70px) scale(.98); }
+      9%, 17% { opacity: 1; transform: translateX(0) scale(1.02); }
+      21%, 88% { opacity: 1; transform: translateX(0) scale(1); }
+      96%, 100% { opacity: 0; transform: translateX(-18px) scale(.98); }
+    }
+
+    @keyframes bustEnterRight {
+      0%, 5% { opacity: 0; transform: translateX(70px) scale(.98); }
+      9%, 17% { opacity: 1; transform: translateX(0) scale(1.02); }
+      21%, 88% { opacity: 1; transform: translateX(0) scale(1); }
+      96%, 100% { opacity: 0; transform: translateX(18px) scale(.98); }
+    }
+
+    @keyframes bustExecuted {
+      0%, 48% { filter: drop-shadow(0 20px 28px rgba(0,0,0,.8)); opacity: 1; }
+      52%, 88% { filter: grayscale(1) brightness(.55) drop-shadow(0 20px 28px rgba(0,0,0,.8)); opacity: .72; }
+      96%, 100% { opacity: 0; }
+    }
+
+    @keyframes headAppear {
+      0%, 8% { opacity: 0; transform: translateY(-10px); }
+      12%, 88% { opacity: 1; transform: translateY(0); }
+      96%, 100% { opacity: 0; }
+    }
+
+    @keyframes headDead {
+      0%, 49% { opacity: 1; filter: none; }
+      54%, 88% { opacity: .62; filter: grayscale(1) brightness(.58); }
+      96%, 100% { opacity: 0; }
+    }
+
+    @keyframes topVictimHead {
+      0%, 49% { opacity: 1; filter: none; transform: translateY(0) scale(1); }
+      52% { opacity: 1; filter: brightness(1.45); transform: translateY(0) scale(1.14); }
+      58%, 88% { opacity: .55; filter: grayscale(1) brightness(.52); transform: translateY(0) scale(1); }
+      96%, 100% { opacity: 0; }
+    }
+
+    @keyframes crimeAppear {
+      0%, 9% { opacity: 0; transform: translateY(12px); }
+      15%, 88% { opacity: 1; transform: translateY(0); }
+      96%, 100% { opacity: 0; }
+    }
+
+    @keyframes crimeTarget {
+      0%, 22% { box-shadow: 0 12px 28px rgba(0,0,0,.44); border-color: rgba(247,228,180,.18); }
+      25%, 44% { box-shadow: 0 0 28px rgba(239,189,88,.52); border-color: rgba(239,189,88,.7); }
+      47%, 88% { box-shadow: 0 12px 28px rgba(0,0,0,.44); border-color: rgba(247,228,180,.18); }
+    }
+
+    @keyframes currentCrime {
+      0%, 15% { opacity: 0; transform: translate(-50%, -44%) scale(.92); }
+      19%, 58% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      62%, 82% { opacity: .72; transform: translate(-50%, -50%) scale(.94); filter: grayscale(.25) brightness(.78); }
+      88% { opacity: 0; transform: translate(-50%, -54%) scale(.9); }
+      96%, 100% { opacity: 0; }
+    }
+
+    @keyframes voteSlotShow {
+      0%, 24% { opacity: 0; scale: .4; }
+      30%, 88% { opacity: 1; scale: 1; }
+      96%, 100% { opacity: 0; }
+    }
+
+    @keyframes flyPlayerVote {
+      0%, 20% { opacity: 0; left: 16%; top: 66%; transform: scale(.9); }
+      24% { opacity: 1; left: 18%; top: 58%; transform: scale(1.1); }
+      31%, 45% { opacity: 1; left: 29%; top: 54%; transform: scale(.78); }
+      48%, 100% { opacity: 0; left: 29%; top: 54%; transform: scale(.78); }
+    }
+
+    @keyframes flyNpcVote {
+      0%, 21% { opacity: 0; right: 17%; top: 66%; transform: scale(.9); }
+      25% { opacity: 1; right: 19%; top: 58%; transform: scale(1.1); }
+      32%, 45% { opacity: 1; right: 29%; top: 54%; transform: scale(.78); }
+      48%, 100% { opacity: 0; right: 29%; top: 54%; transform: scale(.78); }
+    }
+
+    @keyframes crimeProjectile {
+      0%, 39% { opacity: 0; transform: translate(0, 0) scale(.75) rotate(0); }
+      42% { opacity: 1; transform: translate(0, 0) scale(1) rotate(-8deg); }
+      49%, 55% { opacity: 1; transform: translate(270%, -36%) scale(.9) rotate(12deg); }
+      58%, 100% { opacity: 0; transform: translate(270%, -36%) scale(.9) rotate(12deg); }
+    }
+
+    @keyframes crimePin {
+      0%, 48% { opacity: 0; transform: scale(.8) rotate(0); }
+      50%, 59% { opacity: 1; transform: scale(1) rotate(4deg); }
+      63%, 88% { opacity: .76; transform: scale(.88) rotate(4deg); filter: grayscale(.4) brightness(.72); }
+      96%, 100% { opacity: 0; }
+    }
+
+    @keyframes topCrimeProjectile {
+      0%, 39% { opacity: 0; left: 49%; top: 54%; transform: scale(.72) rotate(0); }
+      42% { opacity: 1; left: 49%; top: 54%; transform: scale(1) rotate(-8deg); }
+      49%, 55% { opacity: 1; left: calc(50% + 35px); top: 60px; transform: scale(.78) rotate(12deg); }
+      58%, 100% { opacity: 0; left: calc(50% + 35px); top: 60px; transform: scale(.78) rotate(12deg); }
+    }
+
+    @keyframes topCrimePin {
+      0%, 48% { opacity: 0; transform: scale(.72) rotate(0); }
+      50%, 59% { opacity: 1; transform: scale(1) rotate(4deg); }
+      63%, 88% { opacity: .7; transform: scale(.86) rotate(4deg); filter: grayscale(.4) brightness(.72); }
+      96%, 100% { opacity: 0; }
+    }
+
+    @keyframes executionBurst {
+      0%, 55% { opacity: 0; transform: scale(.2) rotate(0); }
+      58% { opacity: 1; transform: scale(1.1) rotate(35deg); }
+      62% { opacity: .4; transform: scale(1.55) rotate(75deg); }
+      66%, 100% { opacity: 0; transform: scale(1.8) rotate(110deg); }
+    }
+
+    @keyframes topExecutionBurst {
+      0%, 55% { opacity: 0; transform: scale(.2) rotate(0); }
+      58% { opacity: 1; transform: scale(1.05) rotate(35deg); }
+      62% { opacity: .42; transform: scale(1.55) rotate(75deg); }
+      66%, 100% { opacity: 0; transform: scale(1.8) rotate(110deg); }
+    }
+
+    @keyframes victimNote {
+      0%, 42% { opacity: 0; transform: translate(-50%, 8px); }
+      46%, 64% { opacity: 1; transform: translate(-50%, 0); }
+      70%, 100% { opacity: 0; transform: translate(-50%, -8px); }
+    }
+
+    @keyframes lastWord {
+      0%, 61% { opacity: 0; transform: translate(0, 10px) scale(.96); }
+      65%, 72% { opacity: 1; transform: translate(0, 0) scale(1); }
+      75%, 100% { opacity: 0; transform: translate(-90px, 72px) scale(.86); }
+    }
+
+    @keyframes resultHold {
+      0%, 78% { opacity: 0; transform: translate(-50%, 12px); }
+      82%, 90% { opacity: 1; transform: translate(-50%, 0); }
+      96%, 100% { opacity: 0; transform: translate(-50%, 12px); }
+    }
+
+    @media (max-width: 900px) {
+      header, .grid.two, .grid { grid-template-columns: 1fr; }
+      .flow { grid-template-columns: 1fr; }
+      .execution-stage { min-height: 320px; }
+      .current-crime { grid-template-columns: 58px minmax(130px, 210px); top: 40%; padding: 10px 12px; }
+      .current-crime img { width: 52px; height: 52px; }
+      .current-crime b { font-size: 16px; }
+      .crime-board { width: 58%; }
+      .head { width: 38px; height: 38px; }
+      .crime { grid-template-columns: 48px 1fr; min-height: 58px; }
+      .crime img { width: 40px; height: 40px; }
+      .bust { width: 30%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <div>
+        <div class="tagline">Round End Insert · 投票与处决动画页</div>
+        <h1>议会结算前的黑场处决流程</h1>
+        <p class="hero-copy">目标是在“撤离动画结束”与“议会结算页弹出”之间插入一个纯黑舞台：先展示当前会谈双方投票，再按罪行触发处决、遗言投票、循环处决，全部播完并停留 5 秒后自动交还给结算面板。</p>
+      </div>
+      <div class="status">
+        <b>计划定位</b>
+        <p>先做独立覆盖层 <code>CouncilExecutionOverlay</code>，不替换现有 <code>CouncilResultPage</code>。它只负责读取一份结算时间线并播放动画；规则引擎负责产出谁投票、哪项罪行触发、谁死亡、死亡遗言又追加了哪些票。</p>
+        <p>下面的原型动画用现有角色半身像、头像和罪行图标模拟完整节奏。</p>
+      </div>
+    </header>
+
+    <section>
+      <h2>HTML 动画原型</h2>
+      <div class="stage-shell">
+        <div class="stage-toolbar">
+          <span>循环演示：初始投票 → 最新罪行居中 → 同罪行分裂命中多个角色 → 处决变灰 → 遗言投票 → 5 秒停留</span>
+          <button type="button" id="replay">重新播放</button>
+        </div>
+        <div class="execution-stage" id="stage">
+          <div class="stage-title">本回合投票正在结算</div>
+
+          <div class="bust player">
+            <img src="../project/assets/generated/player_portrait_half.png" alt="玩家半身像">
+            <div class="nameplate">你</div>
+          </div>
+          <div class="bust npc executed">
+            <img src="../project/assets/ui/characters/portrait_half/npc_fox_portrait_half.png" alt="当前对话角色半身像">
+            <div class="nameplate">狐面议员</div>
+          </div>
+
+          <div class="npc-row">
+            <img class="head" src="../project/assets/ui/characters/headicon/npc_wolf_head_avatar.png" alt="狼">
+            <img class="head" src="../project/assets/ui/characters/headicon/npc_deer_head_avatar.png" alt="鹿">
+            <img class="head" src="../project/assets/ui/characters/headicon/npc_snake_head_avatar.png" alt="蛇">
+            <img class="head top-victim" src="../project/assets/ui/characters/headicon/npc_crow_head_avatar.png" alt="鸦">
+            <img class="head" src="../project/assets/ui/characters/headicon/npc_mantis_knife_judge_head_avatar.png" alt="螳螂">
+            <img class="head" src="../project/assets/ui/characters/headicon/npc_badger_oath_notary_head_avatar.png" alt="獾">
+          </div>
+
+          <div class="current-crime">
+            <img src="../project/assets/generated/ui/council_icons/crime_hush_money_invoice.png" alt="当前罪行图标">
+            <div><span>最新触发罪行</span><b>封口费发票</b></div>
+          </div>
+
+          <div class="crime-board">
+            <div class="crime target">
+              <img src="../project/assets/generated/ui/council_icons/crime_hush_money_invoice.png" alt="罪行图标">
+              <div><b>封口费发票</b><small>赞成达到处决阈值 · 命中 2 名角色</small></div>
+              <span class="vote-slot vote-left"><img src="../project/assets/ui/characters/headicon/player_head_avatar.png" alt="玩家票"></span>
+              <span class="vote-slot vote-right"><img src="../project/assets/ui/characters/headicon/npc_fox_head_avatar.png" alt="NPC 票"></span>
+            </div>
+          </div>
+
+          <img class="fly player-vote" src="../project/assets/ui/characters/headicon/player_head_avatar.png" alt="玩家投票飞行">
+          <img class="fly npc-vote" src="../project/assets/ui/characters/headicon/npc_fox_head_avatar.png" alt="NPC 投票飞行">
+          <img class="crime-projectile" src="../project/assets/generated/ui/council_icons/crime_hush_money_invoice.png" alt="处决罪行飞行">
+          <img class="crime-pin" src="../project/assets/generated/ui/council_icons/crime_hush_money_invoice.png" alt="固定在被处决者身上的罪行">
+          <img class="top-crime-projectile" src="../project/assets/generated/ui/council_icons/crime_hush_money_invoice.png" alt="顶部 NPC 处决罪行飞行">
+          <img class="top-crime-pin" src="../project/assets/generated/ui/council_icons/crime_hush_money_invoice.png" alt="固定在顶部 NPC 头像上的罪行">
+          <div class="execution-burst"></div>
+          <div class="top-execution-burst"></div>
+          <div class="victim-note">同一条罪行同时命中：狐面议员、鸦羽密探</div>
+          <div class="last-word">遗言：把我的两票留给“私人飞机环保演说”。</div>
+          <div class="result-card">所有处决与遗言投票已完成 · 5 秒后打开议会结算页</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>播放流程</h2>
+      <div class="flow">
+        <div class="step"><b>1. 黑场入场</b><small>隐藏对话 HUD 和状态页，只保留全屏黑色覆盖层；左右半身像入场，上方 NPC 头像列出现。</small></div>
+        <div class="step"><b>2. 当前罪行</b><small>最新触发的罪行图标和罪行名字在屏幕正中单独放大显示，中下方只显示已经触发处决条件的罪行。</small></div>
+        <div class="step"><b>3. 双方投票</b><small>半身像上不预放头像；投票瞬间从角色位置生成一枚头像，飞向罪行条目左右两侧并固定为票位。</small></div>
+        <div class="step"><b>4. 多目标处决</b><small>若同一罪行命中多个角色，罪行图标分裂为多枚，分别飞向左右半身像或顶部 NPC 头像，固定后同时播放处决特效并灰化。</small></div>
+        <div class="step"><b>5. 循环与退场</b><small>遗言票若造成新处决，就继续播放同样序列；全部完成后停留 5 秒，淡出并调用结算页。</small></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>建议的数据时间线</h2>
+      <p>规则层不要把动画逻辑塞进 UI。建议在 <code>CouncilRulesEngine.finish_round</code> 附近额外产出一份结构化时间线，UI 只照着播放。</p>
+      <table>
+        <tr><th>字段</th><th>用途</th><th>示例</th></tr>
+        <tr><td><code>initial_votes</code></td><td>本回合已有票，用于第一次头像飞行和固定票位。</td><td><code>[{member_id:"player", crime_id:"c12", vote:"guilty"}]</code></td></tr>
+        <tr><td><code>crime_rows</code></td><td>只展示已经触发处决条件的罪行，包含图标、名字、赞成/反对数量。</td><td><code>{crime_id:"c12", icon:"crime_hush_money_invoice.png"}</code></td></tr>
+        <tr><td><code>execution_steps</code></td><td>每一次处决动画。单个 step 可以包含多个 victims；遗言导致的新处决再展开为后续 step。</td><td><code>{crime_id:"c12", victims:["npc_fox","npc_crow"], will_votes:[...]}</code></td></tr>
+        <tr><td><code>member_snapshots</code></td><td>播放前角色快照，避免动画期间 state 已被修改导致显示不稳定。</td><td><code>{id:"npc_fox", alive_before:true, alive_after:false}</code></td></tr>
+      </table>
+    </section>
+
+    <section>
+      <h2>Godot 接入计划</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>新增覆盖层</h3>
+          <p>创建 <code>project/scripts/ui/council_execution_overlay.gd</code>，结构参考 <code>action_animation_overlay.gd</code>：全屏黑色 <code>ColorRect</code>，分 <code>ActorLayer</code>、<code>VoteLayer</code>、<code>VfxLayer</code>、<code>UiLayer</code>。</p>
+        </div>
+        <div class="card">
+          <h3>新增入口</h3>
+          <p>在 <code>adventure_screen.gd</code> 构建 <code>council_execution_overlay</code>，并在 <code>_show_council_chapter_result_gate</code> 调用结算页之前执行 <code>await overlay.play_timeline(timeline)</code>。</p>
+        </div>
+        <div class="card">
+          <h3>规则产物</h3>
+          <p>把 <code>_execute_crime</code> 中的 victims、death wills、will votes 记录为 timeline step。若 <code>death_will_effective</code> 为真，循环检查新增票是否触发新罪行。</p>
+        </div>
+      </div>
+      <div class="grid two" style="margin-top:14px">
+        <div class="card">
+          <h3>目标锚点</h3>
+          <p>普通 NPC 处决定位到上方头像；玩家和当前对话角色定位到左右大半身像。遗言票的起点也使用同一个被处决目标锚点。</p>
+        </div>
+        <div class="card">
+          <h3>时长控制</h3>
+          <p>初始投票约 1.4 秒，每个处决 step 约 2.2 到 3.0 秒，遗言投票按票数错峰飞行。所有 step 完成后 <code>await create_timer(5.0)</code> 再淡出。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>实现顺序</h2>
+      <ol>
+        <li>先做 <code>CouncilExecutionOverlay</code> 的静态布局：黑场、半身像、上方头像、罪行条目和票位容器。</li>
+        <li>实现 <code>play_initial_votes</code>：从玩家/当前 NPC 半身像锚点飞到罪行左右票位。</li>
+        <li>实现 <code>play_execution_step</code>：罪行图标飞向目标、目标处决特效、头像/半身像灰化、遗言票飞行。</li>
+        <li>扩展规则层产出 timeline，先用当前已记录的 <code>council_vote_records</code>、<code>council_executed_crimes</code>、<code>council_death_wills</code> 生成可播放数据。</li>
+        <li>将 overlay 插入到 <code>_show_council_chapter_result_gate</code> 前，并补一个视觉导出测试确认黑场、飞行、灰化、5 秒停留都出现。</li>
+      </ol>
+    </section>
+  </main>
+
+  <script>
+    const replay = document.getElementById("replay");
+    let stage = document.getElementById("stage");
+
+    replay.addEventListener("click", () => {
+      const clone = stage.cloneNode(true);
+      stage.parentNode.replaceChild(clone, stage);
+      clone.id = "stage";
+      stage = clone;
+    });
+  </script>
+</body>
+</html>

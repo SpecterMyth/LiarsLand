@@ -51,6 +51,7 @@ func _run() -> void:
 	assert(state.victory)
 	assert(CouncilRulesEngineScript.alive_count(state) == 1)
 	_test_execution_threshold_rechecks_alive_count(data)
+	_test_execution_timeline_multivictim_and_chain(data)
 	_test_npc_reasoning_guards(data)
 	_test_only_player_can_retreat(data)
 	_test_council_energy_rules(data)
@@ -140,6 +141,34 @@ func _test_execution_threshold_rechecks_alive_count(data: Dictionary) -> void:
 	CouncilRulesEngineScript.check_executions(state, events)
 	assert("crime_a" in state.council_executed_crimes)
 	assert("crime_b" in state.council_executed_crimes)
+
+
+func _test_execution_timeline_multivictim_and_chain(data: Dictionary) -> void:
+	var state = GameStateScript.new()
+	CouncilRulesEngineScript.setup_state(state, data)
+	state.chapter["death_will_enabled"] = true
+	state.chapter["death_will_effective"] = true
+	state.chapter["force_reveal_at_alive"] = 0
+	state.council_crime_pool = [
+		{"id": "crime_a", "title": "Crime A"},
+		{"id": "crime_b", "title": "Crime B"}
+	]
+	state.player["hidden_crimes"] = []
+	state.npcs[0]["hidden_crimes"] = ["crime_a"]
+	state.npcs[1]["hidden_crimes"] = ["crime_a"]
+	state.npcs[2]["hidden_crimes"] = ["crime_b"]
+	state.council_vote_records = [
+		{"member_id": "player", "crime_id": "crime_a", "vote": CouncilRulesEngineScript.VOTE_GUILTY, "locked": true, "source": "test", "round": 0},
+		{"member_id": String(state.npcs[2].get("id", "")), "crime_id": "crime_a", "vote": CouncilRulesEngineScript.VOTE_GUILTY, "locked": true, "source": "test", "round": 0},
+		{"member_id": "player", "crime_id": "crime_b", "vote": CouncilRulesEngineScript.VOTE_GUILTY, "locked": true, "source": "test", "round": 0}
+	]
+	var events: Array[String] = []
+	CouncilRulesEngineScript.check_executions(state, events)
+	assert(state.council_execution_timeline.size() >= 2)
+	assert(String(state.council_execution_timeline[0].get("crime_id", "")) == "crime_a")
+	assert((state.council_execution_timeline[0].get("victims", []) as Array).size() == 2)
+	assert(String(state.council_execution_timeline[1].get("crime_id", "")) == "crime_b")
+	assert((state.council_execution_timeline[1].get("victims", []) as Array).size() == 1)
 
 
 func _test_npc_reasoning_guards(data: Dictionary) -> void:

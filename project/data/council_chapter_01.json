@@ -32,8 +32,50 @@
     "max_output_chars": 900
   },
   "npcs": [
-    {"id": "npc_fox", "public_name": "绯尾侯爵", "public_identity": "夜市贵族，擅长把债务包装成礼物。", "territory": "债契拍卖台", "portrait": "npc_fox_portrait.png", "portrait_half": "npc_fox_portrait_half.png", "scene": "bg_debt_auction_stage.png", "faction": "red_hat"},
-    {"id": "npc_crow", "public_name": "墨羽书记官", "public_identity": "旧档案馆书记官，记得别人以为烧掉的字。", "territory": "烧证目录室", "portrait": "npc_crow_portrait.png", "portrait_half": "npc_crow_portrait_half.png", "scene": "bg_burned_catalog_room.png", "faction": "blue_tie"},
-    {"id": "npc_deer", "public_name": "白枝使节", "public_identity": "温和外交官，句子像祝福也像警告。", "territory": "誓约花园", "portrait": "npc_deer_portrait.png", "portrait_half": "npc_deer_portrait_half.png", "scene": "bg_treaty_flower_bed.png", "faction": "red_hat"}
+    {
+      "id": "npc_fox",
+      "public_name": "绯尾侯爵",
+      "public_identity": "夜市贵族，擅长把债务包装成礼物。",
+      "territory": "债契拍卖台",
+      "portrait": "npc_fox_portrait.png",
+      "portrait_half": "npc_fox_portrait_half.png",
+      "scene": "bg_debt_auction_stage.png",
+      "background": "bg_debt_auction_stage.png",
+      "faction": "red_hat",
+      "character_profile": "把秘密、欠条和人情都当作可包装的礼物，笑容越温柔，报价越精确。",
+      "speech_style": "优雅、含蓄，常用礼节和赠礼比喻试探对方底价。",
+      "social_texture": "喜欢被当成贵客对待，讨厌粗鲁催促；被逼急时会把话题转成债务。",
+      "scene_prompt": "债契拍卖台上堆满红封与烫金契纸，他说话时总像在替一句话落槌定价。"
+    },
+    {
+      "id": "npc_crow",
+      "public_name": "墨羽书记官",
+      "public_identity": "旧档案馆书记官，记得别人以为烧掉的字。",
+      "territory": "焚目录室",
+      "portrait": "npc_crow_portrait.png",
+      "portrait_half": "npc_crow_portrait_half.png",
+      "scene": "bg_burned_catalog_room.png",
+      "background": "bg_burned_catalog_room.png",
+      "faction": "blue_tie",
+      "character_profile": "旧档案馆的黑羽书记，靠记忆保存烧毁名单，也靠沉默让别人心虚。",
+      "speech_style": "冷硬、简短，像在复述卷宗条目；很少给情绪，只给可疑空白。",
+      "social_texture": "厌恶口头承诺，偏爱编号、日期和能被记录的证词。",
+      "scene_prompt": "焚目录室里有焦黑书脊和墨水味，他会把每个停顿都听成删改痕迹。"
+    },
+    {
+      "id": "npc_deer",
+      "public_name": "白枝使节",
+      "public_identity": "温和外交官，句子像祝福也像警告。",
+      "territory": "誓约花圃",
+      "portrait": "npc_deer_portrait.png",
+      "portrait_half": "npc_deer_portrait_half.png",
+      "scene": "bg_treaty_flower_bed.png",
+      "background": "bg_treaty_flower_bed.png",
+      "faction": "red_hat",
+      "character_profile": "在礼法和怜悯之间维持平衡的使节，习惯先保全体面再处理真相。",
+      "speech_style": "温和、克制，常把警告说成祝愿，把拒绝说成礼节。",
+      "social_texture": "愿意听完完整理由，但对轻慢誓约的人会立刻疏远。",
+      "scene_prompt": "誓约花圃里缎带和停战铃轻轻晃动，她会把每句话放进礼仪秤盘上称量。"
+    }
   ]
 }

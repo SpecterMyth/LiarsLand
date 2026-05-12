@@ -5,7 +5,8 @@ const COUNCIL_CHAPTER_PATH := "res://data/council_chapter_01.json"
 const COUNCIL_CHAPTER_PATHS := [
 	"res://data/council_chapter_01.json",
 	"res://data/council_chapter_02.json",
-	"res://data/council_chapter_03.json"
+	"res://data/council_chapter_03.json",
+	"res://data/council_chapter_04.json"
 ]
 const DEFAULT_IDENTITY_GUIDELINE := "## 对外身份\n来自边境的灰狐抄写员，替商队整理族谱与债契。\n\n## 对手应如何认知我\n- 以这份公开身份理解我的言行。\n- 不知道我的真实目标，除非我在对话中暴露。\n- 优先把我视为可以交易、试探、被利用或结盟的外来者。"
 const DEFAULT_BEHAVIOR_GUIDELINE := "根据对方的问题进行回复"
@@ -21,6 +22,7 @@ const PromptBuilderScript := preload("res://scripts/llm/prompt_builder.gd")
 const AdventureLayoutScript := preload("res://scripts/ui/adventure_layout.gd")
 const CardUiKitScript := preload("res://scripts/ui/card_ui_kit.gd")
 const ActionAnimationOverlayScript := preload("res://scripts/ui/action_animation_overlay.gd")
+const CouncilExecutionOverlayScript := preload("res://scripts/ui/council_execution_overlay.gd")
 const StartMenuScript := preload("res://scripts/ui/start_menu.gd")
 const StandardButtonScript := preload("res://scripts/ui/standard_button.gd")
 const CommonFrameScript := preload("res://scripts/ui/common_frame.gd")
@@ -146,6 +148,7 @@ var selection_panel: Control
 var selection_box: Control
 var common_modal: Control
 var action_animation_overlay: Control
+var council_execution_overlay: Control
 var shop_panel: Control
 var shop_box: Control
 var ascension_box: Control
@@ -522,6 +525,7 @@ func _build_ui() -> void:
 	_build_selection_panel()
 	_build_common_modal()
 	_build_action_animation_overlay()
+	_build_council_execution_overlay()
 	_build_shop_panel()
 	_build_ascension_panel()
 	_build_death_page()
@@ -544,6 +548,12 @@ func _build_action_animation_overlay() -> void:
 	action_animation_overlay = ActionAnimationOverlayScript.new() as Control
 	action_animation_overlay.visible = false
 	add_child(action_animation_overlay)
+
+
+func _build_council_execution_overlay() -> void:
+	council_execution_overlay = CouncilExecutionOverlayScript.new() as Control
+	council_execution_overlay.visible = false
+	add_child(council_execution_overlay)
 
 
 func _sync_auto_check_pair(source: CheckBox, mirror: CheckBox) -> void:
@@ -981,6 +991,7 @@ func _run_council_chapter() -> void:
 			if state.ended or not running:
 				break
 			await _run_council_dialogue()
+			await _play_council_execution_timeline_if_needed()
 			_update_state_panel()
 			if state.ended or not running:
 				break
@@ -1026,6 +1037,8 @@ func _run_council_dialogue() -> void:
 		_update_progress()
 		_set_active_speaker("player")
 		var player_response := await _get_council_player_dialogue()
+		if await _finish_manual_action_if_needed():
+			return
 		if bool(player_response.get("cancelled", false)):
 			return
 		if player_response.has("error"):
@@ -1042,16 +1055,26 @@ func _run_council_dialogue() -> void:
 		if state.ended:
 			break
 		var events: Array[String] = []
-		var player_action_applied: bool = CouncilRulesEngineScript.apply_member_action(state, "player", String(player_response.get("action", "declare_tendency")), player_response, events)
+		var player_animation_action := String(player_response.get("action", "declare_tendency"))
+		var player_animation_payload: Dictionary = player_response.duplicate(true)
+		var player_action_applied: bool = CouncilRulesEngineScript.apply_member_action(state, "player", player_animation_action, player_response, events)
 		var progress_crime := CouncilRulesEngineScript.best_progress_crime(state, String(state.current_npc().get("id", "")))
 		if state.turn >= 2 and (not player_action_applied or not _council_has_locked_vote("player", progress_crime)):
-			player_action_applied = CouncilRulesEngineScript.apply_member_action(state, "player", "cast_vote", _council_forced_vote_payload(progress_crime), events)
+			player_animation_action = "cast_vote"
+			player_animation_payload = _council_forced_vote_payload(progress_crime)
+			player_action_applied = CouncilRulesEngineScript.apply_member_action(state, "player", player_animation_action, player_animation_payload, events)
+		if player_action_applied:
+			await _play_council_action_animation(player_animation_action, "player", player_animation_payload, events)
 		for event in events:
 			_append_system_log(event)
+		if CouncilRulesEngineScript.normalize_action(player_animation_action) == "retreat":
+			break
 		if state.ended:
 			break
 		_set_active_speaker("npc")
 		var npc_response := await _get_council_npc_dialogue()
+		if await _finish_manual_action_if_needed():
+			return
 		if npc_response.has("error"):
 			_show_error(npc_response.get("error", ""))
 			return
@@ -1061,6 +1084,9 @@ func _run_council_dialogue() -> void:
 		events.clear()
 		var npc_id := String(state.current_npc().get("id", ""))
 		var npc_action := String(npc_response.get("action", "declare_tendency"))
+		var npc_animation_action := npc_action
+		var npc_animation_payload: Dictionary = npc_response.duplicate(true)
+		var npc_animation_outcome := ""
 		var npc_action_applied := false
 		var npc_trade_rejected := false
 		if CouncilRulesEngineScript.normalize_action(npc_action) == "offer_trade":
@@ -1070,13 +1096,20 @@ func _run_council_dialogue() -> void:
 			else:
 				npc_action_applied = true
 				npc_trade_rejected = true
+				npc_animation_action = "offer_trade"
+				npc_animation_payload = npc_response.duplicate(true)
+				npc_animation_outcome = "failure"
 				events.append("你拒绝了对手的政治交易。")
 		else:
 			npc_action_applied = CouncilRulesEngineScript.apply_member_action(state, npc_id, npc_action, npc_response, events)
 		if not npc_trade_rejected and state.turn >= 2 and (not npc_action_applied or not _council_has_locked_vote(npc_id, progress_crime)):
-			npc_action_applied = CouncilRulesEngineScript.apply_member_action(state, npc_id, "cast_vote", _council_forced_vote_payload(progress_crime), events)
+			npc_animation_action = "cast_vote"
+			npc_animation_payload = _council_forced_vote_payload(progress_crime)
+			npc_action_applied = CouncilRulesEngineScript.apply_member_action(state, npc_id, npc_animation_action, npc_animation_payload, events)
 		if state.turn >= 2 and not state.ended:
 			CouncilRulesEngineScript.apply_follow_votes(state, progress_crime, "guilty", events)
+		if npc_action_applied:
+			await _play_council_action_animation(npc_animation_action, "npc", npc_animation_payload, events, npc_animation_outcome)
 		for event in events:
 			_append_system_log(event)
 		_update_state_panel()
@@ -1165,8 +1198,6 @@ func _populate_round_select_page() -> void:
 			else:
 				_apply_locked_npc_select_card(card)
 	_wire_right_utility_buttons(selection_panel.get_node_or_null("RightUtilityButtons") as Control)
-	if council_mode:
-		_add_council_selection_summary()
 
 
 func _add_council_selection_summary() -> void:
@@ -1624,11 +1655,11 @@ func _run_current_dialogue() -> void:
 
 
 func _finish_manual_action_if_needed() -> bool:
-	if not manual_action_resolved:
+	if not manual_action_resolved and not manual_action_in_progress:
 		return false
 	while manual_action_in_progress and running:
 		await get_tree().process_frame
-	return true
+	return manual_action_resolved
 
 
 func _resolve_decided_action(action: String, payload: Dictionary, label: String) -> bool:
@@ -1679,13 +1710,14 @@ func _on_manual_action_pressed(action: String) -> void:
 		if not applied:
 			manual_action_in_progress = false
 			return
-		manual_action_resolved = true
 		if CouncilRulesEngineScript.normalize_action(String(payload.get("action", ""))) == "cast_vote" and not state.ended:
 			CouncilRulesEngineScript.apply_follow_votes(state, String(payload.get("target_crime_id", "")), String(payload.get("vote", "guilty")), events)
+		await _play_council_action_animation(String(payload.get("action", action)), "player", payload, events)
 		for event in events:
 			_append_system_log(event)
 		_show_result_banner("会议行动：%s" % String(payload.get("label", action)), Color(1.0, 0.82, 0.34, 1.0))
 		_update_state_panel()
+		manual_action_resolved = true
 		manual_action_in_progress = false
 		return
 	var normalized := RulesEngineScript.normalize_action(action)
@@ -1719,8 +1751,7 @@ func _manual_council_payload(action: String) -> Dictionary:
 func _choose_manual_council_payload(action: String) -> Dictionary:
 	match action:
 		"leave":
-			var accepted: bool = await common_modal.call("show_message", "暂时撤退", "结束本次会谈，并在下一回合重新选择议员。", "撤退", "取消")
-			return {"action": "retreat", "label": "暂时撤退"} if accepted else {}
+			return {"action": "retreat", "label": "暂时撤退"}
 		"invite":
 			var tendency := await _choose_council_vote_payload("表达倾向", "declare_tendency")
 			if not tendency.is_empty():
@@ -1807,7 +1838,13 @@ func _confirm_npc_council_trade(actor_id: String, payload: Dictionary) -> bool:
 
 func _confirm_and_apply_council_action(member_id: String, action: String, payload: Dictionary, events: Array[String], require_confirm := true) -> bool:
 	var normalized := CouncilRulesEngineScript.normalize_action(action)
-	if require_confirm and normalized == "offer_trade":
+	if require_confirm and normalized == "retreat":
+		if common_modal == null:
+			return false
+		var accepted: bool = await common_modal.call("show_message", "暂时撤退", "确认结束本次会议，并在动画播放完毕后回到议员选择？", "撤退", "取消")
+		if not accepted:
+			return false
+	elif require_confirm and normalized == "offer_trade":
 		if common_modal == null:
 			return false
 		var counterpart_id := String(payload.get("counterpart_id", ""))
@@ -2144,6 +2181,38 @@ func _play_npc_action_animation(npc_response: Dictionary, events: Array) -> void
 	await _play_action_animation(action, "npc", artifact_id, events)
 
 
+func _play_council_action_animation(action: String, actor_role: String, payload: Dictionary, events: Array, outcome_override := "") -> void:
+	if action_animation_overlay == null or not is_instance_valid(action_animation_overlay):
+		return
+	var normalized := CouncilRulesEngineScript.normalize_action(action)
+	if normalized.is_empty() or normalized == "none":
+		return
+	if result_banner != null:
+		result_banner.visible = false
+	var chrome_state := _capture_action_animation_chrome_state()
+	var animation_payload := payload.duplicate(true)
+	animation_payload["status_icon_target"] = _action_animation_status_icon_target()
+	_set_action_animation_chrome_visible(false)
+	var outcome := String(outcome_override)
+	if outcome.is_empty():
+		if state != null and state.ended:
+			outcome = "victory" if state.victory else "death"
+		else:
+			outcome = "success"
+	await action_animation_overlay.call(
+		"play_action",
+		normalized,
+		actor_role,
+		"",
+		outcome,
+		state,
+		player_portrait,
+		npc_portrait,
+		animation_payload
+	)
+	_restore_action_animation_chrome_state(chrome_state)
+
+
 func _play_action_animation(action: String, actor_role: String, artifact_id: String, events: Array) -> void:
 	if action_animation_overlay == null or not is_instance_valid(action_animation_overlay):
 		return
@@ -2153,6 +2222,7 @@ func _play_action_animation(action: String, actor_role: String, artifact_id: Str
 	if result_banner != null:
 		result_banner.visible = false
 	var chrome_state := _capture_action_animation_chrome_state()
+	var action_payload := {"status_icon_target": _action_animation_status_icon_target()}
 	_set_action_animation_chrome_visible(false)
 	await action_animation_overlay.call(
 		"play_action",
@@ -2162,10 +2232,18 @@ func _play_action_animation(action: String, actor_role: String, artifact_id: Str
 		_action_animation_outcome(normalized, events),
 		state,
 		player_portrait,
-		npc_portrait
+		npc_portrait,
+		action_payload
 	)
 	if actor_role == "npc" and normalized == "gift" and not state.ended:
 		_restore_action_animation_chrome_state(chrome_state)
+
+
+func _action_animation_status_icon_target() -> Vector2:
+	if status_button != null and is_instance_valid(status_button) and action_animation_overlay != null and is_instance_valid(action_animation_overlay):
+		var global_target := status_button.get_global_rect().get_center()
+		return action_animation_overlay.get_global_transform_with_canvas().affine_inverse() * global_target
+	return Vector2(1586.0, 846.0)
 
 
 func _capture_action_animation_chrome_state() -> Dictionary:
@@ -4413,6 +4491,9 @@ func _show_council_status_gate() -> void:
 func _show_council_chapter_result_gate(final_game: bool) -> void:
 	if council_result_page == null:
 		return
+	await _play_council_execution_timeline_if_needed()
+	var chrome_state := _capture_council_result_chrome_state()
+	_set_council_result_chrome_visible(false)
 	_set_dialogue_visible(false)
 	_close_float_panels()
 	if council_result_page.has_method("show_result"):
@@ -4421,7 +4502,65 @@ func _show_council_chapter_result_gate(final_game: bool) -> void:
 	_show_modal_backdrop()
 	while council_result_waiting and running:
 		await get_tree().process_frame
+	if council_result_page != null:
+		council_result_page.visible = false
+	_restore_council_result_chrome_state(chrome_state)
 	_update_modal_backdrop()
+
+
+func _play_council_execution_timeline_if_needed() -> void:
+	if council_execution_overlay == null or not is_instance_valid(council_execution_overlay):
+		return
+	if state == null or not state.council_mode:
+		return
+	var timeline: Array = state.council_execution_timeline.duplicate(true)
+	if timeline.is_empty():
+		return
+	state.council_execution_timeline.clear()
+	var chrome_state := _capture_council_result_chrome_state()
+	_set_council_result_chrome_visible(false)
+	_set_dialogue_visible(false)
+	_close_float_panels()
+	_show_modal_backdrop()
+	await council_execution_overlay.call("play_timeline", timeline, state)
+	_restore_council_result_chrome_state(chrome_state)
+	_update_modal_backdrop()
+
+
+func _capture_council_result_chrome_state() -> Dictionary:
+	var state_data := {"nodes": {}}
+	for node in [_flat_clash_hud_control()]:
+		var control := node as CanvasItem
+		if control != null:
+			state_data["nodes"][control.get_instance_id()] = {"node": control, "visible": control.visible}
+	return state_data
+
+
+func _set_council_result_chrome_visible(is_visible: bool) -> void:
+	var hud := _flat_clash_hud_control()
+	if hud != null:
+		hud.visible = is_visible
+	if dialogue_view != null and not is_visible:
+		dialogue_view.clear()
+	if recent_view != null and not is_visible:
+		recent_view.clear()
+
+
+func _restore_council_result_chrome_state(state_data: Dictionary) -> void:
+	for item in state_data.get("nodes", {}).values():
+		var control := item.get("node") as CanvasItem
+		if control != null and is_instance_valid(control):
+			control.visible = bool(item.get("visible", control.visible))
+	_update_dialogue_scene_visibility()
+
+
+func _flat_clash_hud_control() -> Control:
+	if status_label == null:
+		return null
+	var status_panel := status_label.get_parent() as Control
+	if status_panel == null:
+		return null
+	return status_panel.get_parent() as Control
 
 
 func _council_result_snapshot() -> Dictionary:
