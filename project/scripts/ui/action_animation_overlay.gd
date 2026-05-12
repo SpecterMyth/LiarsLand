@@ -2,9 +2,12 @@ extends Control
 
 const BASE_SIZE := Vector2(1672.0, 941.0)
 const ASSET_ROOT := "res://assets/generated/"
+const CHARACTER_PORTRAIT_ROOT := "res://assets/ui/characters/portrait/"
+const CHARACTER_PORTRAIT_HALF_ROOT := "res://assets/ui/characters/portrait_half/"
 const CARD_ASSET_ROOT := "res://assets/generated/ui/card/"
 const COMMON_UI_ROOT := "res://assets/ui/common/"
 const ACTION_VFX_ROOT := "res://assets/generated/action_vfx/"
+const PlayerGrabRigScene := preload("res://scenes/ui/player_grab_rig.tscn")
 
 const ACTION_DURATION := {
 	"leave": 3.2,
@@ -26,6 +29,8 @@ var _title: Label
 var _subtitle: Label
 var _fallback_player: TextureRect
 var _fallback_npc: TextureRect
+var _player_grab_slot: Control
+var _player_grab_rig: Node2D
 var _player: Control
 var _npc: Control
 var _artifact: TextureRect
@@ -56,11 +61,15 @@ func play_action(action: String, actor_role: String, artifact_id: String, outcom
 		return
 	_bind_actor_nodes(player_actor, npc_actor)
 	var actor_state := _capture_actor_state()
+	if actor_role != "npc":
+		_use_player_grab_rig()
 	_reset_nodes()
 	_configure_text(normalized, actor_role, artifact_id, outcome, state)
 	_configure_textures(normalized, artifact_id, state)
 	visible = true
 	move_to_front()
+	if actor_role != "npc":
+		await _play_player_grab_intro()
 	match normalized:
 		"leave":
 			await _play_leave(outcome)
@@ -113,6 +122,14 @@ func _build() -> void:
 
 	_fallback_player = _make_texture(Rect2(80, 276, 500, 640), true)
 	_actor_layer.add_child(_fallback_player)
+
+	_player_grab_slot = Control.new()
+	_player_grab_slot.name = "PlayerGrabRigSlot"
+	_player_grab_slot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_player_grab_slot.visible = false
+	_place(_player_grab_slot, Rect2(80, 276, 500, 640))
+	_actor_layer.add_child(_player_grab_slot)
+	_build_player_grab_rig()
 
 	_fallback_npc = _make_texture(Rect2(1092, 276, 500, 640), false)
 	_actor_layer.add_child(_fallback_npc)
@@ -168,6 +185,50 @@ func _make_layer(layer_name: String, layer_z: int) -> Control:
 	layer.z_index = layer_z
 	_stage.add_child(layer)
 	return layer
+
+
+func _build_player_grab_rig() -> void:
+	if _player_grab_slot == null or _player_grab_rig != null:
+		return
+	var rig := PlayerGrabRigScene.instantiate() as Node2D
+	if rig == null:
+		return
+	_player_grab_slot.add_child(rig)
+	var fit_scale: float = min(500.0 / 832.0, 640.0 / 986.0)
+	rig.position = Vector2(500.0, (640.0 - 986.0 * fit_scale) * 0.5)
+	rig.scale = Vector2(-fit_scale, fit_scale)
+	_player_grab_rig = rig
+
+
+func _player_grab_rig_ready() -> bool:
+	if _player_grab_slot == null or _player_grab_rig == null or not is_instance_valid(_player_grab_rig):
+		return false
+	if not _player_grab_rig.has_method("has_required_assets"):
+		return false
+	return bool(_player_grab_rig.call("has_required_assets"))
+
+
+func _use_player_grab_rig() -> void:
+	if not _player_grab_rig_ready():
+		_player = _fallback_player
+		return
+	var previous_player := _player
+	_player = _player_grab_slot
+	_player_grab_slot.visible = true
+	_player_grab_slot.z_as_relative = false
+	_player_grab_slot.z_index = z_index + 12
+	_player_grab_slot.move_to_front()
+	_fallback_player.visible = false
+	var external_player := previous_player as Control
+	if external_player != null and external_player != _fallback_player and external_player != _player_grab_slot:
+		external_player.modulate.a = 0.0
+
+
+func _play_player_grab_intro() -> void:
+	if not _player_grab_rig_ready() or _player != _player_grab_slot:
+		return
+	_player_grab_rig.call("play_grab_forward")
+	await get_tree().create_timer(0.75).timeout
 
 
 func _load_vfx_textures() -> void:
@@ -226,6 +287,8 @@ func _bind_actor_nodes(player_actor: Control, npc_actor: Control) -> void:
 	_npc = npc_actor if npc_actor != null and is_instance_valid(npc_actor) else _fallback_npc
 	_fallback_player.visible = _player == _fallback_player
 	_fallback_npc.visible = _npc == _fallback_npc
+	if _player_grab_slot != null:
+		_player_grab_slot.visible = _player == _player_grab_slot
 	for actor in [_player, _npc]:
 		var control := actor as Control
 		if control == null:
@@ -267,6 +330,8 @@ func _restore_actor_state(actor_state: Dictionary) -> void:
 	_stage.rotation_degrees = float(actor_state.get("stage_rotation", 0.0))
 	_fallback_player.visible = _player == _fallback_player
 	_fallback_npc.visible = _npc == _fallback_npc
+	if _player_grab_slot != null:
+		_player_grab_slot.visible = false
 
 
 func _restore_control_state(state: Dictionary) -> void:
@@ -288,6 +353,8 @@ func debug_actor_state() -> Dictionary:
 		"using_external_npc": _npc != _fallback_npc,
 		"fallback_player_visible": _fallback_player.visible,
 		"fallback_npc_visible": _fallback_npc.visible,
+		"player_grab_rig_visible": _player_grab_slot.visible if _player_grab_slot != null else false,
+		"player_grab_rig_ready": _player_grab_rig_ready(),
 		"player_visible": _player.visible if _player != null else false,
 		"npc_visible": _npc.visible if _npc != null else false,
 		"transient_vfx_count": _transient_vfx.size()
@@ -298,7 +365,9 @@ func _reset_nodes() -> void:
 	_cleanup_transient_vfx()
 	_stage.position = Vector2.ZERO
 	_stage.rotation_degrees = 0.0
-	for node in [_fallback_player, _fallback_npc, _artifact, _artifact_frame, _action_icon, _result_label]:
+	for node in [_fallback_player, _fallback_npc, _player_grab_slot, _artifact, _artifact_frame, _action_icon, _result_label]:
+		if node == null:
+			continue
 		var canvas := node as CanvasItem
 		if canvas != null:
 			canvas.modulate = Color.WHITE
@@ -317,6 +386,8 @@ func _reset_nodes() -> void:
 	_veil.color = Color(0.0, 0.0, 0.0, 0.0)
 	_pulse.color = Color(1.0, 0.2, 0.12, 0.0)
 	_place(_fallback_player, Rect2(80, 276, 500, 640))
+	if _player_grab_slot != null:
+		_place(_player_grab_slot, Rect2(80, 276, 500, 640))
 	_place(_fallback_npc, Rect2(1092, 276, 500, 640))
 	_place(_artifact, Rect2(756, 390, 160, 160))
 	_place(_artifact_frame, Rect2(732, 366, 208, 208))
@@ -324,6 +395,8 @@ func _reset_nodes() -> void:
 	_place(_action_icon, Rect2(760, 178, 152, 152))
 	_fallback_player.visible = _player == _fallback_player
 	_fallback_npc.visible = _npc == _fallback_npc
+	if _player_grab_slot != null:
+		_player_grab_slot.visible = _player == _player_grab_slot
 
 
 func _configure_text(action: String, actor_role: String, artifact_id: String, outcome: String, state) -> void:
@@ -343,7 +416,7 @@ func _configure_textures(action: String, artifact_id: String, state) -> void:
 	var npc: Dictionary = state.current_npc()
 	var portrait_name := String(npc.get("portrait", ""))
 	if _npc == _fallback_npc and not portrait_name.is_empty():
-		_set_texture(_fallback_npc, ASSET_ROOT + portrait_name.replace(".png", "_half.png"), ASSET_ROOT + portrait_name)
+		_set_texture(_fallback_npc, CHARACTER_PORTRAIT_HALF_ROOT + portrait_name.replace(".png", "_half.png"), CHARACTER_PORTRAIT_ROOT + portrait_name)
 	_set_texture(_action_icon, COMMON_UI_ROOT + "icon_tile_action_%s.png" % action, COMMON_UI_ROOT + "icon_tile_action_leave.png")
 	if artifact_id.is_empty():
 		_artifact.texture = _action_icon.texture

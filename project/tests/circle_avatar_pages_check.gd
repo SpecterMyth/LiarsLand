@@ -7,6 +7,8 @@ class FakeCouncilState:
 	var max_chapters := 1
 	var chapter_round := 0
 	var max_rounds := 1
+	var max_player_chars := 12
+	var player_chars := 4
 	var ended := false
 	var player := {
 		"id": "player",
@@ -42,6 +44,7 @@ class FakeCouncilState:
 	var council_vote_tendencies := [
 		{"member_id": "npc_fox", "crime_id": "hush_money_invoice", "vote": "innocent"}
 	]
+	var council_faction_public_crimes := {}
 
 	func current_npc() -> Dictionary:
 		return npcs[0]
@@ -54,12 +57,12 @@ func _init() -> void:
 func _run() -> void:
 	await process_frame
 	var required_paths := [
-		"res://assets/generated/player_circle_avatar.png",
-		"res://assets/generated/npc_fox_circle_avatar.png"
+		"res://assets/ui/characters/headicon/player_head_avatar.png",
+		"res://assets/ui/characters/headicon/npc_fox_head_avatar.png"
 	]
 	for path in required_paths:
 		if not ResourceLoader.exists(path):
-			push_error("Missing generated circle avatar: %s" % path)
+			push_error("Missing character head avatar: %s" % path)
 			quit(1)
 			return
 
@@ -92,11 +95,11 @@ func _check_history_page() -> bool:
 	var texture_paths := []
 	_collect_texture_paths(page, texture_paths)
 	page.queue_free()
-	if player_path != "res://assets/generated/player_circle_avatar.png" or fox_path != "res://assets/generated/npc_fox_circle_avatar.png":
-		push_error("History page did not resolve circle avatar paths.")
+	if player_path != "res://assets/ui/characters/headicon/player_head_avatar.png" or fox_path != "res://assets/ui/characters/headicon/npc_fox_head_avatar.png":
+		push_error("History page did not resolve head avatar paths.")
 		return false
-	if not texture_paths.has("res://assets/generated/player_circle_avatar.png") or not texture_paths.has("res://assets/generated/npc_fox_circle_avatar.png"):
-		push_error("History summary did not load circle avatar textures.")
+	if not texture_paths.has("res://assets/ui/characters/headicon/player_head_avatar.png") or not texture_paths.has("res://assets/ui/characters/headicon/npc_fox_head_avatar.png"):
+		push_error("History summary did not load head avatar textures.")
 		return false
 	if text.is_empty():
 		push_error("History page did not render dialogue text.")
@@ -113,8 +116,8 @@ func _check_status_page() -> bool:
 	var player_path := String(page.call("_avatar_texture_path", FakeCouncilState.new().player))
 	var fox_path := String(page.call("_avatar_texture_path", FakeCouncilState.new().npcs[0]))
 	page.queue_free()
-	if player_path != "res://assets/generated/player_circle_avatar.png" or fox_path != "res://assets/generated/npc_fox_circle_avatar.png":
-		push_error("Status page did not resolve circle avatar paths.")
+	if player_path != "res://assets/ui/characters/headicon/player_head_avatar.png" or fox_path != "res://assets/ui/characters/headicon/npc_fox_head_avatar.png":
+		push_error("Status page did not resolve head avatar paths.")
 		return false
 	return true
 

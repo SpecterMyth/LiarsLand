@@ -1,0 +1,29 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/ui/common/title_banner_dark_small.png" id="1_counter"]
+[ext_resource type="FontFile" path="res://assets/fonts/AlibabaPuHuiTi-3-105-Heavy.ttf" id="2_font"]
+[ext_resource type="Script" path="res://scripts/ui/round_counter_panel.gd" id="3_script"]
+
+[node name="RoundCounter" type="TextureRect"]
+custom_minimum_size = Vector2(366, 58)
+mouse_filter = 2
+texture = ExtResource("1_counter")
+expand_mode = 1
+script = ExtResource("3_script")
+round_text = "第 1 回合"
+
+[node name="RoundCounterLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.02, 0.025, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 30
+text = "第 1 回合"
+horizontal_alignment = 1
+vertical_alignment = 1

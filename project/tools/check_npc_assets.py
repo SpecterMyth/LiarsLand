@@ -6,41 +6,56 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CHAPTER = ROOT / "data" / "chapter_01.json"
+CHAPTERS = [
+    ROOT / "data" / "chapter_01.json",
+    ROOT / "data" / "council_chapter_01.json",
+    ROOT / "data" / "council_chapter_02.json",
+    ROOT / "data" / "council_chapter_03.json",
+]
 GENERATED = ROOT / "assets" / "generated"
+CHARACTERS = ROOT / "assets" / "ui" / "characters"
+HEADICONS = CHARACTERS / "headicon"
+PORTRAITS = CHARACTERS / "portrait"
+PORTRAIT_HALVES = CHARACTERS / "portrait_half"
 SELECT_CARDS = ROOT / "assets" / "ui" / "characters" / "cards"
 
 
 def main() -> int:
-    data = json.loads(CHAPTER.read_text(encoding="utf-8"))
-    npcs = data.get("npcs", [])
     errors: list[str] = []
-    seen: set[str] = set()
+    total_npcs = 0
 
-    if len(npcs) != 20:
-        errors.append(f"Expected 20 NPCs, found {len(npcs)}.")
+    for chapter_path in CHAPTERS:
+        data = json.loads(chapter_path.read_text(encoding="utf-8"))
+        chapter_name = chapter_path.name
+        npcs = data.get("npcs", [])
+        seen: set[str] = set()
 
-    for npc in npcs:
-        npc_id = str(npc.get("id", ""))
-        if not npc_id:
-            errors.append("NPC is missing id.")
-            continue
-        if npc_id in seen:
-            errors.append(f"Duplicate NPC id: {npc_id}")
-        seen.add(npc_id)
+        if chapter_name == "chapter_01.json" and len(npcs) != 20:
+            errors.append(f"{chapter_name}: expected 20 NPCs, found {len(npcs)}.")
 
-        portrait = str(npc.get("portrait", ""))
-        background = str(npc.get("background", ""))
-        required = [
-            GENERATED / portrait,
-            GENERATED / portrait.replace(".png", "_half.png"),
-            GENERATED / portrait.replace("_portrait.png", "_head_avatar.png"),
-            SELECT_CARDS / f"{npc_id}_select_card.png",
-            GENERATED / background,
-        ]
-        for path in required:
-            if not path.exists():
-                errors.append(f"{npc_id}: missing {path.relative_to(ROOT)}")
+        for npc in npcs:
+            npc_id = str(npc.get("id", ""))
+            if not npc_id:
+                errors.append(f"{chapter_name}: NPC is missing id.")
+                continue
+            if npc_id in seen:
+                errors.append(f"{chapter_name}: duplicate NPC id: {npc_id}")
+            seen.add(npc_id)
+            total_npcs += 1
+
+            portrait = str(npc.get("portrait", ""))
+            background = str(npc.get("background", npc.get("scene", "")))
+            select_card = portrait.replace("_portrait.png", "_select_card.png")
+            required = [
+                PORTRAITS / portrait,
+                PORTRAIT_HALVES / str(npc.get("portrait_half", portrait.replace(".png", "_half.png"))),
+                HEADICONS / portrait.replace("_portrait.png", "_head_avatar.png"),
+                SELECT_CARDS / select_card,
+                GENERATED / background,
+            ]
+            for path in required:
+                if not path.exists():
+                    errors.append(f"{chapter_name}:{npc_id}: missing {path.relative_to(ROOT)}")
 
     if errors:
         print("NPC asset check failed:")
@@ -48,7 +63,7 @@ def main() -> int:
             print(f"- {error}")
         return 1
 
-    print(f"NPC asset check passed for {len(npcs)} NPCs.")
+    print(f"NPC asset check passed for {total_npcs} NPC references across {len(CHAPTERS)} chapters.")
     return 0
 
 

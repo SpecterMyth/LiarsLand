@@ -1,0 +1,1033 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>议会四行为完整实现改进计划</title>
+  <style>
+    :root {
+      --bg: #f5f0e4;
+      --paper: #fffaf0;
+      --ink: #211f1a;
+      --muted: #625b50;
+      --line: #d6c8ad;
+      --red: #9b3131;
+      --red-dark: #642020;
+      --gold: #b47a22;
+      --blue: #315f8d;
+      --green: #2e6c56;
+      --shadow: rgba(49, 38, 24, 0.14);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.48), rgba(255,255,255,0)), var(--bg);
+      color: var(--ink);
+      font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", Arial, sans-serif;
+      line-height: 1.72;
+    }
+
+    main {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 38px 0 70px;
+    }
+
+    header,
+    section {
+      background: rgba(255, 250, 240, 0.86);
+      border: 1px solid var(--line);
+      box-shadow: 0 14px 38px var(--shadow);
+    }
+
+    header {
+      padding: 34px 38px;
+    }
+
+    section {
+      margin-top: 24px;
+      padding: 26px 30px;
+      box-shadow: none;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      line-height: 1.28;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 900px;
+      font-size: clamp(30px, 4vw, 50px);
+      color: var(--red-dark);
+    }
+
+    h2 {
+      padding-top: 8px;
+      border-top: 2px solid var(--line);
+      font-size: 25px;
+      color: var(--red-dark);
+    }
+
+    h3 {
+      font-size: 18px;
+      color: var(--red-dark);
+    }
+
+    p {
+      margin: 10px 0 0;
+    }
+
+    ul,
+    ol {
+      margin: 10px 0 0;
+      padding-left: 1.35em;
+    }
+
+    li + li {
+      margin-top: 4px;
+    }
+
+    code {
+      padding: 1px 5px;
+      background: #f2e2c3;
+      border: 1px solid #e2cfaa;
+      color: var(--red-dark);
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.94em;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 16px;
+      border-collapse: collapse;
+      background: var(--paper);
+      font-size: 15px;
+    }
+
+    th,
+    td {
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f0ddb8;
+      color: var(--red-dark);
+    }
+
+    .subtitle {
+      max-width: 920px;
+      color: var(--muted);
+      font-size: 18px;
+      margin-top: 14px;
+    }
+
+    .meta,
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 3px 10px;
+      border: 1px solid var(--line);
+      background: #fff2d4;
+      color: var(--red-dark);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .four {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .panel {
+      min-height: 100%;
+      padding: 17px 18px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+    }
+
+    .panel strong {
+      color: var(--red-dark);
+    }
+
+    .note {
+      margin-top: 16px;
+      padding: 15px 18px;
+      background: #fff0d2;
+      border-left: 5px solid var(--red);
+    }
+
+    .warn {
+      background: #fbe1d8;
+      border-left-color: var(--red-dark);
+    }
+
+    .flow {
+      counter-reset: step;
+      display: grid;
+      gap: 10px;
+      padding: 0;
+      margin: 16px 0 0;
+      list-style: none;
+    }
+
+    .flow li {
+      counter-increment: step;
+      display: grid;
+      grid-template-columns: 38px 1fr;
+      gap: 12px;
+      padding: 13px 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+    }
+
+    .flow li::before {
+      content: counter(step);
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      background: var(--red);
+      color: #fff;
+      font-weight: 800;
+    }
+
+    .status {
+      display: inline-block;
+      min-width: 76px;
+      padding: 2px 8px;
+      border: 1px solid var(--line);
+      background: #fff6e4;
+      color: var(--red-dark);
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .ok { color: var(--green); }
+    .risk { color: var(--red); }
+    .info { color: var(--blue); }
+
+    .dialogue-stage {
+      position: relative;
+      min-height: 520px;
+      margin-top: 18px;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(24, 18, 20, 0.80), rgba(24, 18, 20, 0.48)),
+        linear-gradient(135deg, #30212b, #182b33 58%, #39251c);
+      border: 1px solid #483a31;
+      color: #fff6df;
+    }
+
+    .stage-character {
+      position: absolute;
+      bottom: 22px;
+      width: 170px;
+      height: 300px;
+      border: 1px solid rgba(255, 226, 165, 0.28);
+      background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(0,0,0,0.34));
+      display: grid;
+      place-items: end center;
+      padding-bottom: 18px;
+      font-weight: 800;
+      color: rgba(255, 246, 223, 0.78);
+    }
+
+    .stage-character.player { left: 34px; }
+    .stage-character.npc { right: 34px; }
+
+    .trade-modal {
+      position: relative;
+      width: min(760px, calc(100% - 64px));
+      margin: 42px auto;
+      background: #17120f;
+      border: 2px solid #d3a14a;
+      box-shadow: 0 22px 80px rgba(0,0,0,0.58);
+      color: #fff6df;
+    }
+
+    .trade-modal::before {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border: 1px solid rgba(211, 161, 74, 0.34);
+      pointer-events: none;
+    }
+
+    .trade-modal-header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: start;
+      padding: 22px 24px 16px;
+      border-bottom: 1px solid rgba(211, 161, 74, 0.45);
+      background: linear-gradient(90deg, rgba(155,49,49,0.36), rgba(46,108,86,0.22));
+    }
+
+    .trade-modal-title {
+      font-size: 23px;
+      line-height: 1.25;
+      color: #ffd885;
+      font-weight: 900;
+    }
+
+    .trade-modal-subtitle {
+      margin-top: 6px;
+      color: rgba(255, 246, 223, 0.76);
+      font-size: 14px;
+    }
+
+    .trade-state-badge {
+      padding: 5px 10px;
+      border: 1px solid rgba(255, 216, 133, 0.55);
+      background: rgba(255, 216, 133, 0.12);
+      color: #ffd885;
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .trade-sides {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 16px 24px 0;
+    }
+
+    .trade-side {
+      display: grid;
+      grid-template-columns: 64px 1fr;
+      gap: 12px;
+      align-items: center;
+      border: 1px solid rgba(255, 216, 133, 0.28);
+      background: rgba(255,255,255,0.055);
+      padding: 12px 14px;
+    }
+
+    .trade-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 216, 133, 0.68);
+      background:
+        radial-gradient(circle at 50% 26%, rgba(255,255,255,0.22), transparent 24%),
+        linear-gradient(160deg, rgba(155,49,49,0.86), rgba(49,95,141,0.76));
+      box-shadow: 0 0 0 4px rgba(0,0,0,0.22);
+    }
+
+    .trade-side:nth-child(2) .trade-avatar {
+      background:
+        radial-gradient(circle at 50% 26%, rgba(255,255,255,0.22), transparent 24%),
+        linear-gradient(160deg, rgba(49,95,141,0.86), rgba(46,108,86,0.76));
+    }
+
+    .trade-side-name {
+      font-size: 18px;
+      font-weight: 900;
+      color: #fff6df;
+    }
+
+    .trade-side-status {
+      margin-top: 4px;
+      font-size: 13px;
+      color: #ffd885;
+    }
+
+    .proposal-list {
+      display: grid;
+      gap: 10px;
+      padding: 16px 24px;
+    }
+
+    .proposal-row {
+      display: grid;
+      grid-template-columns: 38px minmax(160px, 1fr) 120px;
+      gap: 10px;
+      align-items: stretch;
+      background: rgba(255, 250, 240, 0.065);
+      border: 1px solid rgba(255, 216, 133, 0.24);
+    }
+
+    .proposal-row.harmful {
+      background: linear-gradient(90deg, rgba(155, 49, 49, 0.46), rgba(155, 49, 49, 0.20));
+      border-color: rgba(255, 116, 92, 0.72);
+      box-shadow: inset 0 0 0 1px rgba(255, 214, 190, 0.12);
+    }
+
+    .proposal-index {
+      display: grid;
+      place-items: center;
+      background: rgba(155, 49, 49, 0.48);
+      color: #ffe3a3;
+      font-weight: 900;
+    }
+
+    .proposal-crime {
+      padding: 10px 2px;
+      min-width: 0;
+    }
+
+    .proposal-title-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      color: #fff6df;
+      font-weight: 900;
+      line-height: 1.3;
+    }
+
+    .proposal-title-text {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .proposal-crime strong {
+      color: #fff6df;
+    }
+
+    .proposal-crime span {
+      display: block;
+      color: rgba(255, 246, 223, 0.58);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .harm-marker {
+      flex: 0 0 auto;
+      display: inline-block;
+      padding: 1px 7px;
+      border: 1px solid rgba(255, 182, 148, 0.64);
+      background: rgba(92, 16, 12, 0.50);
+      color: #ffd2c2;
+      font-size: 11px;
+      font-weight: 900;
+      vertical-align: 1px;
+    }
+
+    .vote-chip {
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      min-height: 68px;
+      padding: 8px;
+      border-left: 1px solid rgba(255, 216, 133, 0.18);
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .vote-chip small {
+      display: block;
+      margin-top: 2px;
+      color: rgba(255, 246, 223, 0.58);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .vote-chip.guilty { color: #ff9a82; }
+    .vote-chip.innocent { color: #84dec1; }
+    .vote-chip.abstain { color: #d6d0c3; }
+
+    .trade-footer {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 10px;
+      align-items: center;
+      padding: 15px 24px 22px;
+      border-top: 1px solid rgba(211, 161, 74, 0.32);
+    }
+
+    .trade-button {
+      min-width: 112px;
+      padding: 10px 14px;
+      border: 1px solid rgba(255, 216, 133, 0.45);
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff6df;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .trade-button.primary {
+      background: #b47a22;
+      border-color: #ffd885;
+      color: #1d140b;
+    }
+
+    .trade-button.disabled {
+      color: rgba(255, 246, 223, 0.36);
+      border-color: rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.035);
+    }
+
+    .state-samples {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .state-card {
+      padding: 14px 16px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+    }
+
+    .state-card h3 {
+      font-size: 17px;
+    }
+
+    @media (max-width: 900px) {
+      main { width: min(100% - 24px, 1180px); padding-top: 18px; }
+      header, section { padding: 22px; }
+      .grid, .two, .four { grid-template-columns: 1fr; }
+      table { display: block; overflow-x: auto; }
+      .dialogue-stage { min-height: 620px; }
+      .stage-character { display: none; }
+      .trade-modal { width: calc(100% - 24px); margin: 18px auto; }
+      .trade-modal-header,
+      .trade-footer,
+      .trade-sides,
+      .proposal-row,
+      .state-samples {
+        grid-template-columns: 1fr;
+      }
+      .vote-chip {
+        min-height: 48px;
+        border-left: 0;
+      border-top: 1px solid rgba(255, 216, 133, 0.18);
+    }
+
+    .proposal-row .vote-chip {
+      border-left: 1px solid rgba(255, 216, 133, 0.18);
+      border-top: 0;
+    }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>议会四行为完整实现改进计划</h1>
+      <p class="subtitle">
+        基于 <code>docs/brainstorm/council-faith-core-gameplay.html</code> 的核心玩法方向，以及当前 Godot 原型的实际状态，目标是把“暂时撤退、倾向表达、直接投票、政治交易”完整接入玩家和 NPC 的同一套议会行为系统。
+      </p>
+      <div class="meta">
+        <span class="tag">输出：实现计划</span>
+        <span class="tag">范围：玩家 + NPC</span>
+        <span class="tag">重点：四种行为完整闭环</span>
+        <span class="tag">日期：2026-05-11</span>
+      </div>
+    </header>
+
+    <section>
+      <h2>一、目标状态</h2>
+      <div class="grid four">
+        <div class="panel">
+          <h3>暂时撤退</h3>
+          <p>任何一方可结束本次会谈，不产生新票，但必须进入议会状态页，让玩家观察当前公开局势。</p>
+        </div>
+        <div class="panel">
+          <h3>倾向表达</h3>
+          <p>任何一方可对一条罪行表达有罪、无罪或弃权倾向。倾向是公开软承诺，可被后续倾向覆盖，也会保留历史轨迹。</p>
+        </div>
+        <div class="panel">
+          <h3>直接投票</h3>
+          <p>任何一方可对一条罪行投出正式票。正式票公开、锁定、不可更改，并立刻检查处决阈值。</p>
+        </div>
+        <div class="panel">
+          <h3>政治交易</h3>
+          <p>任何一方可提出 1 到 3 个议案的绑定投票方案。玩家确认后，交易内所有合法投票同时锁定。</p>
+        </div>
+      </div>
+      <div class="note">
+        设计原则：四种行为必须同构。玩家角色、NPC、真实按钮、LLM 输出、测试脚本都走同一套行为解析、校验、结算和日志记录。
+      </div>
+    </section>
+
+    <section>
+      <h2>二、当前断点</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>模块</th>
+            <th>当前状态</th>
+            <th>影响</th>
+            <th>改进方向</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>章节入口</td>
+            <td><code>adventure_screen.gd</code> 固定加载 <code>chapter_01.json</code>。</td>
+            <td>即使配置写了 council mode，也不会自然进入议会章节数据。</td>
+            <td>按 <code>config.game.mode</code> 选择 <code>council_chapter_01.json</code>，或建立专用 <code>CouncilScreen</code>。</td>
+          </tr>
+          <tr>
+            <td>规则引擎</td>
+            <td>已有 <code>CouncilRulesEngine.apply_member_action</code>、<code>cast_vote</code>、<code>declare_tendency</code>、<code>apply_trade_offer</code>。</td>
+            <td>规则层可跑测试，但主屏幕没有使用它。</td>
+            <td>主流程进入 council mode 后只调用 <code>CouncilRulesEngine</code>，暂停旧 <code>RulesEngine</code> 行动。</td>
+          </tr>
+          <tr>
+            <td>NPC 对话</td>
+            <td>Prompt 已有 council 版，但运行时仍用旧 <code>npc_dialogue_system</code> 和旧道具交易格式。</td>
+            <td>NPC 不会可靠地产生政治交易提案。</td>
+            <td>切到 <code>council_npc_system_v2</code> / <code>council_npc_user_v2</code>，并新增交易确认解析。</td>
+          </tr>
+          <tr>
+            <td>玩家动作</td>
+            <td>左侧按钮资源存在，但没有连到实际处理函数。</td>
+            <td>玩家无法手动验证四种行为，也无法看到交易子页面。</td>
+            <td>四个会议按钮打开对应子页面；正式玩法可保留“自动玩家角色 LLM”开关。</td>
+          </tr>
+          <tr>
+            <td>政治交易 UI</td>
+            <td>只有旧道具交易确认弹窗。</td>
+            <td>玩家无法确认 NPC 提议的 1 到 3 个投票议案。</td>
+            <td>新增议会交易确认页，展示发起者、议案列表、双方将要投出的票、危险提示。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>三、统一行为数据</h2>
+      <p>新增或收敛为一个统一结构，作为 UI、LLM、测试脚本与规则引擎之间的唯一契约。</p>
+      <table>
+        <thead>
+          <tr>
+            <th>字段</th>
+            <th>类型</th>
+            <th>说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>actor_id</code></td>
+            <td>String</td>
+            <td>行动发起者，玩家为 <code>player</code>，NPC 使用成员 id。</td>
+          </tr>
+          <tr>
+            <td><code>action</code></td>
+            <td>String</td>
+            <td><code>retreat</code>、<code>declare_tendency</code>、<code>cast_vote</code>、<code>offer_trade</code>。</td>
+          </tr>
+          <tr>
+            <td><code>target_crime_id</code></td>
+            <td>String</td>
+            <td>单议案行为使用。必须存在于本章罪行库。</td>
+          </tr>
+          <tr>
+            <td><code>vote</code></td>
+            <td>String</td>
+            <td><code>guilty</code>、<code>innocent</code>、<code>abstain</code>。</td>
+          </tr>
+          <tr>
+            <td><code>bound_votes</code></td>
+            <td>Array</td>
+            <td>政治交易使用。长度 1 到 6；对应 1 到 3 个议案，每个议案至少包含双方各一张票。</td>
+          </tr>
+          <tr>
+            <td><code>proposal_id</code></td>
+            <td>String</td>
+            <td>交易确认用。NPC 提案先进入待确认状态，玩家接受后才落票。</td>
+          </tr>
+          <tr>
+            <td><code>speech</code></td>
+            <td>String</td>
+            <td>对话文本。行为结算必须依赖结构化字段，不解析自然语言。</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note warn">
+        关键修正：当前 <code>apply_trade_offer</code> 会直接把 <code>bound_votes</code> 落成正式票。改进后，NPC 发起的交易必须先进入 <code>pending_council_trade_offer</code>，只有玩家确认后才执行。
+      </div>
+    </section>
+
+    <section>
+      <h2>四、行为流程</h2>
+      <div class="grid two">
+        <div class="panel">
+          <h3>玩家发起</h3>
+          <ol class="flow">
+            <li><div><strong>点击会议按钮</strong><p>打开对应子页面：撤退确认、倾向选择、投票选择、交易编辑。</p></div></li>
+            <li><div><strong>选择议案</strong><p>投票和倾向选择 1 条罪行；政治交易选择 1 到 3 条罪行。</p></div></li>
+            <li><div><strong>选择票向</strong><p>每条议案选择有罪、无罪或弃权。政治交易同时指定玩家票与要求 NPC 投出的票。</p></div></li>
+            <li><div><strong>确认结算</strong><p>直接调用 <code>CouncilRulesEngine.apply_member_action</code>。交易作为玩家主动提案时可立即要求 NPC 接受或拒绝。</p></div></li>
+            <li><div><strong>刷新公开记录</strong><p>状态页显示新倾向、新正式票、交易来源、处决变化和下一步入口。</p></div></li>
+          </ol>
+        </div>
+        <div class="panel">
+          <h3>NPC 发起</h3>
+          <ol class="flow">
+            <li><div><strong>LLM 输出结构化行为</strong><p>NPC 返回 <code>action</code> 与合法字段，自然语言只用于表达态度。</p></div></li>
+            <li><div><strong>规则预校验</strong><p>剔除不存在罪行、已锁定票、死亡成员、危险自杀票和超出数量的交易。</p></div></li>
+            <li><div><strong>交易需要确认</strong><p>NPC 的 <code>offer_trade</code> 不立即落票，先弹出交易确认页。</p></div></li>
+            <li><div><strong>玩家接受或拒绝</strong><p>接受后双方绑定票同时结算；拒绝后记录“交易被拒绝”，不落票。</p></div></li>
+            <li><div><strong>对话结束路径统一</strong><p>撤退、投票、交易、达到轮数都进入议会状态页，再回 NPC 选择页。</p></div></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>五、四种行为验收规格</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>行为</th>
+            <th>玩家实现</th>
+            <th>NPC 实现</th>
+            <th>规则验收</th>
+            <th>UI 验收</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>暂时撤退</td>
+            <td>点击撤退按钮后弹确认；确认后结束会谈。</td>
+            <td>NPC 可返回 <code>retreat</code>；系统展示 NPC 撤退文本。</td>
+            <td>不新增投票；本回合会谈结束；进入状态页。</td>
+            <td>状态页出现“本次会谈结束：某某撤退”。继续后仍有最多 3 名候选 NPC。</td>
+          </tr>
+          <tr>
+            <td>倾向表达</td>
+            <td>选择罪行和票向后记录玩家倾向。</td>
+            <td>NPC 可主动表达或回应玩家压力表达倾向。</td>
+            <td>同一成员同一罪行只保留最新有效倾向；历史页保留轨迹。</td>
+            <td>状态页用灰色头像显示倾向，正式投票后从倾向区移除或降为历史。</td>
+          </tr>
+          <tr>
+            <td>直接投票</td>
+            <td>选择罪行和票向后正式锁票。</td>
+            <td>NPC 可主动投票，但不能改已锁定票，不能对不存在罪行投票。</td>
+            <td>正式票不可更改；投票后立即检查处决和胜负。</td>
+            <td>状态页用彩色头像落到有罪或无罪列；弃权进入历史与摘要，不占有罪/无罪列。</td>
+          </tr>
+          <tr>
+            <td>政治交易</td>
+            <td>玩家可编辑 1 到 3 个议案，要求双方投指定票。</td>
+            <td>NPC 可提出 1 到 3 个议案，玩家确认后执行。</td>
+            <td>交易内所有合法票同源记录为 <code>trade</code>，同一交易原子化结算。</td>
+            <td>确认页展示议案、双方票向、危险提示、接受/拒绝；接受后状态页显示交易链。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>六、政治交易细则</h2>
+      <div class="grid">
+        <div class="panel">
+          <h3>议案数量</h3>
+          <p>每次交易允许 1 到 3 个不同罪行。重复罪行合并为一条；非法罪行直接拒绝整个提案或剔除后降级为可确认提案。</p>
+        </div>
+        <div class="panel">
+          <h3>双方共同投票</h3>
+          <p>每条议案必须至少包含玩家和当前 NPC 各一张正式票。可以扩展到已公开参与交易的第三方，但第一版只做双方。</p>
+        </div>
+        <div class="panel">
+          <h3>原子化结算</h3>
+          <p>接受交易后，先批量写入所有合法正式票，再统一检查处决，避免第一张票触发死亡后导致后续票丢失。</p>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>交易示例</th>
+            <th>结构化含义</th>
+            <th>玩家看到的文本</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>单议案</td>
+            <td>玩家投 C03 有罪，NPC 投 C03 有罪。</td>
+            <td>“我们一起把 C03 推到有罪。”</td>
+          </tr>
+          <tr>
+            <td>交换保护</td>
+            <td>玩家投 C02 无罪，NPC 投 C04 有罪。</td>
+            <td>“你保住 C02，我帮你压 C04。”</td>
+          </tr>
+          <tr>
+            <td>三议案套餐</td>
+            <td>C01 双方无罪，C03 双方有罪，C05 玩家弃权/NPC 有罪。</td>
+            <td>“三张票一起落，少一张都不算交易。”</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>七、政治交易弹窗 UI 设计</h2>
+      <p>
+        政治交易使用同一个弹出式 UI 表达两种方向：玩家角色提出时，弹窗显示“等待 NPC 确认”；NPC 提出时，弹窗显示“等待玩家确认”。确认方同意后，交易内所有合法票同时执行。
+      </p>
+
+      <div class="dialogue-stage" aria-label="政治交易弹窗示意">
+        <div class="stage-character player">玩家角色</div>
+        <div class="stage-character npc">当前 NPC</div>
+        <div class="trade-modal">
+          <div class="trade-modal-header">
+            <div>
+              <div class="trade-modal-title">政治交易提案</div>
+              <div class="trade-modal-subtitle">绯尾侯爵提出：三张票一起落，少一张都不算数。</div>
+            </div>
+            <div class="trade-state-badge">等待玩家确认</div>
+          </div>
+
+          <div class="trade-sides">
+            <div class="trade-side">
+              <div class="trade-avatar" aria-hidden="true"></div>
+              <div>
+                <div class="trade-side-name">绯尾侯爵</div>
+                <div class="trade-side-status">提议方</div>
+              </div>
+            </div>
+            <div class="trade-side">
+              <div class="trade-avatar" aria-hidden="true"></div>
+              <div>
+                <div class="trade-side-name">灰狐代笔员</div>
+                <div class="trade-side-status">等待确认</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="proposal-list">
+            <div class="proposal-row harmful">
+              <div class="proposal-index">1</div>
+              <div class="proposal-crime">
+                <div class="proposal-title-line">
+                  <strong class="proposal-title-text">把封口费伪装成律师账单</strong>
+                  <span class="harm-marker">损害我</span>
+                </div>
+                <span>这条罪行在我的秘密档案中，接受后会把我推向处决线</span>
+              </div>
+              <div class="vote-chip guilty">有罪<small>双方同投</small></div>
+            </div>
+            <div class="proposal-row">
+              <div class="proposal-index">2</div>
+              <div class="proposal-crime">
+                <strong>用公款给鸭子盖湖景房</strong>
+                <span>双方交换保护，降低本轮压力</span>
+              </div>
+              <div class="vote-chip innocent">无罪<small>双方同投</small></div>
+            </div>
+            <div class="proposal-row">
+              <div class="proposal-index">3</div>
+              <div class="proposal-crime">
+                <strong>编造人生履历骗选票和捐款</strong>
+                <span>双方不承诺此项，公开记录为交易弃权</span>
+              </div>
+              <div class="vote-chip abstain">弃权<small>双方同投</small></div>
+            </div>
+          </div>
+
+          <div class="trade-footer">
+            <div></div>
+            <div class="trade-button">拒绝</div>
+            <div class="trade-button primary">接受并执行</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="state-samples">
+        <div class="state-card">
+          <h3>玩家提议时</h3>
+          <p>标题仍为“政治交易提案”，副标题改为“灰狐代笔员提出”。状态徽标显示“等待 NPC 确认”。底部主按钮对玩家不可点，显示“等待回应”；可保留“撤回提案”。</p>
+        </div>
+        <div class="state-card">
+          <h3>NPC 提议时</h3>
+          <p>状态徽标显示“等待玩家确认”。底部提供“拒绝”和“接受并执行”。玩家接受后立即调用交易结算；拒绝只写入会谈日志。</p>
+        </div>
+        <div class="state-card">
+          <h3>双方同意后</h3>
+          <p>弹窗切换为“交易已执行”，按钮变为“查看议会状态”。所有议案行显示落票结果，并高亮可能触发处决的罪行。</p>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>区域</th>
+            <th>内容</th>
+            <th>设计理由</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>标题区</td>
+            <td>交易标题、发起者台词、等待状态徽标。</td>
+            <td>玩家第一眼知道是谁提出、当前轮到谁确认。</td>
+          </tr>
+          <tr>
+            <td>双方身份区</td>
+            <td>左侧提议方，右侧确认方；每侧前方显示角色大头像，后方两行文字显示名字与“提议方 / 等待确认”。</td>
+            <td>同一 UI 同时支持玩家提议和 NPC 提议，只需交换头像、身份文字和按钮状态。</td>
+          </tr>
+          <tr>
+            <td>议案列表</td>
+            <td>最多 3 行，每行一条罪行，右侧直接显示该提案的有罪、无罪或弃权结论。</td>
+            <td>提案本身已经代表双方共同承诺，不再重复显示玩家票和 NPC 票两列。</td>
+          </tr>
+          <tr>
+            <td>损害标记</td>
+            <td>如果某条提案损害玩家利益，该议案整行使用红色背景，并在罪行标题旁显示“损害我”。</td>
+            <td>风险必须贴在具体提案上，而不是作为泛泛的说明文字放在弹窗底部。</td>
+          </tr>
+          <tr>
+            <td>底部操作</td>
+            <td>确认方看到“拒绝 / 接受并执行”；提议方看到“等待回应 / 撤回提案”。</td>
+            <td>避免玩家误以为自己能替 NPC 确认，也避免 NPC 提案绕过玩家确认。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>八、实现阶段</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>阶段</th>
+            <th>任务</th>
+            <th>完成标准</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="status">P0</span></td>
+            <td>修正 council 启动路径：根据配置加载 council 章节，或建立独立 council 屏幕入口。</td>
+            <td>启动游戏后进入议会章节；状态页能显示罪行、阵营、成员和投票板。</td>
+          </tr>
+          <tr>
+            <td><span class="status">P1</span></td>
+            <td>把主对话流程切换到 <code>CouncilRulesEngine</code> 与 council prompt。</td>
+            <td>玩家和 NPC 的 <code>declare_tendency</code>、<code>cast_vote</code>、<code>retreat</code> 能从 LLM 输出结算。</td>
+          </tr>
+          <tr>
+            <td><span class="status">P2</span></td>
+            <td>实现玩家四个会议按钮和三个子页面：单议案选择、交易编辑、撤退确认。</td>
+            <td>不用 LLM 也能手动跑通四种行为，方便调试。</td>
+          </tr>
+          <tr>
+            <td><span class="status">P3</span></td>
+            <td>实现 NPC 政治交易确认页和待确认交易状态。</td>
+            <td>NPC 提出 1 到 3 个议案后，玩家接受才落票，拒绝不落票。</td>
+          </tr>
+          <tr>
+            <td><span class="status">P4</span></td>
+            <td>完善状态页和历史页对四种行为的可视化。</td>
+            <td>玩家能区分撤退、倾向、正式票、交易票，并追踪每条票的来源。</td>
+          </tr>
+          <tr>
+            <td><span class="status">P5</span></td>
+            <td>联调真实 LLM 策略，让 NPC 主动发起交易、回避危险罪行、保护阵营利益。</td>
+            <td>第一章连续 3 局至少自然出现倾向、直接投票和政治交易。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>九、测试矩阵</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>测试</th>
+            <th>覆盖内容</th>
+            <th>预期结果</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>规则单测</td>
+            <td>四种行为、非法罪行、已锁票、死亡成员、交易 1 到 3 议案。</td>
+            <td>非法动作不污染状态；合法动作记录完整；处决阈值准确。</td>
+          </tr>
+          <tr>
+            <td>交易原子化测试</td>
+            <td>交易内多张票同时达到处决阈值。</td>
+            <td>所有交易票先记录，再进行处决和结算。</td>
+          </tr>
+          <tr>
+            <td>玩家按钮测试</td>
+            <td>点击撤退、倾向、投票、交易。</td>
+            <td>每个按钮打开正确子页面，确认后进入状态页。</td>
+          </tr>
+          <tr>
+            <td>NPC 提案测试</td>
+            <td>Mock NPC 输出 <code>offer_trade</code>。</td>
+            <td>出现确认页；接受落票；拒绝只写日志。</td>
+          </tr>
+          <tr>
+            <td>LLM 防越权测试</td>
+            <td>NPC 尝试投不存在罪行、修改已锁票、读取他人隐藏罪行。</td>
+            <td>规则引擎拒绝动作，UI 只显示系统确认过的公开事实。</td>
+          </tr>
+          <tr>
+            <td>视觉回归测试</td>
+            <td>1280x720 与窄屏下的状态页、交易确认页、行动子页面。</td>
+            <td>文字不重叠，按钮可点，投票头像和交易列表可读。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>十、优先决策</h2>
+      <div class="grid two">
+        <div class="panel">
+          <h3>建议立即确认</h3>
+          <ul>
+            <li>正式 UI 是否允许真人手动点四个会议行为，还是只作为调试开关。</li>
+            <li>NPC 政治交易被玩家拒绝后，是否消耗本次 NPC 行动。</li>
+            <li>无罪票是否只是公开立场，还是能形成“保护阈值”。第一版建议只作为公开正式票，不额外锁死法案。</li>
+            <li>弃权票是否显示在状态页。第一版建议只进历史和摘要，不进入左右头像列。</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>建议第一版固定</h3>
+          <ul>
+            <li>政治交易只支持当前会谈双方，不支持第三方绑定。</li>
+            <li>交易最多 3 个不同罪行。</li>
+            <li>交易接受后不可撤销，所有票来源标记为 <code>trade</code>。</li>
+            <li>所有对话结束路径都先进入议会状态页，再回到 NPC 三选一。</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note">
+        最小可玩目标：第一章 4 人局中，玩家能看到 NPC 主动提出政治交易，确认后双方票同时落入状态页，并可能立刻触发处决。这就是本轮改进的硬验收。
+      </div>
+    </section>
+  </main>
+</body>
+</html>

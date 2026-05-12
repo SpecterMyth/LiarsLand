@@ -79,3 +79,24 @@ NPC Imagegen final replacement pass v2 - 2026-05-09:
 - Chroma key standards: use pure `#00ff00` outside non-green characters; use pure `#ff00ff` for green/teal-heavy NPCs such as gecko, frog, eel, and mantis. The subject/card must not use the key color.
 - Select cards: vertical half-body card, transparent outside card after key removal, no generated names, labels, buttons, icons, numbers, or stat boxes inside the image.
 - Verification artifacts: `tmp/final_head_avatars_contact.png`, `tmp/final_select_cards_contact.png`, `tmp/npc_dialogue_desktop_contact.png`, `tmp/npc_dialogue_mobile_contact.png`, `tmp/npc_selection_contact.png`, `tmp/npc_shop_contact.png`, and `tmp/world_intel_archive_godot_visual.png`.
+
+NPC Imagegen replacement pass v3 - 2026-05-12:
+
+- Rebuilt all 15 second-batch NPC runtime assets from scratch after art-direction feedback.
+- Added missing concept sheets in `arts/concepts/actors` for `npc_eel_drain_smuggler`, `npc_goat_bell_keeper`, and `npc_mantis_knife_judge` before runtime replacement.
+- Runtime source generation used built-in Imagegen, with `npc_fox` as the style and proportion reference: left-facing characters, thick black outlines, simplified angular cel-shading, large color blocks, weak volume, and no tiny costume detail.
+- Character palettes follow each actor concept instead of forcing a red-black scheme across the batch.
+- Background handling used flat chroma-key source images plus local alpha removal with `D:/AppHome/Codex/skills/.system/imagegen/scripts/remove_chroma_key.py`.
+- Final runtime outputs were locked to existing project specs: full portrait `1024x1536`, half portrait `820x1010`, head avatar `256x256`, circle avatar `256x256`, and select card `963x1633`.
+- Verification artifacts: `tmp/imagegen/npc_batch_20260512/final_portraits_contact.png`, `tmp/imagegen/npc_batch_20260512/final_half_contact.png`, `tmp/imagegen/npc_batch_20260512/final_head_contact.png`, `tmp/imagegen/npc_batch_20260512/final_circle_contact.png`, and `tmp/imagegen/npc_batch_20260512/final_cards_contact.png`.
+
+NPC head avatar and character asset relocation pass v4 - 2026-05-12:
+
+- Rebuilt the 15 second-batch NPC `*_head_avatar.png` files through built-in Imagegen after the head-size correction request.
+- Head avatar generation rule: pure black background source, left-facing three-quarter profile, huge head filling roughly 92-95% of the image height, tiny shoulder/bust only, thick black outline, simplified angular cel shading, no border ring, no text.
+- Local post-processing did not chroma-key the new heads. It copied the black-background Imagegen sources, composited/cropped them to `256x256` circular avatars, and saved them under `project/assets/ui/characters/`.
+- Existing old NPC head avatars were moved into the same folder and normalized to the same circular `256x256` no-border shape. `player_head_avatar.png` and `opponent_head_avatar.png` were added as compatibility fallbacks.
+- NPC full portraits moved from `project/assets/generated/` to `project/assets/ui/characters/portrait/`.
+- NPC half portraits moved from `project/assets/generated/` to `project/assets/ui/characters/portrait_half/`.
+- Runtime code now resolves NPC head avatars from `res://assets/ui/characters/`, full portraits from `res://assets/ui/characters/portrait/`, and half portraits from `res://assets/ui/characters/portrait_half/`.
+- Verification artifact: `tmp/imagegen/head_avatar_rebuild_20260512/head_avatar_contact.png`.

@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/ui/common/icon_tile_history.png" id="3_history"]
+[ext_resource type="Texture2D" path="res://assets/ui/common/icon_tile_rules.png" id="4_rules"]
 [ext_resource type="Texture2D" path="res://assets/ui/common/icon_tile_status.png" id="5_status"]
 [ext_resource type="Texture2D" path="res://assets/ui/common/icon_tile_settings.png" id="6_settings"]
 
@@ -16,14 +17,28 @@ mouse_filter = 2
 [node name="HistoryButton" type="TextureButton" parent="."]
 layout_mode = 1
 anchor_left = 0.935
-anchor_top = 0.651
+anchor_top = 0.539
 anchor_right = 0.986
-anchor_bottom = 0.743
+anchor_bottom = 0.631
 focus_mode = 0
 tooltip_text = "历史"
 texture_normal = ExtResource("3_history")
 texture_hover = ExtResource("3_history")
 texture_pressed = ExtResource("3_history")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="RulesButton" type="TextureButton" parent="."]
+layout_mode = 1
+anchor_left = 0.935
+anchor_top = 0.651
+anchor_right = 0.986
+anchor_bottom = 0.743
+focus_mode = 0
+tooltip_text = "准则"
+texture_normal = ExtResource("4_rules")
+texture_hover = ExtResource("4_rules")
+texture_pressed = ExtResource("4_rules")
 ignore_texture_size = true
 stretch_mode = 5
 

@@ -5,7 +5,7 @@ const PAGES := [
 		"scene": "res://scenes/ui/history_page.tscn",
 		"output": "res://../ui/visual_tests/history_page_runtime.png",
 		"method": "set_history",
-		"args": ["玩家：我们从哪一份债契开始？\n对手：从被烧掉的那份开始。\n玩家：那就先谈谁点的火。", ["发现：对手避开了钟楼证词", "行动：玩家保留最后一件法器"], "第 1 / 3 章，回合 2 / 3"]
+		"args": ["玩家：我们从哪一份债契开始？\n对手：从被烧掉的那份开始。\n玩家：那就先谈谁点的火。", ["发现：对手避开了钟楼证词", "行动：玩家保留最后一件法器"], "第 1 / 3 章，第 2 回合"]
 	},
 	{
 		"scene": "res://scenes/ui/status_page.tscn",

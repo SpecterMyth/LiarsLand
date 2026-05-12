@@ -11,11 +11,15 @@ const DIALOGUE_UI_ROOT := "res://assets/generated/ui/dialogue/"
 const GUIDELINES_UI_ROOT := "res://assets/ui/guidelines/"
 const FONT_PATH := "res://assets/fonts/AlibabaPuHuiTi-3-105-Heavy.ttf"
 const StandardButtonScript := preload("res://scripts/ui/standard_button.gd")
+const CommonFrameScript := preload("res://scripts/ui/common_frame.gd")
+const CommonBackgroundPanelScene := preload("res://scenes/ui/common_background_panel.tscn")
 const ACTION_BUTTON_SIZE := Vector2(144, 40)
 const ACTION_BUTTON_SIZE_NARROW := Vector2(126, 36)
 const APPEND_EDIT_HEIGHT := 46
 const APPEND_EDIT_HEIGHT_NARROW := 40
 const TAB_BUTTON_SIZE := Vector2(346, 64)
+const MAIN_PANEL_OFFSET_Y := 40.0
+const VISIBLE_TABS := ["identity", "behavior"]
 
 var current_tab := "identity"
 var guideline_texts := {
@@ -47,7 +51,8 @@ var decision_progress: ProgressBar
 var decision_cancel_button: Button
 var built := false
 var uses_scene_nodes := false
-var main_panel: PanelContainer
+var main_panel: Control
+var guideline_edit_shell: Control
 var tabs_grid: GridContainer
 var footer_bar: Container
 
@@ -163,18 +168,24 @@ func _ensure_built() -> void:
 
 
 func _bind_scene_nodes() -> void:
-	main_panel = get_node_or_null("MainPanel") as PanelContainer
+	main_panel = get_node_or_null("MainPanel") as Control
 	tabs_grid = get_node_or_null("MainPanel/Content/TabRow") as GridContainer
 	footer_bar = get_node_or_null("MainPanel/Content/Footer") as Container
 	close_button = get_node_or_null("CloseButton") as TextureButton
 	identity_tab = get_node_or_null("MainPanel/Content/TabRow/IdentityTab") as Button
 	behavior_tab = get_node_or_null("MainPanel/Content/TabRow/BehaviorTab") as Button
 	growth_tab = get_node_or_null("MainPanel/Content/TabRow/GrowthTab") as Button
-	guideline_edit = get_node_or_null("MainPanel/Content/GuidelineEdit") as TextEdit
+	guideline_edit_shell = get_node_or_null("MainPanel/Content/GuidelineEditShell") as Control
+	guideline_edit = get_node_or_null("MainPanel/Content/GuidelineEditShell/GuidelineEdit") as TextEdit
+	if guideline_edit == null:
+		guideline_edit = get_node_or_null("MainPanel/Content/GuidelineEdit") as TextEdit
 	append_edit = get_node_or_null("MainPanel/Content/AppendRow/AppendEdit") as TextEdit
 	status_label = get_node_or_null("MainPanel/Content/Footer/StatusLabel") as Label
 	auto_action_check = get_node_or_null("MainPanel/Content/Footer/AutoActionCheck") as CheckBox
 	auto_growth_check = get_node_or_null("MainPanel/Content/Footer/AutoGrowthCheck") as CheckBox
+	if auto_growth_check != null:
+		auto_growth_check.visible = false
+		auto_growth_check.disabled = true
 	merge_button = get_node_or_null("MainPanel/Content/AppendRow/MergeButton") as Button
 	reset_button = get_node_or_null("MainPanel/Content/Footer/ResetButton") as Button
 	close_text_button = get_node_or_null("MainPanel/Content/Footer/CloseTextButton") as Button
@@ -194,8 +205,8 @@ func _bind_scene_nodes() -> void:
 		tab_buttons["behavior"] = behavior_tab
 		_connect_once(behavior_tab, "pressed", func(): _select_tab("behavior"))
 	if growth_tab != null:
-		tab_buttons["growth"] = growth_tab
-		_connect_once(growth_tab, "pressed", func(): _select_tab("growth"))
+		growth_tab.visible = false
+		growth_tab.disabled = true
 	if close_button != null:
 		_connect_once(close_button, "pressed", func(): close_requested.emit())
 	if guideline_edit != null:
@@ -237,30 +248,38 @@ func _style_scene_nodes() -> void:
 		close_button.ignore_texture_size = true
 		close_button.stretch_mode = TextureButton.STRETCH_SCALE
 	if main_panel != null:
-		main_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.035, 0.030, 0.036, 0.96), Color(0.88, 0.52, 0.18, 0.92), 3))
+		if main_panel is PanelContainer:
+			(main_panel as PanelContainer).add_theme_stylebox_override("panel", _transparent_style())
+		_ensure_sibling_background(main_panel, "MainPanelBack", CommonFrameScript.DARK_TEAL, 50.0)
+	if guideline_edit != null:
+		_ensure_common_background(guideline_edit, "GuidelineEditBack", CommonFrameScript.GRAY)
 	if identity_tab != null:
 		_style_tab_button(identity_tab, Color(0.18, 0.52, 0.52, 1.0))
 	if behavior_tab != null:
 		_style_tab_button(behavior_tab, Color(0.48, 0.10, 0.18, 1.0))
 	if growth_tab != null:
-		_style_tab_button(growth_tab, Color(0.34, 0.20, 0.58, 1.0))
+		growth_tab.visible = false
+		growth_tab.disabled = true
 	if status_label != null:
 		_style_label(status_label, 17, Color(1.0, 0.85, 0.50, 1.0), 2)
 	if guideline_edit != null:
 		guideline_edit.add_theme_font_size_override("font_size", 17)
-		guideline_edit.add_theme_color_override("font_color", Color(1.0, 0.91, 0.74, 1.0))
-		guideline_edit.add_theme_color_override("font_placeholder_color", Color(0.62, 0.48, 0.35, 1.0))
-		guideline_edit.add_theme_stylebox_override("normal", _panel_style(Color(0.020, 0.018, 0.020, 0.98), Color(0.78, 0.47, 0.16, 0.70), 2))
+		guideline_edit.add_theme_color_override("font_color", Color(0.035, 0.030, 0.030, 1.0))
+		guideline_edit.add_theme_color_override("font_placeholder_color", Color(0.28, 0.25, 0.22, 1.0))
+		_apply_transparent_text_edit_style(guideline_edit)
 	if append_edit != null:
 		append_edit.add_theme_font_size_override("font_size", 16)
 		append_edit.add_theme_color_override("font_color", Color(0.94, 0.98, 0.92, 1.0))
 		append_edit.add_theme_color_override("font_placeholder_color", Color(0.52, 0.68, 0.64, 1.0))
 		append_edit.add_theme_stylebox_override("normal", _panel_style(Color(0.018, 0.030, 0.030, 0.98), Color(0.12, 0.72, 0.72, 0.58), 2))
-	for check in [auto_action_check, auto_growth_check]:
+	for check in [auto_action_check]:
 		if check != null:
 			_style_check(check)
+	if auto_growth_check != null:
+		auto_growth_check.visible = false
+		auto_growth_check.disabled = true
 	if merge_button != null:
-		_style_secondary_button(merge_button)
+		_style_primary_button(merge_button)
 	if reset_button != null:
 		_style_secondary_button(reset_button)
 	if close_text_button != null:
@@ -344,30 +363,30 @@ func _build() -> void:
 	close_button.pressed.connect(func(): close_requested.emit())
 	add_child(close_button)
 
-	main_panel = PanelContainer.new()
+	main_panel = Control.new()
 	main_panel.name = "MainPanel"
 	_place(main_panel, Rect2(0.070, 0.165, 0.855, 0.750))
-	main_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.035, 0.030, 0.036, 0.96), Color(0.88, 0.52, 0.18, 0.92), 3))
+	_apply_main_panel_offset()
 	add_child(main_panel)
+	_ensure_sibling_background(main_panel, "MainPanelBack", CommonFrameScript.DARK_TEAL, 50.0)
 
 	var root := VBoxContainer.new()
 	root.name = "Content"
 	root.add_theme_constant_override("separation", 8)
+	_place_inset(root, 42, 44, 42, 38)
 	main_panel.add_child(root)
 
 	tabs_grid = GridContainer.new()
 	tabs_grid.name = "TabRow"
-	tabs_grid.columns = 3
+	tabs_grid.columns = 2
 	tabs_grid.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	tabs_grid.add_theme_constant_override("h_separation", 10)
 	tabs_grid.add_theme_constant_override("v_separation", 8)
 	root.add_child(tabs_grid)
 	identity_tab = _make_tab_button("IdentityTab", "对外身份", "identity", Color(0.18, 0.52, 0.52, 1.0))
-	behavior_tab = _make_tab_button("BehaviorTab", "对话行动", "behavior", Color(0.48, 0.10, 0.18, 1.0))
-	growth_tab = _make_tab_button("GrowthTab", "成长逻辑", "growth", Color(0.34, 0.20, 0.58, 1.0))
+	behavior_tab = _make_tab_button("BehaviorTab", "行动准则", "behavior", Color(0.48, 0.10, 0.18, 1.0))
 	tabs_grid.add_child(identity_tab)
 	tabs_grid.add_child(behavior_tab)
-	tabs_grid.add_child(growth_tab)
 
 	var mode_row := HBoxContainer.new()
 	mode_row.name = "ModeRow"
@@ -390,9 +409,10 @@ func _build() -> void:
 	guideline_edit.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
 	guideline_edit.placeholder_text = "编辑当前准则..."
 	guideline_edit.add_theme_font_size_override("font_size", 17)
-	guideline_edit.add_theme_color_override("font_color", Color(1.0, 0.91, 0.74, 1.0))
-	guideline_edit.add_theme_color_override("font_placeholder_color", Color(0.62, 0.48, 0.35, 1.0))
-	guideline_edit.add_theme_stylebox_override("normal", _panel_style(Color(0.020, 0.018, 0.020, 0.98), Color(0.78, 0.47, 0.16, 0.70), 2))
+	guideline_edit.add_theme_color_override("font_color", Color(0.035, 0.030, 0.030, 1.0))
+	guideline_edit.add_theme_color_override("font_placeholder_color", Color(0.28, 0.25, 0.22, 1.0))
+	_apply_transparent_text_edit_style(guideline_edit)
+	_ensure_common_background(guideline_edit, "GuidelineEditBack", CommonFrameScript.GRAY)
 	guideline_edit.text_changed.connect(func(): guideline_texts[current_tab] = guideline_edit.text)
 	root.add_child(guideline_edit)
 
@@ -413,6 +433,7 @@ func _build() -> void:
 	root.add_child(append_row)
 	append_row.add_child(append_edit)
 	merge_button = _make_secondary_button("MergeButton", "融合准则")
+	_style_primary_button(merge_button)
 	merge_button.custom_minimum_size = Vector2(124, 64)
 	merge_button.pressed.connect(_on_merge_pressed)
 	append_row.add_child(merge_button)
@@ -423,6 +444,8 @@ func _build() -> void:
 	root.add_child(footer_bar)
 	auto_action_check = _make_check("AutoActionCheck", "自己行动")
 	auto_growth_check = _make_check("AutoGrowthCheck", "自己成长")
+	auto_growth_check.visible = false
+	auto_growth_check.disabled = true
 	footer_bar.add_child(auto_action_check)
 	footer_bar.add_child(auto_growth_check)
 	status_label = _make_small_label("正在编辑：对外身份", 17, Color(1.0, 0.85, 0.50, 1.0))
@@ -588,6 +611,77 @@ func _style_textured_button(button: Button, color: Color) -> void:
 	button.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.45))
 
 
+func _ensure_common_background(parent: Control, node_name: String, color: String, bleed := 0.0) -> NinePatchRect:
+	var panel := parent.get_node_or_null(node_name) as NinePatchRect
+	if panel == null:
+		panel = CommonBackgroundPanelScene.instantiate() as NinePatchRect
+		panel.name = node_name
+		parent.add_child(panel)
+		parent.move_child(panel, 0)
+	_place_inset(panel, -bleed, -bleed, -bleed, -bleed)
+	panel.custom_minimum_size = Vector2.ZERO
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.show_behind_parent = parent is TextEdit
+	panel.frame_color = color
+	panel.apply_default_size = false
+	CommonFrameScript.apply_background_panel(panel, color, Vector2.ZERO)
+	return panel
+
+
+func _ensure_sibling_background(target: Control, node_name: String, color: String, bleed := 0.0) -> NinePatchRect:
+	var parent := target.get_parent() as Control
+	if parent == null:
+		return _ensure_common_background(target, node_name, color, bleed)
+	var panel := parent.get_node_or_null(node_name) as NinePatchRect
+	if panel == null:
+		panel = CommonBackgroundPanelScene.instantiate() as NinePatchRect
+		panel.name = node_name
+		parent.add_child(panel)
+		parent.move_child(panel, target.get_index())
+	panel.anchor_left = target.anchor_left
+	panel.anchor_top = target.anchor_top
+	panel.anchor_right = target.anchor_right
+	panel.anchor_bottom = target.anchor_bottom
+	panel.offset_left = target.offset_left - bleed
+	panel.offset_top = target.offset_top - bleed
+	panel.offset_right = target.offset_right + bleed
+	panel.offset_bottom = target.offset_bottom + bleed
+	panel.custom_minimum_size = Vector2.ZERO
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.show_behind_parent = false
+	panel.frame_color = color
+	panel.apply_default_size = false
+	CommonFrameScript.apply_background_panel(panel, color, Vector2.ZERO)
+	return panel
+
+
+func _ensure_guideline_edit_shell(edit: TextEdit) -> Control:
+	if guideline_edit_shell != null:
+		_place_inset(edit, 30, 24, 30, 24)
+		return guideline_edit_shell
+	var parent := edit.get_parent() as Control
+	if parent == null:
+		return edit
+	var index := edit.get_index()
+	guideline_edit_shell = Control.new()
+	guideline_edit_shell.name = "GuidelineEditShell"
+	guideline_edit_shell.custom_minimum_size = edit.custom_minimum_size
+	guideline_edit_shell.size_flags_horizontal = edit.size_flags_horizontal
+	guideline_edit_shell.size_flags_vertical = edit.size_flags_vertical
+	parent.add_child(guideline_edit_shell)
+	parent.move_child(guideline_edit_shell, index)
+	edit.reparent(guideline_edit_shell)
+	_place_inset(edit, 30, 24, 30, 24)
+	return guideline_edit_shell
+
+
+func _apply_transparent_text_edit_style(edit: TextEdit) -> void:
+	var style := _transparent_style(50.0)
+	edit.add_theme_stylebox_override("normal", style)
+	edit.add_theme_stylebox_override("focus", style.duplicate())
+	edit.add_theme_stylebox_override("read_only", style.duplicate())
+
+
 func _style_guidelines_action_button(button: Button) -> void:
 	button.custom_minimum_size = ACTION_BUTTON_SIZE
 	button.size_flags_horizontal = Control.SIZE_SHRINK_END
@@ -602,6 +696,8 @@ func _on_merge_pressed() -> void:
 
 
 func _select_tab(tab_id: String) -> void:
+	if not VISIBLE_TABS.has(tab_id):
+		tab_id = "behavior"
 	if tab_id == current_tab and guideline_edit != null:
 		return
 	_store_current_tab_text()
@@ -633,10 +729,13 @@ func _apply_responsive_layout() -> void:
 	var narrow := viewport_width > 0.0 and viewport_width < 620.0
 	if main_panel != null and not uses_scene_nodes:
 		_place(main_panel, Rect2(0.070, 0.165, 0.855, 0.750) if not narrow else Rect2(0.070, 0.165, 0.860, 0.750))
+	if main_panel != null:
+		_apply_main_panel_offset()
+		_ensure_sibling_background(main_panel, "MainPanelBack", CommonFrameScript.DARK_TEAL, 50.0)
 	if tabs_grid != null:
-		tabs_grid.columns = 3 if not narrow else 1
+		tabs_grid.columns = 2 if not narrow else 1
 		tabs_grid.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	for button in [identity_tab, behavior_tab, growth_tab]:
+	for button in [identity_tab, behavior_tab]:
 		if button != null:
 			button.custom_minimum_size = TAB_BUTTON_SIZE
 			button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
@@ -644,17 +743,23 @@ func _apply_responsive_layout() -> void:
 	if status_label != null:
 		status_label.visible = not narrow
 	if guideline_edit != null:
-		guideline_edit.custom_minimum_size = Vector2(0, 250 if not narrow else 230)
+		if guideline_edit_shell != null:
+			guideline_edit_shell.custom_minimum_size = Vector2(0, 250 if not narrow else 230)
+		else:
+			guideline_edit.custom_minimum_size = Vector2(0, 250 if not narrow else 230)
 		guideline_edit.add_theme_font_size_override("font_size", 17 if not narrow else 15)
 	if append_edit != null:
 		append_edit.custom_minimum_size = Vector2(0, APPEND_EDIT_HEIGHT if not narrow else APPEND_EDIT_HEIGHT_NARROW)
 		append_edit.add_theme_font_size_override("font_size", 16 if not narrow else 14)
 	if footer_bar is GridContainer:
-		(footer_bar as GridContainer).columns = 5 if not narrow else 2
-	for check in [auto_action_check, auto_growth_check]:
+		(footer_bar as GridContainer).columns = 4 if not narrow else 2
+	for check in [auto_action_check]:
 		if check != null:
 			check.custom_minimum_size = Vector2(130 if not narrow else 116, 44 if not narrow else 36)
 			check.add_theme_font_size_override("font_size", 18 if not narrow else 15)
+	if auto_growth_check != null:
+		auto_growth_check.visible = false
+		auto_growth_check.disabled = true
 	if merge_button != null:
 		merge_button.custom_minimum_size = ACTION_BUTTON_SIZE if not narrow else ACTION_BUTTON_SIZE_NARROW
 		merge_button.add_theme_font_size_override("font_size", 18 if not narrow else 15)
@@ -674,9 +779,7 @@ func _tab_title(tab_id: String) -> String:
 		"identity":
 			return "正在编辑：对外身份"
 		"behavior":
-			return "正在编辑：对话行动"
-		"growth":
-			return "正在编辑：成长逻辑"
+			return "正在编辑：行动准则"
 		_:
 			return "正在编辑：准则"
 
@@ -711,6 +814,17 @@ func _panel_style(bg: Color, border: Color, width: int) -> StyleBoxFlat:
 	style.content_margin_right = 18
 	style.content_margin_top = 14
 	style.content_margin_bottom = 14
+	return style
+
+
+func _transparent_style(content_margin := 0.0) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0, 0, 0, 0)
+	style.border_color = Color(0, 0, 0, 0)
+	style.content_margin_left = content_margin
+	style.content_margin_right = content_margin
+	style.content_margin_top = content_margin
+	style.content_margin_bottom = content_margin
 	return style
 
 
@@ -765,6 +879,13 @@ func _place(node: Control, rect: Rect2) -> void:
 	node.offset_bottom = 0
 
 
+func _apply_main_panel_offset() -> void:
+	if main_panel == null:
+		return
+	main_panel.offset_top = MAIN_PANEL_OFFSET_Y
+	main_panel.offset_bottom = MAIN_PANEL_OFFSET_Y
+
+
 func _place_absolute(node: Control, rect: Rect2) -> void:
 	node.anchor_left = 0.0
 	node.anchor_top = 0.0
@@ -774,6 +895,17 @@ func _place_absolute(node: Control, rect: Rect2) -> void:
 	node.offset_top = rect.position.y
 	node.offset_right = rect.position.x + rect.size.x
 	node.offset_bottom = rect.position.y + rect.size.y
+
+
+func _place_inset(node: Control, left: float, top: float, right: float, bottom: float) -> void:
+	node.anchor_left = 0.0
+	node.anchor_top = 0.0
+	node.anchor_right = 1.0
+	node.anchor_bottom = 1.0
+	node.offset_left = left
+	node.offset_top = top
+	node.offset_right = -right
+	node.offset_bottom = -bottom
 
 
 func _load_texture(path: String) -> Texture2D:

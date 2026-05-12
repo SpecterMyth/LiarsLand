@@ -3,11 +3,11 @@
 [ext_resource type="Script" uid="uid://dtutc7u41meci" path="res://scripts/ui/world_intel_option_card.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://snookd17457s" path="res://assets/generated/ui/intel/q01_01_lie_origin_moon.png" id="3_preview"]
 [ext_resource type="Texture2D" uid="uid://ctv2ujh4bwvag" path="res://assets/ui/common/bag_panel_left_dark.png" id="4_ysn3g"]
-[ext_resource type="Texture2D" uid="uid://cdwbk3lb3cwrq" path="res://assets/generated/npc_fox_head_avatar.png" id="5_portrait"]
-[ext_resource type="Texture2D" uid="uid://bh7p4qr5hfeyl" path="res://assets/generated/npc_crow_head_avatar.png" id="10_crow"]
-[ext_resource type="Texture2D" uid="uid://bnri1cxhmxc65" path="res://assets/generated/npc_deer_head_avatar.png" id="11_deer"]
-[ext_resource type="Texture2D" uid="uid://dgvm4srs3v0xh" path="res://assets/generated/npc_snake_head_avatar.png" id="12_snake"]
-[ext_resource type="Texture2D" uid="uid://b8gdlola8nxtr" path="res://assets/generated/npc_wolf_head_avatar.png" id="13_wolf"]
+[ext_resource type="Texture2D" path="res://assets/ui/characters/headicon/npc_fox_head_avatar.png" id="5_portrait"]
+[ext_resource type="Texture2D" path="res://assets/ui/characters/headicon/npc_crow_head_avatar.png" id="10_crow"]
+[ext_resource type="Texture2D" path="res://assets/ui/characters/headicon/npc_deer_head_avatar.png" id="11_deer"]
+[ext_resource type="Texture2D" path="res://assets/ui/characters/headicon/npc_snake_head_avatar.png" id="12_snake"]
+[ext_resource type="Texture2D" path="res://assets/ui/characters/headicon/npc_wolf_head_avatar.png" id="13_wolf"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_button"]
 

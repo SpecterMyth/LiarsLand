@@ -24,8 +24,8 @@
   ],
   "player": {
     "id": "player",
-    "public_name": "边境的灰狐代笔员",
-    "public_identity": "来自边境的灰狐代笔员，被临时推上议会席位。",
+    "public_name": "灰狐代笔员",
+    "public_identity": "灰狐代笔员，被临时推上议会席位。",
     "portrait": "player_portrait.png",
     "portrait_half": "player_portrait_half.png",
     "scene": "bg_moon_market.png",

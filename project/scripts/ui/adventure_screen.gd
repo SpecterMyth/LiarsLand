@@ -40,6 +40,12 @@ const SHOP_LEGACY_UI_ROOT := "res://assets/generated/ui/shop_v2/"
 const SHOP_MANIFEST_PATH := "res://../ui/source_pages/shop/page_manifest.json"
 const LOCKED_NPC_SELECT_CARD_PATH := SELECT_CARD_ROOT + "npc_unknown_select_card.png"
 const UI_FONT_PATH := "res://assets/fonts/AlibabaPuHuiTi-3-105-Heavy.ttf"
+const GENERATED_ROOT := "res://assets/generated/"
+const CHARACTER_ROOT := "res://assets/ui/characters/"
+const CHARACTER_HEADICON_ROOT := CHARACTER_ROOT + "headicon/"
+const CHARACTER_PORTRAIT_ROOT := CHARACTER_ROOT + "portrait/"
+const CHARACTER_PORTRAIT_HALF_ROOT := CHARACTER_ROOT + "portrait_half/"
+const COUNCIL_ICON_ROOT := "res://assets/generated/ui/council_icons/"
 const INVENTORY_CAPACITY := 40
 const INVENTORY_REQUIREMENT_SLOT_SIZE := Vector2(116, 116)
 const INVENTORY_ITEM_SLOT_SIZE := Vector2(116, 116)
@@ -86,6 +92,7 @@ var dialogue_title: Label
 var result_banner: Label
 var llm_retry_button: Button
 var dialogue_view: RichTextLabel
+var dialogue_thinking_label: Label
 var recent_view: RichTextLabel
 var state_view: RichTextLabel
 var card_grid: GridContainer
@@ -407,6 +414,7 @@ func _build_ui() -> void:
 	result_banner = controls.get("result_banner")
 	llm_retry_button = controls.get("llm_retry_button")
 	dialogue_view = controls.get("dialogue_view")
+	dialogue_thinking_label = controls.get("dialogue_thinking_label")
 	state_view = controls.get("state_view")
 	card_grid = controls.get("card_grid")
 	intel_panel = controls.get("intel_panel")
@@ -974,6 +982,8 @@ func _run_council_chapter() -> void:
 				break
 			await _run_council_dialogue()
 			_update_state_panel()
+			if state.ended or not running:
+				break
 			if running:
 				await _show_council_status_gate()
 			if state.ended or not running:
@@ -986,6 +996,7 @@ func _run_council_chapter() -> void:
 		if not running:
 			break
 		if state.ended and state.victory and state.chapter_index < COUNCIL_CHAPTER_PATHS.size() - 1:
+			CouncilRulesEngineScript.award_chapter_energy(state)
 			state.council_chapter_results.append(_council_result_snapshot())
 			await _show_council_chapter_result_gate(false)
 			_load_council_chapter(state.chapter_index + 1)
@@ -993,6 +1004,11 @@ func _run_council_chapter() -> void:
 			_update_state_panel()
 			continue
 		if state.ended:
+			if String(state.end_reason_id) == CouncilRulesEngineScript.END_REASON_ENERGY_DEPLETED:
+				_show_death_page()
+				break
+			if state.victory:
+				CouncilRulesEngineScript.award_chapter_energy(state)
 			state.council_chapter_results.append(_council_result_snapshot())
 			await _show_council_chapter_result_gate(true)
 		break
@@ -1017,7 +1033,14 @@ func _run_council_dialogue() -> void:
 			return
 		var speech := String(player_response.get("speech", "我需要先听听你对这些罪名的态度。")).strip_edges()
 		state.add_dialogue("player", speech)
+		var energy_events: Array[String] = []
+		CouncilRulesEngineScript.apply_player_speech_energy(state, speech, energy_events)
 		await _finish_speech_stream("你方", speech, Color(0.58, 0.82, 1.0, 1.0))
+		for event in energy_events:
+			_append_system_log(event)
+		_update_state_panel()
+		if state.ended:
+			break
 		var events: Array[String] = []
 		var player_action_applied: bool = CouncilRulesEngineScript.apply_member_action(state, "player", String(player_response.get("action", "declare_tendency")), player_response, events)
 		var progress_crime := CouncilRulesEngineScript.best_progress_crime(state, String(state.current_npc().get("id", "")))
@@ -1037,8 +1060,20 @@ func _run_council_dialogue() -> void:
 		await _finish_speech_stream("对方", npc_speech, Color(1.0, 0.61, 0.48, 1.0))
 		events.clear()
 		var npc_id := String(state.current_npc().get("id", ""))
-		var npc_action_applied: bool = CouncilRulesEngineScript.apply_member_action(state, npc_id, String(npc_response.get("action", "declare_tendency")), npc_response, events)
-		if state.turn >= 2 and (not npc_action_applied or not _council_has_locked_vote(npc_id, progress_crime)):
+		var npc_action := String(npc_response.get("action", "declare_tendency"))
+		var npc_action_applied := false
+		var npc_trade_rejected := false
+		if CouncilRulesEngineScript.normalize_action(npc_action) == "offer_trade":
+			var accepted := await _confirm_npc_council_trade(npc_id, npc_response)
+			if accepted:
+				npc_action_applied = CouncilRulesEngineScript.apply_member_action(state, npc_id, npc_action, npc_response, events)
+			else:
+				npc_action_applied = true
+				npc_trade_rejected = true
+				events.append("你拒绝了对手的政治交易。")
+		else:
+			npc_action_applied = CouncilRulesEngineScript.apply_member_action(state, npc_id, npc_action, npc_response, events)
+		if not npc_trade_rejected and state.turn >= 2 and (not npc_action_applied or not _council_has_locked_vote(npc_id, progress_crime)):
 			npc_action_applied = CouncilRulesEngineScript.apply_member_action(state, npc_id, "cast_vote", _council_forced_vote_payload(progress_crime), events)
 		if state.turn >= 2 and not state.ended:
 			CouncilRulesEngineScript.apply_follow_votes(state, progress_crime, "guilty", events)
@@ -1189,6 +1224,9 @@ func _apply_round_player_card(root: Control) -> void:
 	if root == null:
 		return
 	_ensure_select_card_shadow_mask(root)
+	if root.has_method("set_player_data"):
+		root.call("set_player_data", state.player, state)
+		return
 	var name := root.get_node_or_null("NameLabel") as Label
 	if name != null:
 		name.text = _player_short_name()
@@ -1636,10 +1674,13 @@ func _on_manual_action_pressed(action: String) -> void:
 		if payload.is_empty():
 			manual_action_in_progress = false
 			return
-		manual_action_resolved = true
 		var events: Array[String] = []
-		CouncilRulesEngineScript.apply_member_action(state, "player", String(payload.get("action", "declare_tendency")), payload, events)
-		if String(payload.get("action", "")) == "cast_vote" and not state.ended:
+		var applied := await _confirm_and_apply_council_action("player", String(payload.get("action", "declare_tendency")), payload, events, true)
+		if not applied:
+			manual_action_in_progress = false
+			return
+		manual_action_resolved = true
+		if CouncilRulesEngineScript.normalize_action(String(payload.get("action", ""))) == "cast_vote" and not state.ended:
 			CouncilRulesEngineScript.apply_follow_votes(state, String(payload.get("target_crime_id", "")), String(payload.get("vote", "guilty")), events)
 		for event in events:
 			_append_system_log(event)
@@ -1753,6 +1794,313 @@ func _confirm_player_action(action: String, payload: Dictionary, label: String) 
 		artifact_text = "\n法器?%s" % state.artifact_name(artifact_id)
 	var body := "你方角色准备执行?%s%s\n允许后会立即结算本次行动?" % [_action_name(action), artifact_text]
 	return await common_modal.call("show_message", "确认玩家行动", body, "确定", "取消")
+
+
+func _confirm_npc_council_trade(actor_id: String, payload: Dictionary) -> bool:
+	if common_modal == null:
+		return true
+	payload["counterpart_id"] = "player"
+	var auto_accept := _player_auto_accepts_council_trade(actor_id, payload)
+	var content := _make_council_trade_content(actor_id, "player", payload, "对手提出政治交易")
+	return await common_modal.call("show_countdown_with_content", "政治交易提案", content, 10.0, "拒绝", "接受并执行", auto_accept)
+
+
+func _confirm_and_apply_council_action(member_id: String, action: String, payload: Dictionary, events: Array[String], require_confirm := true) -> bool:
+	var normalized := CouncilRulesEngineScript.normalize_action(action)
+	if require_confirm and normalized == "offer_trade":
+		if common_modal == null:
+			return false
+		var counterpart_id := String(payload.get("counterpart_id", ""))
+		if counterpart_id.is_empty():
+			counterpart_id = String(state.current_npc().get("id", ""))
+			payload["counterpart_id"] = counterpart_id
+		var content := _make_council_trade_content(member_id, counterpart_id, payload, "你的角色提出政治交易")
+		var accepted: bool = await common_modal.call("show_countdown_with_content", "政治交易提案", content, 10.0, "取消", "确认", true)
+		if not accepted:
+			return false
+	elif require_confirm and normalized == "cast_vote":
+		if common_modal == null:
+			return false
+		var crime_id := String(payload.get("crime_id", payload.get("target_crime_id", "")))
+		var body := "确认对「%s」投%s票。正式票提交后不可更改。" % [CouncilRulesEngineScript.crime_title(state, crime_id), _vote_label_cn(String(payload.get("vote", "guilty")))]
+		var accepted: bool = await common_modal.call("show_countdown_message", "确认议会行动", body, 10.0, "取消", "确认")
+		if not accepted:
+			return false
+	return CouncilRulesEngineScript.apply_member_action(state, member_id, normalized, payload, events)
+
+
+func _player_auto_accepts_council_trade(actor_id: String, payload: Dictionary) -> bool:
+	var normalized := CouncilRulesEngineScript.normalize_trade_offer(state, actor_id, payload)
+	for item in normalized.get("bound_votes", []):
+		if typeof(item) != TYPE_DICTIONARY:
+			continue
+		if String(item.get("member_id", "")) != "player":
+			continue
+		var crime_id := String(item.get("crime_id", ""))
+		var vote := String(item.get("vote", "guilty"))
+		if _council_vote_hurts_player(crime_id, vote):
+			return false
+	return true
+
+
+func _council_vote_hurts_player(crime_id: String, vote: String) -> bool:
+	if vote != "guilty":
+		return false
+	var player_crimes: Array = state.player.get("hidden_crimes", [])
+	return crime_id in player_crimes
+
+
+func _make_council_trade_content(actor_id: String, responder_id: String, payload: Dictionary, title_text: String) -> Control:
+	var offer := CouncilRulesEngineScript.normalize_trade_offer(state, actor_id, payload)
+	var proposals: Array = offer.get("proposals", [])
+	var bound_votes: Array = offer.get("bound_votes", [])
+	var box := VBoxContainer.new()
+	box.name = "CouncilTradeProposal"
+	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	box.add_theme_constant_override("separation", 10)
+	box.set_meta("modal_panel_size", Vector2(940, 600))
+	box.set_meta("preserve_content_theme", true)
+
+	var heading := _make_trade_label(title_text, 20, Color(0.12, 0.07, 0.04, 1.0), true)
+	heading.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	box.add_child(heading)
+
+	var subtitle := _make_trade_label("接受后，双方将立即按下列议案锁定正式票。拒绝则不会执行这笔交易。", 14, Color(0.20, 0.13, 0.08, 1.0), false)
+	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	box.add_child(subtitle)
+
+	var parties := HBoxContainer.new()
+	parties.name = "TradeParties"
+	parties.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	parties.add_theme_constant_override("separation", 12)
+	parties.add_child(_make_trade_party_card(actor_id, "提案方", true))
+	parties.add_child(_make_trade_party_card(responder_id, "回应方", false))
+	box.add_child(parties)
+
+	var list := VBoxContainer.new()
+	list.name = "TradeProposalList"
+	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	list.add_theme_constant_override("separation", 8)
+	for proposal in proposals:
+		if typeof(proposal) != TYPE_DICTIONARY:
+			continue
+		list.add_child(_make_trade_proposal_row(proposal, bound_votes, actor_id, responder_id))
+	if list.get_child_count() == 0:
+		list.add_child(_make_trade_label("这笔交易没有可执行议案。", 16, Color(0.45, 0.18, 0.13, 1.0), true))
+	box.add_child(list)
+	return box
+
+
+func _make_trade_party_card(member_id: String, role_text: String, left_side: bool) -> Control:
+	var member := CouncilRulesEngineScript.get_member(state, member_id)
+	var card := PanelContainer.new()
+	card.name = "TradePartyCard"
+	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	card.custom_minimum_size = Vector2(0, 60)
+	card.add_theme_stylebox_override("panel", _make_trade_style(Color(0.96, 0.88, 0.68, 0.94), Color(0.56, 0.34, 0.14, 0.90), 10))
+
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 10)
+	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	card.add_child(row)
+
+	if not left_side:
+		row.add_child(_make_trade_badge(role_text, Color(0.14, 0.31, 0.43, 1.0), Color.WHITE))
+	row.add_child(_make_trade_avatar(member_id, 54))
+
+	var text_box := VBoxContainer.new()
+	text_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	text_box.custom_minimum_size = Vector2(150, 0)
+	text_box.add_theme_constant_override("separation", 1)
+	var name := _make_trade_label(String(member.get("public_name", member_id)), 18, Color(0.13, 0.07, 0.03, 1.0), true)
+	var faction_id := _member_faction_id(member)
+	var detail := _make_trade_label("%s · %s" % [role_text, CouncilRulesEngineScript.faction_name(state, faction_id)], 12, Color(0.32, 0.20, 0.11, 1.0), false)
+	text_box.add_child(name)
+	text_box.add_child(detail)
+	row.add_child(text_box)
+	if left_side:
+		row.add_child(_make_trade_badge(role_text, Color(0.48, 0.18, 0.13, 1.0), Color.WHITE))
+	return card
+
+
+func _make_trade_proposal_row(proposal: Dictionary, bound_votes: Array, actor_id: String, responder_id: String) -> Control:
+	var crime_id := String(proposal.get("crime_id", ""))
+	var vote := String(proposal.get("vote", "guilty"))
+	var row := PanelContainer.new()
+	row.name = "TradeProposalRow"
+	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.custom_minimum_size = Vector2(0, 72)
+	row.add_theme_stylebox_override("panel", _make_trade_style(Color(0.99, 0.93, 0.77, 0.95), Color(0.57, 0.37, 0.16, 0.88), 10))
+
+	var content := HBoxContainer.new()
+	content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	content.add_theme_constant_override("separation", 12)
+	row.add_child(content)
+	content.add_child(_make_trade_icon(_crime_icon_path(crime_id), 60))
+
+	var text_box := VBoxContainer.new()
+	text_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	text_box.custom_minimum_size = Vector2(360, 0)
+	text_box.add_theme_constant_override("separation", 2)
+	var title := _make_trade_label(CouncilRulesEngineScript.crime_title(state, crime_id), 18, Color(0.12, 0.07, 0.04, 1.0), true)
+	var detail := _make_trade_label("正式票向：%s · 绑定 %d 张票" % [_vote_label_cn(vote), _bound_vote_count(bound_votes, crime_id)], 13, Color(0.34, 0.22, 0.13, 1.0), false)
+	text_box.add_child(title)
+	text_box.add_child(detail)
+	content.add_child(text_box)
+
+	content.add_child(_make_trade_vote_summary(crime_id, vote))
+	return row
+
+
+func _make_trade_vote_summary(crime_id: String, vote: String) -> Control:
+	var row := HBoxContainer.new()
+	row.name = "TradeVoteSummary"
+	row.custom_minimum_size = Vector2(204, 54)
+	row.add_theme_constant_override("separation", 8)
+	row.add_child(_make_trade_benefit_badge(crime_id, vote))
+	row.add_child(_make_trade_vote_badge(crime_id, vote))
+	return row
+
+
+func _make_trade_vote_badge(crime_id: String, vote: String) -> Control:
+	var panel := PanelContainer.new()
+	panel.custom_minimum_size = Vector2(66, 38)
+	var tint := Color(0.48, 0.13, 0.10, 1.0) if vote == "guilty" else Color(0.05, 0.36, 0.34, 1.0)
+	panel.add_theme_stylebox_override("panel", _make_trade_style(tint, tint.darkened(0.18), 8))
+	var text := _make_trade_label(_vote_label_cn(vote), 14, Color.WHITE, true)
+	text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	text.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	panel.add_child(text)
+	panel.tooltip_text = "统一绑定投票：对 %s 投 %s" % [CouncilRulesEngineScript.crime_title(state, crime_id), _vote_label_cn(vote)]
+	return panel
+
+
+func _make_trade_benefit_badge(crime_id: String, vote: String) -> Control:
+	var info := _trade_benefit_info(crime_id, vote)
+	return _make_trade_badge(String(info.get("label", "无所谓")), info.get("bg", Color(0.38, 0.33, 0.25, 1.0)), Color.WHITE)
+
+
+func _trade_benefit_info(crime_id: String, vote: String) -> Dictionary:
+	var player_crimes: Array = state.player.get("hidden_crimes", [])
+	if crime_id in player_crimes:
+		if vote == "guilty":
+			return {"label": "对我不利", "bg": Color(0.55, 0.12, 0.10, 1.0)}
+		return {"label": "对我有利", "bg": Color(0.04, 0.43, 0.28, 1.0)}
+	return {"label": "无所谓", "bg": Color(0.35, 0.31, 0.25, 1.0)}
+
+
+func _bound_vote_count(bound_votes: Array, crime_id: String) -> int:
+	var count := 0
+	for item in bound_votes:
+		if typeof(item) == TYPE_DICTIONARY and String(item.get("crime_id", "")) == crime_id:
+			count += 1
+	return count
+
+
+func _vote_label_cn(vote: String) -> String:
+	return "无罪" if vote == "innocent" else "有罪"
+
+
+func _make_trade_avatar(member_id: String, size: int) -> Control:
+	return _make_trade_icon(_avatar_texture_path(member_id), size)
+
+
+func _make_trade_icon(path: String, size: int) -> Control:
+	var icon := TextureRect.new()
+	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon.custom_minimum_size = Vector2(size, size)
+	icon.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if ResourceLoader.exists(path):
+		icon.texture = load(path)
+	return icon
+
+
+func _make_trade_badge(text: String, bg: Color, fg: Color) -> Control:
+	var panel := PanelContainer.new()
+	panel.custom_minimum_size = Vector2(96, 34)
+	panel.add_theme_stylebox_override("panel", _make_trade_style(bg, bg.darkened(0.20), 8))
+	var label := _make_trade_label(text, 13, fg, true)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	panel.add_child(label)
+	return panel
+
+
+func _make_trade_label(text: String, size: int, color: Color, bold := false) -> Label:
+	var label := Label.new()
+	label.text = text
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.clip_text = false
+	label.custom_minimum_size = Vector2(0, max(20, size + 8))
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	label.add_theme_font_size_override("font_size", size)
+	label.add_theme_color_override("font_color", color)
+	var ui_font := _load_ui_font()
+	if ui_font != null:
+		label.add_theme_font_override("font", ui_font)
+	if bold:
+		label.add_theme_color_override("font_shadow_color", Color(1.0, 0.88, 0.56, 0.50))
+		label.add_theme_constant_override("shadow_offset_x", 0)
+		label.add_theme_constant_override("shadow_offset_y", 1)
+	return label
+
+
+func _make_trade_style(bg: Color, border: Color, radius: int) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = bg
+	style.border_color = border
+	style.set_border_width_all(2)
+	style.set_corner_radius_all(radius)
+	style.content_margin_left = 10
+	style.content_margin_right = 10
+	style.content_margin_top = 7
+	style.content_margin_bottom = 7
+	return style
+
+
+func _avatar_texture_path(member_id: String) -> String:
+	if member_id == "player":
+		var player_head := CHARACTER_HEADICON_ROOT + "player_head_avatar.png"
+		if ResourceLoader.exists(player_head):
+			return player_head
+		return CHARACTER_HEADICON_ROOT + "player_head_avatar.png"
+	var member := CouncilRulesEngineScript.get_member(state, member_id)
+	var base := String(member.get("id", member_id))
+	var path := CHARACTER_HEADICON_ROOT + base + "_head_avatar.png"
+	if ResourceLoader.exists(path):
+		return path
+	var opponent_head := CHARACTER_HEADICON_ROOT + "opponent_head_avatar.png"
+	if ResourceLoader.exists(opponent_head):
+		return opponent_head
+	return CHARACTER_HEADICON_ROOT + "opponent_head_avatar.png"
+
+
+func _head_avatar_texture_path_from_portrait(portrait_name: String) -> String:
+	if portrait_name.is_empty():
+		var opponent_head := CHARACTER_HEADICON_ROOT + "opponent_head_avatar.png"
+		if ResourceLoader.exists(opponent_head):
+			return opponent_head
+		return CHARACTER_HEADICON_ROOT + "opponent_head_avatar.png"
+	var head_name := portrait_name.replace("_portrait.png", "_head_avatar.png")
+	var head_path := CHARACTER_HEADICON_ROOT + head_name
+	if ResourceLoader.exists(head_path):
+		return head_path
+	return CHARACTER_PORTRAIT_ROOT + portrait_name
+
+
+func _crime_icon_path(crime_id: String) -> String:
+	var path := COUNCIL_ICON_ROOT + "crime_" + crime_id + ".png"
+	if ResourceLoader.exists(path):
+		return path
+	return GENERATED_ROOT + "icon_unknown.png"
+
+
+func _member_faction_id(member: Dictionary) -> String:
+	return String(member.get("hidden_faction", member.get("faction", "")))
 
 
 func _choose_action_artifact(action: String) -> String:
@@ -3185,6 +3533,16 @@ func _make_select_stat_row(label_text: String, value_text: String, index: int) -
 
 
 func _select_card_path_for_npc(npc: Dictionary) -> String:
+	var explicit_card := String(npc.get("select_card", "")).strip_edges()
+	if not explicit_card.is_empty():
+		if explicit_card.begins_with("res://"):
+			return explicit_card
+		return SELECT_CARD_ROOT + explicit_card
+	var portrait := String(npc.get("portrait", "")).strip_edges()
+	if portrait.ends_with("_portrait.png"):
+		var portrait_card_path := SELECT_CARD_ROOT + portrait.replace("_portrait.png", "_select_card.png")
+		if ResourceLoader.exists(portrait_card_path) or FileAccess.file_exists(ProjectSettings.globalize_path(portrait_card_path)):
+			return portrait_card_path
 	var id := String(npc.get("id", ""))
 	return "%s%s_select_card.png" % [SELECT_CARD_ROOT, id]
 
@@ -3695,7 +4053,7 @@ func _set_current_npc_assets() -> void:
 	var portrait_name := String(npc.get("portrait", ""))
 	if not portrait_name.is_empty():
 		var half_portrait := portrait_name.replace(".png", "_half.png")
-		_set_texture_or_fallback(npc_portrait, "res://assets/generated/%s" % half_portrait, "res://assets/generated/%s" % portrait_name)
+		_set_texture_or_fallback(npc_portrait, CHARACTER_PORTRAIT_HALF_ROOT + half_portrait, CHARACTER_PORTRAIT_ROOT + portrait_name)
 	_update_dialogue_scene_visibility()
 	npc_label.text = String(npc.get("public_name", ""))
 	if current_speaker_label != null:
@@ -3769,6 +4127,7 @@ func _update_council_state_panel() -> void:
 
 func _on_stream_delta(section: String, delta: String) -> void:
 	if section == streaming_section:
+		_hide_dialogue_thinking_placeholder()
 		dialogue_view.append_text(_escape(delta))
 		_follow_dialogue_view(dialogue_view)
 
@@ -3783,8 +4142,20 @@ func _on_stream_field_delta(section: String, field_name: String, delta: String) 
 		streamed_speech += delta
 		_follow_dialogue_view(dialogue_view)
 	elif field_name == "thinking" and not speech_stream_started:
+		_hide_dialogue_thinking_placeholder()
 		dialogue_view.append_text("[font_size=11][color=#130905]%s[/color][/font_size]" % _escape(delta))
 		_follow_dialogue_view(dialogue_view)
+
+
+func _show_dialogue_thinking_placeholder() -> void:
+	if dialogue_thinking_label != null:
+		dialogue_thinking_label.visible = true
+		dialogue_thinking_label.move_to_front()
+
+
+func _hide_dialogue_thinking_placeholder() -> void:
+	if dialogue_thinking_label != null:
+		dialogue_thinking_label.visible = false
 
 
 func _prepare_llm_stream(section: String, speaker: String, color: Color, clear_for_thinking := true) -> void:
@@ -3798,12 +4169,14 @@ func _prepare_llm_stream(section: String, speaker: String, color: Color, clear_f
 	streamed_speech = ""
 	if clear_for_thinking:
 		dialogue_view.clear()
+		_show_dialogue_thinking_placeholder()
 
 
 func _begin_speech_stream() -> void:
 	speech_stream_started = true
 	dialogue_title.text = "对话?"
 	result_banner.visible = false
+	_hide_dialogue_thinking_placeholder()
 	dialogue_view.clear()
 	_pop_control(dialogue_view)
 
@@ -3825,6 +4198,7 @@ func _finish_speech_stream(speaker: String, speech: String, color: Color) -> voi
 func _show_speech_stream(speaker: String, speech: String, color: Color) -> void:
 	dialogue_title.text = "对话?"
 	result_banner.visible = false
+	_hide_dialogue_thinking_placeholder()
 	dialogue_view.clear()
 	_pop_control(dialogue_view)
 	for i in range(0, speech.length(), 3):
@@ -3835,6 +4209,7 @@ func _show_speech_stream(speaker: String, speech: String, color: Color) -> void:
 
 func _show_scene_message(text: String) -> void:
 	dialogue_title.text = "场景"
+	_hide_dialogue_thinking_placeholder()
 	dialogue_view.clear()
 	dialogue_view.append_text("[color=#f3d28b]%s[/color]" % _escape(text))
 	_follow_dialogue_view(dialogue_view)
@@ -3843,6 +4218,7 @@ func _show_scene_message(text: String) -> void:
 func _show_error(text: String) -> void:
 	dialogue_title.text = "LLM 调用错误"
 	result_banner.visible = false
+	_hide_dialogue_thinking_placeholder()
 	dialogue_view.clear()
 	dialogue_view.append_text("[color=#ff7a7a]%s[/color]" % _escape(text))
 	_follow_dialogue_view(dialogue_view)
@@ -4067,7 +4443,8 @@ func _council_result_snapshot() -> Dictionary:
 		"victory": state.victory,
 		"reason": state.end_reason,
 		"members": members,
-		"votes": state.council_vote_records.duplicate(true)
+		"votes": state.council_vote_records.duplicate(true),
+		"energy_rewards": state.council_last_energy_rewards.duplicate(true)
 	}
 
 
@@ -4076,6 +4453,7 @@ func _ensure_council_continue_button() -> void:
 		return
 	council_status_continue_button = StandardButtonScript.new()
 	council_status_continue_button.text = "继续"
+	StandardButtonScript.apply(council_status_continue_button, StandardButtonScript.PRIMARY, "继续", 30)
 	council_status_continue_button.z_index = 4020
 	council_status_continue_button.custom_minimum_size = Vector2(180, 58)
 	council_status_continue_button.anchor_left = 0.5
@@ -4501,7 +4879,7 @@ func _update_card_grid() -> void:
 		"status":
 			_add_section_label("当前状?")
 			_add_info_card("round", "章节 / 回合", "%d / %d 章" % [state.chapter_index + 1, state.max_chapters], "回合 %d / %d，对话 %d / %d" % [state.chapter_round + 1, state.max_rounds, state.turn, state.max_dialogue_turns], true, false, false)
-			_add_info_card("budget", "字符与能?", "%d / %d" % [state.player_chars, state.max_player_chars], "能量?%d  等级?%d" % [int(state.player.get("energy", 0)), int(state.player.get("level", 1))], true, false, false)
+			_add_info_card("budget", "精力", "%d" % maxi(0, int(state.max_player_chars) - int(state.player_chars)), "每输出 1 字消耗 1 点", true, false, false)
 			var npc: Dictionary = state.current_npc()
 			if not npc.is_empty():
 				_add_info_card("npc", String(npc.get("public_name", "对手")), String(npc.get("friend_judgement", "unknown")), "亲近度：%d  地盘?%s" % [int(npc.get("affinity", 0)), String(npc.get("territory", "未知"))], true, false, false)
@@ -4653,7 +5031,7 @@ func _add_intel_testimony_portraits(parent: HBoxContainer, question_id: String, 
 		portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 		portrait.tooltip_text = "?%d?%s" % [int(source.get("chapter", 1)), String(source.get("npc_name", "对手"))]
-		_set_texture_or_fallback(portrait, "res://assets/generated/%s" % String(source.get("portrait", "")), "res://assets/generated/opponent_portrait.png")
+		_set_texture_or_fallback(portrait, _head_avatar_texture_path_from_portrait(String(source.get("portrait", ""))), "res://assets/generated/opponent_portrait.png")
 		parent.add_child(portrait)
 
 
@@ -4828,7 +5206,7 @@ func _add_world_intel_option(parent: VBoxContainer, question_id: String, option:
 		portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 		portrait.tooltip_text = "?%d?%s" % [int(source.get("chapter", 1)), String(source.get("npc_name", "对手"))]
-		_set_texture_or_fallback(portrait, "res://assets/generated/%s" % String(source.get("portrait", "")), "res://assets/generated/opponent_portrait.png")
+		_set_texture_or_fallback(portrait, _head_avatar_texture_path_from_portrait(String(source.get("portrait", ""))), "res://assets/generated/opponent_portrait.png")
 		portraits.add_child(portrait)
 
 
@@ -5120,7 +5498,7 @@ func _update_after_end() -> void:
 	if state.ended:
 		_set_status_text(state.end_reason)
 		_show_result_banner(state.end_reason, Color(0.62, 1.0, 0.78, 1.0) if state.victory else Color(1.0, 0.36, 0.32, 1.0))
-		if not state.victory and not council_mode:
+		if not state.victory and (not council_mode or String(state.end_reason_id) == CouncilRulesEngineScript.END_REASON_ENERGY_DEPLETED):
 			_show_death_page()
 	start_button.disabled = false
 	if rules_edit != null:
@@ -5180,6 +5558,8 @@ func _append_failure_review_rule(base_text: String, rule_text: String) -> String
 func _build_failure_guideline_prompt() -> String:
 	if state == null:
 		return _failure_rule_from_context("")
+	if String(state.end_reason_id) == CouncilRulesEngineScript.END_REASON_ENERGY_DEPLETED:
+		return "用尽可能少的字去表达你的政治观点"
 	var reason := String(state.end_reason)
 	for i in range(state.event_log.size() - 1, -1, -1):
 		var event := String(state.event_log[i]).strip_edges()
@@ -5359,6 +5739,7 @@ func _set_current_dialogue_role(role: String) -> void:
 	if current_speaker_label != null:
 		_place_dialogue_nameplate(current_speaker_label, role, speaker_name, false)
 	if dialogue_view != null:
+		_hide_dialogue_thinking_placeholder()
 		dialogue_view.clear()
 	_animate_current_dialogue_pop()
 
@@ -5377,7 +5758,7 @@ func _set_dialogue_visible(visible: bool) -> void:
 		if node != null:
 			node.visible = visible
 	if council_mode and visible:
-		for node in [info_button, bag_button, rules_button]:
+		for node in [info_button, bag_button]:
 			if node != null:
 				node.visible = false
 	if llm_retry_button != null and not visible:
@@ -5395,6 +5776,7 @@ func _set_dialogue_visible(visible: bool) -> void:
 		if upper_box != null:
 			upper_box.visible = false
 		if dialogue_view != null:
+			_hide_dialogue_thinking_placeholder()
 			dialogue_view.clear()
 		if recent_view != null:
 			recent_view.clear()
@@ -5487,6 +5869,9 @@ func _follow_dialogue_view(view: RichTextLabel) -> void:
 func _player_short_name() -> String:
 	if state == null:
 		return "玩家角色"
+	var public_name := String(state.player.get("public_name", "")).strip_edges()
+	if not public_name.is_empty():
+		return public_name
 	var identity := String(state.player.get("public_identity", "")).strip_edges()
 	if identity.is_empty():
 		return "玩家角色"

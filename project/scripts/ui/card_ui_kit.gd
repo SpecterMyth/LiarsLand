@@ -429,13 +429,15 @@ func _stat_icon(label: String) -> String:
 
 
 func _texture(name: String) -> Texture2D:
-	for root in [UI_ROOT, "res://assets/generated/ui/card/", "res://assets/generated/"]:
+	for root in [UI_ROOT, "res://assets/generated/"]:
 		var path: String = String(root) + name
 		if ResourceLoader.exists(path):
 			return load(path)
 		if OS.has_feature("web"):
 			continue
-		var image := Image.load_from_file(ProjectSettings.globalize_path(path))
-		if image != null:
-			return ImageTexture.create_from_image(image)
+		var absolute_path := ProjectSettings.globalize_path(path)
+		if FileAccess.file_exists(absolute_path):
+			var image := Image.load_from_file(absolute_path)
+			if image != null:
+				return ImageTexture.create_from_image(image)
 	return null

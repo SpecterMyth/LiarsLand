@@ -28,8 +28,8 @@
   ],
   "player": {
     "id": "player",
-    "public_name": "边境的灰狐代笔员",
-    "public_identity": "跨郡巡回代笔员，受邀记录钟楼听证。",
+    "public_name": "灰狐代笔员",
+    "public_identity": "灰狐代笔员，受邀记录钟楼听证。",
     "portrait": "player_portrait.png",
     "portrait_half": "player_portrait_half.png",
     "scene": "bg_embassy_bell_bridge.png",

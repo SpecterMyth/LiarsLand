@@ -31,6 +31,9 @@ var _design_title_font_size := 30
 var _design_cancel_button_size := Vector2(192, 58)
 var _design_confirm_button_size := Vector2(192, 58)
 var _design_button_separation := 18
+var _compact_countdown_layout := false
+var _preferred_panel_size := Vector2.ZERO
+var _countdown_scroll_height := 118.0
 
 
 func _ready() -> void:
@@ -46,14 +49,18 @@ func show_message(title: String, body: String, confirm_text := "确定", cancel_
 
 func show_countdown_message(title: String, body: String, seconds := 10.0, cancel_text := "取消", confirm_text := "确认") -> bool:
 	_prepare(title, "", cancel_text)
+	_compact_countdown_layout = true
 	_clear_content()
 	_confirm_button.text = confirm_text
 	_confirm_button.visible = true
 	_confirm_button.disabled = false
 	_update_button_labels()
-	_content_holder.add_child(_make_body_label(body))
+	var body_label := _make_body_label(body)
+	_content_holder.add_child(body_label)
 	var footer := _ensure_countdown_footer()
 	footer.visible = true
+	_countdown_scroll_height = _measure_countdown_content_height(body_label)
+	_update_layout_for_viewport()
 	var countdown := _make_body_label("%d 秒后执行" % int(ceil(seconds)))
 	countdown.name = "CountdownLabel"
 	countdown.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -66,6 +73,7 @@ func show_countdown_message(title: String, body: String, seconds := 10.0, cancel
 	progress.show_percentage = false
 	progress.custom_minimum_size = Vector2(0, 24)
 	footer.add_child(progress)
+	_update_layout_for_viewport()
 	_show_modal()
 	var elapsed := 0.0
 	while _is_waiting and elapsed < seconds:
@@ -80,6 +88,52 @@ func show_countdown_message(title: String, body: String, seconds := 10.0, cancel
 	return _last_confirmed
 
 
+func show_countdown_with_content(title: String, content: Control, seconds := 10.0, cancel_text := "取消", confirm_text := "确认", auto_confirm := true) -> bool:
+	_prepare(title, confirm_text, cancel_text)
+	_compact_countdown_layout = true
+	_clear_content()
+	if content != null:
+		if content.has_meta("modal_panel_size"):
+			var preferred_size = content.get_meta("modal_panel_size")
+			if preferred_size is Vector2:
+				_preferred_panel_size = preferred_size
+		if content.get_parent() != null:
+			content.get_parent().remove_child(content)
+		content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		if not bool(content.get_meta("preserve_content_theme", false)):
+			_apply_black_text_theme(content)
+		_content_holder.add_child(content)
+	var footer := _ensure_countdown_footer()
+	footer.visible = true
+	_countdown_scroll_height = _measure_countdown_content_height(content)
+	_update_layout_for_viewport()
+	var countdown := _make_body_label("%d 秒后%s" % [int(ceil(seconds)), "自动确认" if auto_confirm else "自动拒绝"])
+	countdown.name = "CountdownLabel"
+	countdown.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	footer.add_child(countdown)
+	var progress := ProgressBar.new()
+	progress.name = "CountdownProgress"
+	progress.min_value = 0.0
+	progress.max_value = max(seconds, 0.01)
+	progress.value = seconds
+	progress.show_percentage = false
+	progress.custom_minimum_size = Vector2(0, 24)
+	footer.add_child(progress)
+	_update_layout_for_viewport()
+	_show_modal()
+	var elapsed := 0.0
+	while _is_waiting and elapsed < seconds:
+		await get_tree().process_frame
+		elapsed += get_process_delta_time()
+		var left: float = max(0.0, seconds - elapsed)
+		progress.value = left
+		countdown.text = "%d 秒后%s" % [int(ceil(left)), "自动确认" if auto_confirm else "自动拒绝"]
+	if _is_waiting:
+		_finish(auto_confirm, null)
+		return auto_confirm
+	return _last_confirmed
+
+
 func show_with_content(title: String, content: Control, confirm_text := "确定", cancel_text := "取消") -> bool:
 	_prepare(title, confirm_text, cancel_text)
 	_clear_content()
@@ -87,7 +141,8 @@ func show_with_content(title: String, content: Control, confirm_text := "确定"
 		if content.get_parent() != null:
 			content.get_parent().remove_child(content)
 		content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		_apply_black_text_theme(content)
+		if not bool(content.get_meta("preserve_content_theme", false)):
+			_apply_black_text_theme(content)
 		_content_holder.add_child(content)
 	_show_modal()
 	var response: Array = await resolved
@@ -360,6 +415,9 @@ func _prepare(title: String, confirm_text: String, cancel_text: String) -> void:
 	_pending_value = null
 	_is_waiting = true
 	_last_confirmed = false
+	_compact_countdown_layout = false
+	_preferred_panel_size = Vector2.ZERO
+	_countdown_scroll_height = 118.0
 	_title_label.text = title
 	_cancel_button.text = cancel_text
 	_confirm_button.text = confirm_text
@@ -408,8 +466,13 @@ func _notification(what: int) -> void:
 
 func _update_layout_for_viewport() -> void:
 	var viewport_size := _get_layout_size()
-	var width: float = min(_design_panel_size.x, max(320.0, viewport_size.x - 32.0))
-	var height: float = min(_design_panel_size.y, max(280.0, viewport_size.y - 64.0))
+	var target_size := _preferred_panel_size if _preferred_panel_size.x > 0.0 and _preferred_panel_size.y > 0.0 else _design_panel_size
+	var width: float = min(target_size.x, max(320.0, viewport_size.x - 32.0))
+	var height: float = min(target_size.y, max(280.0, viewport_size.y - 64.0))
+	var footer_visible := _countdown_footer != null and _countdown_footer.visible
+	if footer_visible or _compact_countdown_layout:
+		var countdown_height := _countdown_panel_height(width)
+		height = min(height, max(280.0, min(countdown_height, viewport_size.y - 64.0)))
 	_apply_panel_margins(width)
 	_panel.custom_minimum_size = Vector2(width, height)
 	_panel.anchor_left = 0.0
@@ -424,7 +487,16 @@ func _update_layout_for_viewport() -> void:
 	_title_wrap.offset_top = max(8.0, _panel.offset_top - 33.0)
 	_title_wrap.offset_right = _title_wrap.offset_left + min(493.0, width - 52.0)
 	_title_wrap.offset_bottom = _title_wrap.offset_top + 66
-	_scroll.custom_minimum_size = Vector2(0, max(118.0, height - 178.0))
+	var scroll_height: float
+	if footer_visible:
+		scroll_height = max(72.0, height - _countdown_footer_reserved_height(width))
+	else:
+		scroll_height = max(118.0, height - 178.0)
+	_scroll.custom_minimum_size = Vector2(0, scroll_height)
+	_scroll.size_flags_vertical = Control.SIZE_SHRINK_BEGIN if footer_visible else Control.SIZE_EXPAND_FILL
+	if _countdown_footer != null:
+		_countdown_footer.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	_buttons_row.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	_title_label.add_theme_font_size_override("font_size", 22 if width < 520.0 else _design_title_font_size)
 	if width < 520.0:
 		var available_button_width := (width - 92.0) * 0.5
@@ -445,10 +517,10 @@ func _apply_panel_margins(width: float) -> void:
 	var margin_style := style.duplicate() as StyleBox
 	if margin_style == null:
 		return
-	var side_margin := 28.0 if width < 520.0 else 60.0
+	var side_margin := 28.0 if width < 520.0 else (44.0 if _preferred_panel_size.x > 0.0 else 60.0)
 	margin_style.content_margin_left = side_margin
 	margin_style.content_margin_right = side_margin
-	margin_style.content_margin_top = 70.0
+	margin_style.content_margin_top = 56.0 if _preferred_panel_size.x > 0.0 else 70.0
 	margin_style.content_margin_bottom = 0.0
 	_panel.add_theme_stylebox_override("panel", margin_style)
 
@@ -463,6 +535,38 @@ func _get_layout_size() -> Vector2:
 		return parent_control.size
 
 	return get_viewport_rect().size
+
+
+func _countdown_panel_height(width: float) -> float:
+	if _preferred_panel_size.y > 0.0:
+		return _preferred_panel_size.y
+	var chrome_height := 196.0
+	var max_height := 348.0 if width >= 720.0 else 332.0
+	return min(max_height, chrome_height + _countdown_scroll_height)
+
+
+func _countdown_footer_reserved_height(width: float) -> float:
+	var button_height: float = min(_design_cancel_button_size.y, 54.0) if width < 520.0 else _design_cancel_button_size.y
+	var countdown_height := 34.0
+	var progress_height := 24.0
+	var footer_gap := 8.0
+	var stack_gaps := 28.0
+	var top_margin: float = 56.0 if _preferred_panel_size.x > 0.0 else 70.0
+	var safety := 10.0
+	return top_margin + countdown_height + progress_height + footer_gap + button_height + stack_gaps + safety
+
+
+func _measure_countdown_content_height(content: Control) -> float:
+	if content == null:
+		return 96.0
+	var measured := content.get_combined_minimum_size().y
+	if measured <= 0.0:
+		measured = content.custom_minimum_size.y
+	if content is Label:
+		var label := content as Label
+		var lines: int = maxi(1, label.text.count("\n") + 1)
+		measured = max(measured, float(lines) * 34.0)
+	return clampf(measured + 8.0, 72.0, 156.0)
 
 
 func _clear_content() -> void:

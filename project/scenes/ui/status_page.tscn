@@ -1,30 +1,33 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://w5b245x1l4uc"]
 
-[ext_resource type="Script" path="res://scripts/ui/status_page.gd" id="1_qw58k"]
-[ext_resource type="Texture2D" path="res://assets/ui/status/status_page_bg.png" id="2_ood68"]
-[ext_resource type="Texture2D" path="res://assets/ui/common/shop_texture_scratches_dark.png" id="3_aatyy"]
-[ext_resource type="Texture2D" path="res://assets/ui/common/title_banner_red.png" id="4_ilx3u"]
-[ext_resource type="FontFile" path="res://assets/fonts/AlibabaPuHuiTi-3-105-Heavy.ttf" id="5_0q1eg"]
-[ext_resource type="Texture2D" path="res://assets/ui/common/bag_close_normal.png" id="6_m50lx"]
-[ext_resource type="Texture2D" path="res://assets/ui/common/bag_close_pressed.png" id="7_negrc"]
-[ext_resource type="Texture2D" path="res://assets/ui/common/bag_close_hover.png" id="8_r1xe6"]
-[ext_resource type="Texture2D" path="res://assets/ui/common/common_background_panel_dark_teal.png" id="9_xk2s5"]
-[ext_resource type="Texture2D" path="res://assets/ui/common/common_background_panel_gold.png" id="10_w3g1t"]
-[ext_resource type="Texture2D" path="res://assets/ui/common/common_background_panel_dark_purple.png" id="11_mg6p1"]
-[ext_resource type="Texture2D" path="res://assets/ui/common/common_background_panel_dark_red.png" id="12_fmv8d"]
-[ext_resource type="Texture2D" path="res://assets/ui/common/common_background_panel_gray.png" id="13_gray"]
+[ext_resource type="Script" uid="uid://c6c0crwigrbvs" path="res://scripts/ui/status_page.gd" id="1_qw58k"]
+[ext_resource type="Texture2D" uid="uid://3ta60ed6x0c7" path="res://assets/ui/status/status_page_bg.png" id="2_ood68"]
+[ext_resource type="Texture2D" uid="uid://blp74ww0pik6f" path="res://assets/ui/common/shop_texture_scratches_dark.png" id="3_aatyy"]
+[ext_resource type="Texture2D" uid="uid://wkrok03laijs" path="res://assets/ui/common/title_banner_red.png" id="4_ilx3u"]
+[ext_resource type="FontFile" uid="uid://bfxtkx81kxl1d" path="res://assets/fonts/AlibabaPuHuiTi-3-105-Heavy.ttf" id="5_0q1eg"]
+[ext_resource type="Texture2D" uid="uid://x2t7p2e58gtc" path="res://assets/ui/common/bag_close_normal.png" id="6_m50lx"]
+[ext_resource type="Texture2D" uid="uid://dgnmp72mo6xm0" path="res://assets/ui/common/bag_close_pressed.png" id="7_negrc"]
+[ext_resource type="Texture2D" uid="uid://bxxe7ugcm6h4n" path="res://assets/ui/common/bag_close_hover.png" id="8_r1xe6"]
+[ext_resource type="Texture2D" uid="uid://cycdufmhttpr4" path="res://assets/ui/common/common_background_panel_dark_teal.png" id="9_xk2s5"]
+[ext_resource type="Texture2D" uid="uid://cpsp16gij06hq" path="res://assets/ui/common/common_background_panel_gray.png" id="10_gray"]
+[ext_resource type="PackedScene" path="res://scenes/ui/common_title_bar.tscn" id="11_title"]
+[ext_resource type="PackedScene" path="res://scenes/ui/round_counter_panel.tscn" id="12_round"]
+[ext_resource type="Texture2D" uid="uid://b7rxgr5v8i2mw" path="res://assets/ui/common/common_title_bar_gray.png" id="13_ood68"]
 
-[node name="StatusPage" type="Control" unique_id=1278424354]
+[node name="StatusPage" type="Control" unique_id=1842639729]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_qw58k")
-page_title = "状态"
+page_title = "议会状态"
 background_path = "res://assets/ui/status/status_page_bg.png"
 panel_color = "dark_teal"
+main_panel_rect = Rect2(54, 92, 1172, 586)
 
-[node name="Background" type="TextureRect" parent="." unique_id=966027816]
+[node name="Background" type="TextureRect" parent="." unique_id=968416551]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -33,14 +36,14 @@ texture = ExtResource("2_ood68")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="Veil" type="ColorRect" parent="." unique_id=116178672]
+[node name="Veil" type="ColorRect" parent="." unique_id=2081848232]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 color = Color(0.015, 0.01, 0.012, 0.68)
 
-[node name="TextureScratches" type="TextureRect" parent="." unique_id=919141786]
+[node name="TextureScratches" type="TextureRect" parent="." unique_id=813741720]
 modulate = Color(1, 1, 1, 0.12)
 layout_mode = 0
 anchor_right = 1.0
@@ -49,7 +52,7 @@ mouse_filter = 2
 texture = ExtResource("3_aatyy")
 expand_mode = 1
 
-[node name="TitleBanner" type="TextureRect" parent="." unique_id=92112492]
+[node name="TitleBanner" type="TextureRect" parent="." unique_id=102269077]
 layout_mode = 0
 offset_left = -23.0
 offset_top = 17.333
@@ -59,7 +62,7 @@ mouse_filter = 2
 texture = ExtResource("4_ilx3u")
 expand_mode = 1
 
-[node name="TitleLabel" type="Label" parent="." unique_id=1077266376]
+[node name="TitleLabel" type="Label" parent="." unique_id=1426647648]
 layout_mode = 0
 offset_left = 36.0
 offset_top = 26.0
@@ -70,10 +73,19 @@ theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
 theme_override_constants/outline_size = 3
 theme_override_fonts/font = ExtResource("5_0q1eg")
 theme_override_font_sizes/font_size = 35
-text = "状态"
+text = "议会状态"
 vertical_alignment = 1
 
-[node name="CloseButton" type="TextureButton" parent="." unique_id=1176197310]
+[node name="RoundBadge" parent="." unique_id=1341950465 instance=ExtResource("12_round")]
+layout_mode = 0
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -480.0
+offset_top = 25.0
+offset_right = -114.0
+offset_bottom = 83.0
+
+[node name="CloseButton" type="TextureButton" parent="." unique_id=66344550]
 layout_mode = 0
 offset_left = 1192.0
 offset_top = 28.0
@@ -88,257 +100,324 @@ texture_hover = ExtResource("8_r1xe6")
 ignore_texture_size = true
 stretch_mode = 0
 
-[node name="MainPanel" type="NinePatchRect" parent="." unique_id=1811665879]
+[node name="MainPanel" type="NinePatchRect" parent="." unique_id=667105915]
 texture_filter = 1
 layout_mode = 0
-offset_left = 82.0
-offset_top = 118.0
-offset_right = 1198.0
-offset_bottom = 662.0
+offset_left = 54.0
+offset_top = 92.0
+offset_right = 1226.0
+offset_bottom = 678.0
 texture = ExtResource("9_xk2s5")
 patch_margin_left = 70
 patch_margin_top = 70
 patch_margin_right = 70
 patch_margin_bottom = 70
 
-[node name="ContentMargin" type="MarginContainer" parent="MainPanel" unique_id=538983922]
+[node name="ContentMargin" type="MarginContainer" parent="MainPanel" unique_id=1515678446]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme_override_constants/margin_left = 52
-theme_override_constants/margin_top = 52
-theme_override_constants/margin_right = 52
-theme_override_constants/margin_bottom = 52
+theme_override_constants/margin_left = 42
+theme_override_constants/margin_top = 42
+theme_override_constants/margin_right = 42
+theme_override_constants/margin_bottom = 42
 
-[node name="Content" type="VBoxContainer" parent="MainPanel/ContentMargin" unique_id=1024047712]
+[node name="Content" type="VBoxContainer" parent="MainPanel/ContentMargin" unique_id=1090896950]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 14
+theme_override_constants/separation = 0
 
-[node name="StatusCardGrid" type="GridContainer" parent="MainPanel/ContentMargin/Content" unique_id=1774932260]
+[node name="EmptyLabel" type="Label" parent="MainPanel/ContentMargin/Content" unique_id=1335080787]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/h_separation = 16
-theme_override_constants/v_separation = 16
-columns = 3
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(1, 0.84, 0.38, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = ExtResource("5_0q1eg")
+theme_override_font_sizes/font_size = 26
+text = "等待议会开始"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="StatusCard" type="NinePatchRect" parent="MainPanel/ContentMargin/Content/StatusCardGrid" unique_id=1103058114]
+[node name="StatusBody" type="HBoxContainer" parent="MainPanel/ContentMargin/Content" unique_id=881007417]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="CrimeVoteHolder" type="Control" parent="MainPanel/ContentMargin/Content/StatusBody" unique_id=1270083808]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.2
+
+[node name="CrimeVotePanel" type="NinePatchRect" parent="MainPanel/ContentMargin/Content/StatusBody/CrimeVoteHolder" unique_id=2024496310]
 texture_filter = 1
-custom_minimum_size = Vector2(0, 156)
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-texture = ExtResource("13_gray")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 26.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("10_gray")
 patch_margin_left = 70
 patch_margin_top = 70
 patch_margin_right = 70
 patch_margin_bottom = 70
 
-[node name="MarginContainer" type="MarginContainer" parent="MainPanel/ContentMargin/Content/StatusCardGrid/StatusCard" unique_id=1944409479]
+[node name="MarginContainer" type="MarginContainer" parent="MainPanel/ContentMargin/Content/StatusBody/CrimeVoteHolder/CrimeVotePanel" unique_id=2107078386]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme_override_constants/margin_left = 42
-theme_override_constants/margin_top = 30
-theme_override_constants/margin_right = 42
-theme_override_constants/margin_bottom = 30
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/ContentMargin/Content/StatusCardGrid/StatusCard/MarginContainer" unique_id=256711096]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/ContentMargin/Content/StatusBody/CrimeVoteHolder/CrimeVotePanel/MarginContainer" unique_id=624796173]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme_override_constants/separation = 6
+
+[node name="VoteTitleRow" type="HBoxContainer" parent="MainPanel/ContentMargin/Content/StatusBody/CrimeVoteHolder/CrimeVotePanel/MarginContainer/VBoxContainer" unique_id=464052853]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="Spacer" type="Control" parent="MainPanel/ContentMargin/Content/StatusBody/CrimeVoteHolder/CrimeVotePanel/MarginContainer/VBoxContainer/VoteTitleRow" unique_id=1954599592]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VoteThresholdLabel" type="Label" parent="MainPanel/ContentMargin/Content/StatusBody/CrimeVoteHolder/CrimeVotePanel/MarginContainer/VBoxContainer/VoteTitleRow" unique_id=904326343]
+custom_minimum_size = Vector2(120, 24)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_colors/font_color = Color(0.82, 0.76, 0.66, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 1
+theme_override_fonts/font = ExtResource("5_0q1eg")
+theme_override_font_sizes/font_size = 15
+text = "0票处决"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="EdgeSpacer" type="Control" parent="MainPanel/ContentMargin/Content/StatusBody/CrimeVoteHolder/CrimeVotePanel/MarginContainer/VBoxContainer/VoteTitleRow" unique_id=974723045]
+custom_minimum_size = Vector2(100, 1)
+layout_mode = 2
+
+[node name="VoteHeader" type="HBoxContainer" parent="MainPanel/ContentMargin/Content/StatusBody/CrimeVoteHolder/CrimeVotePanel/MarginContainer/VBoxContainer" unique_id=1411033003]
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/separation = 8
 
-[node name="@Label@16" type="Label" parent="MainPanel/ContentMargin/Content/StatusCardGrid/StatusCard/MarginContainer/VBoxContainer" unique_id=2021171927]
+[node name="GuiltyHeader" type="ColorRect" parent="MainPanel/ContentMargin/Content/StatusBody/CrimeVoteHolder/CrimeVotePanel/MarginContainer/VBoxContainer/VoteHeader" unique_id=1545295134]
+custom_minimum_size = Vector2(160, 26)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.94, 0.9, 0.78, 1)
-theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
-theme_override_constants/outline_size = 2
-theme_override_fonts/font = ExtResource("5_0q1eg")
-theme_override_font_sizes/font_size = 18
-text = "章节 / 回合"
+color = Color(0.32, 0.08, 0.09, 0.88)
 
-[node name="@Label@17" type="Label" parent="MainPanel/ContentMargin/Content/StatusCardGrid/StatusCard/MarginContainer/VBoxContainer" unique_id=497384869]
+[node name="Label" type="Label" parent="MainPanel/ContentMargin/Content/StatusBody/CrimeVoteHolder/CrimeVotePanel/MarginContainer/VBoxContainer/VoteHeader/GuiltyHeader" unique_id=477457351]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.84, 0.38, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 1
+theme_override_fonts/font = ExtResource("5_0q1eg")
+theme_override_font_sizes/font_size = 15
+text = "有罪"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CrimeHeader" type="ColorRect" parent="MainPanel/ContentMargin/Content/StatusBody/CrimeVoteHolder/CrimeVotePanel/MarginContainer/VBoxContainer/VoteHeader" unique_id=1880798242]
+custom_minimum_size = Vector2(0, 26)
 layout_mode = 2
+size_flags_horizontal = 3
+color = Color(0.22, 0.1, 0.28, 0.88)
+
+[node name="Label" type="Label" parent="MainPanel/ContentMargin/Content/StatusBody/CrimeVoteHolder/CrimeVotePanel/MarginContainer/VBoxContainer/VoteHeader/CrimeHeader" unique_id=913995122]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.84, 0.38, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 1
+theme_override_fonts/font = ExtResource("5_0q1eg")
+theme_override_font_sizes/font_size = 15
+text = "罪行"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="InnocentHeader" type="ColorRect" parent="MainPanel/ContentMargin/Content/StatusBody/CrimeVoteHolder/CrimeVotePanel/MarginContainer/VBoxContainer/VoteHeader" unique_id=115298680]
+custom_minimum_size = Vector2(160, 26)
+layout_mode = 2
+color = Color(0.04, 0.28, 0.26, 0.88)
+
+[node name="Label" type="Label" parent="MainPanel/ContentMargin/Content/StatusBody/CrimeVoteHolder/CrimeVotePanel/MarginContainer/VBoxContainer/VoteHeader/InnocentHeader" unique_id=716603093]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.84, 0.38, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
+theme_override_constants/outline_size = 1
+theme_override_fonts/font = ExtResource("5_0q1eg")
+theme_override_font_sizes/font_size = 15
+text = "无罪"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CrimeScroll" type="ScrollContainer" parent="MainPanel/ContentMargin/Content/StatusBody/CrimeVoteHolder/CrimeVotePanel/MarginContainer/VBoxContainer" unique_id=1485856747]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="CrimeRows" type="VBoxContainer" parent="MainPanel/ContentMargin/Content/StatusBody/CrimeVoteHolder/CrimeVotePanel/MarginContainer/VBoxContainer/CrimeScroll" unique_id=567264645]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+
+[node name="VoteTitleBar" parent="MainPanel/ContentMargin/Content/StatusBody/CrimeVoteHolder" unique_id=383708842 instance=ExtResource("11_title")]
+custom_minimum_size = Vector2(0, 0)
+layout_mode = 0
+offset_left = 22.0
+offset_right = 222.0
+offset_bottom = 70.0
+texture = ExtResource("13_ood68")
+patch_margin_left = 100
+patch_margin_right = 100
+frame_color = "gray"
+apply_default_size = false
+
+[node name="VoteTitleLabel" type="Label" parent="MainPanel/ContentMargin/Content/StatusBody/CrimeVoteHolder/VoteTitleBar" unique_id=678111953]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_right = -24.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_colors/font_color = Color(1, 0.84, 0.38, 1)
 theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
 theme_override_constants/outline_size = 2
 theme_override_fonts/font = ExtResource("5_0q1eg")
-theme_override_font_sizes/font_size = 28
-text = "等待开始"
-clip_text = true
+theme_override_font_sizes/font_size = 20
+text = "罪行与投票"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="@Label@18" type="Label" parent="MainPanel/ContentMargin/Content/StatusCardGrid/StatusCard/MarginContainer/VBoxContainer" unique_id=2098065790]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.92, 0.86, 0.72, 1)
-theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
-theme_override_constants/outline_size = 2
-theme_override_fonts/font = ExtResource("5_0q1eg")
-theme_override_font_sizes/font_size = 16
-text = "点击开始后进入章节"
-autowrap_mode = 3
-
-[node name="@NinePatchRect@22" type="NinePatchRect" parent="MainPanel/ContentMargin/Content/StatusCardGrid" unique_id=2053062713]
-texture_filter = 1
-custom_minimum_size = Vector2(0, 156)
+[node name="RightStatusColumn" type="VBoxContainer" parent="MainPanel/ContentMargin/Content/StatusBody" unique_id=1754786557]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-texture = ExtResource("13_gray")
-patch_margin_left = 70
-patch_margin_top = 70
-patch_margin_right = 70
-patch_margin_bottom = 70
-
-[node name="MarginContainer" type="MarginContainer" parent="MainPanel/ContentMargin/Content/StatusCardGrid/@NinePatchRect@22" unique_id=416532991]
-layout_mode = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
-theme_override_constants/margin_left = 42
-theme_override_constants/margin_top = 30
-theme_override_constants/margin_right = 42
-theme_override_constants/margin_bottom = 30
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/ContentMargin/Content/StatusCardGrid/@NinePatchRect@22/MarginContainer" unique_id=859388777]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 8
-
-[node name="@Label@19" type="Label" parent="MainPanel/ContentMargin/Content/StatusCardGrid/@NinePatchRect@22/MarginContainer/VBoxContainer" unique_id=867075900]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.94, 0.9, 0.78, 1)
-theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
-theme_override_constants/outline_size = 2
-theme_override_fonts/font = ExtResource("5_0q1eg")
-theme_override_font_sizes/font_size = 18
-text = "字符与能量"
-
-[node name="@Label@20" type="Label" parent="MainPanel/ContentMargin/Content/StatusCardGrid/@NinePatchRect@22/MarginContainer/VBoxContainer" unique_id=463758860]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.84, 0.38, 1)
-theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
-theme_override_constants/outline_size = 2
-theme_override_fonts/font = ExtResource("5_0q1eg")
-theme_override_font_sizes/font_size = 28
-text = "0 / 0"
-clip_text = true
-
-[node name="@Label@21" type="Label" parent="MainPanel/ContentMargin/Content/StatusCardGrid/@NinePatchRect@22/MarginContainer/VBoxContainer" unique_id=636925164]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.92, 0.86, 0.72, 1)
-theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
-theme_override_constants/outline_size = 2
-theme_override_fonts/font = ExtResource("5_0q1eg")
-theme_override_font_sizes/font_size = 16
-text = "能量：0  等级：1"
-autowrap_mode = 3
-
-[node name="@NinePatchRect@26" type="NinePatchRect" parent="MainPanel/ContentMargin/Content/StatusCardGrid" unique_id=1497994415]
-texture_filter = 1
-custom_minimum_size = Vector2(0, 156)
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-texture = ExtResource("13_gray")
-patch_margin_left = 70
-patch_margin_top = 70
-patch_margin_right = 70
-patch_margin_bottom = 70
-
-[node name="MarginContainer" type="MarginContainer" parent="MainPanel/ContentMargin/Content/StatusCardGrid/@NinePatchRect@26" unique_id=1540628817]
-layout_mode = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
-theme_override_constants/margin_left = 42
-theme_override_constants/margin_top = 30
-theme_override_constants/margin_right = 42
-theme_override_constants/margin_bottom = 30
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/ContentMargin/Content/StatusCardGrid/@NinePatchRect@26/MarginContainer" unique_id=1833346397]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 8
-
-[node name="@Label@23" type="Label" parent="MainPanel/ContentMargin/Content/StatusCardGrid/@NinePatchRect@26/MarginContainer/VBoxContainer" unique_id=1321113658]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.94, 0.9, 0.78, 1)
-theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
-theme_override_constants/outline_size = 2
-theme_override_fonts/font = ExtResource("5_0q1eg")
-theme_override_font_sizes/font_size = 18
-text = "当前对手"
-
-[node name="@Label@24" type="Label" parent="MainPanel/ContentMargin/Content/StatusCardGrid/@NinePatchRect@26/MarginContainer/VBoxContainer" unique_id=1794013648]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.84, 0.38, 1)
-theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
-theme_override_constants/outline_size = 2
-theme_override_fonts/font = ExtResource("5_0q1eg")
-theme_override_font_sizes/font_size = 28
-text = "未选择"
-clip_text = true
-
-[node name="@Label@25" type="Label" parent="MainPanel/ContentMargin/Content/StatusCardGrid/@NinePatchRect@26/MarginContainer/VBoxContainer" unique_id=689909239]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.92, 0.86, 0.72, 1)
-theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
-theme_override_constants/outline_size = 2
-theme_override_fonts/font = ExtResource("5_0q1eg")
-theme_override_font_sizes/font_size = 16
-text = "等待候选对手"
-autowrap_mode = 3
-
-[node name="StatusLower" type="HBoxContainer" parent="MainPanel/ContentMargin/Content" unique_id=1369313492]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
+size_flags_stretch_ratio = 0.9
 theme_override_constants/separation = 18
 
-[node name="RelationPanel" type="NinePatchRect" parent="MainPanel/ContentMargin/Content/StatusLower" unique_id=952169200]
-texture_filter = 1
+[node name="CouncilRosterPanel" type="Control" parent="MainPanel/ContentMargin/Content/StatusBody/RightStatusColumn" unique_id=419101247]
+custom_minimum_size = Vector2(0, 210)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="MainPanel/ContentMargin/Content/StatusBody/RightStatusColumn/CouncilRosterPanel" unique_id=1062135405]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="RosterGrid" type="GridContainer" parent="MainPanel/ContentMargin/Content/StatusBody/RightStatusColumn/CouncilRosterPanel/MarginContainer" unique_id=574843737]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 4
+columns = 5
+
+[node name="DossierHolder" type="Control" parent="MainPanel/ContentMargin/Content/StatusBody/RightStatusColumn" unique_id=1031814815]
+custom_minimum_size = Vector2(0, 220)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-texture = ExtResource("13_gray")
+
+[node name="SecretDossierPanel" type="NinePatchRect" parent="MainPanel/ContentMargin/Content/StatusBody/RightStatusColumn/DossierHolder" unique_id=2008754152]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 24.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("10_gray")
 patch_margin_left = 70
 patch_margin_top = 70
 patch_margin_right = 70
 patch_margin_bottom = 70
 
-[node name="MarginContainer" type="MarginContainer" parent="MainPanel/ContentMargin/Content/StatusLower/RelationPanel" unique_id=1364053906]
+[node name="MarginContainer" type="MarginContainer" parent="MainPanel/ContentMargin/Content/StatusBody/RightStatusColumn/DossierHolder/SecretDossierPanel" unique_id=638405367]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme_override_constants/margin_left = 46
-theme_override_constants/margin_top = 34
-theme_override_constants/margin_right = 46
-theme_override_constants/margin_bottom = 34
+offset_top = 30.0
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 30
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/ContentMargin/Content/StatusLower/RelationPanel/MarginContainer" unique_id=1362654004]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/ContentMargin/Content/StatusBody/RightStatusColumn/DossierHolder/SecretDossierPanel/MarginContainer" unique_id=1965792302]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 8
+theme_override_constants/separation = 2
 
-[node name="@Label@13" type="Label" parent="MainPanel/ContentMargin/Content/StatusLower/RelationPanel/MarginContainer/VBoxContainer" unique_id=614025024]
+[node name="DossierContent" type="VBoxContainer" parent="MainPanel/ContentMargin/Content/StatusBody/RightStatusColumn/DossierHolder/SecretDossierPanel/MarginContainer/VBoxContainer" unique_id=596546945]
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 2
+
+[node name="DossierTitleBar" parent="MainPanel/ContentMargin/Content/StatusBody/RightStatusColumn/DossierHolder" unique_id=34383375 instance=ExtResource("11_title")]
+custom_minimum_size = Vector2(0, 0)
+layout_mode = 0
+offset_left = 22.0
+offset_right = 222.0
+offset_bottom = 70.0
+texture = ExtResource("13_ood68")
+patch_margin_left = 100
+patch_margin_right = 100
+frame_color = "gray"
+apply_default_size = false
+
+[node name="DossierTitleLabel" type="Label" parent="MainPanel/ContentMargin/Content/StatusBody/RightStatusColumn/DossierHolder/DossierTitleBar" unique_id=829526497]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_right = -24.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_colors/font_color = Color(1, 0.84, 0.38, 1)
 theme_override_colors/font_outline_color = Color(0.02, 0.01, 0.01, 0.95)
 theme_override_constants/outline_size = 2
 theme_override_fonts/font = ExtResource("5_0q1eg")
-theme_override_font_sizes/font_size = 22
-text = "关系与风险"
-
-[node name="StatusDetailView" type="RichTextLabel" parent="MainPanel/ContentMargin/Content/StatusLower/RelationPanel/MarginContainer/VBoxContainer" unique_id=879767282]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-focus_mode = 2
-theme_override_colors/default_color = Color(1, 0.91, 0.74, 1)
-theme_override_fonts/normal_font = ExtResource("5_0q1eg")
-theme_override_font_sizes/normal_font_size = 17
-bbcode_enabled = true
-selection_enabled = true
+theme_override_font_sizes/font_size = 20
+text = "我的档案"
+horizontal_alignment = 1
+vertical_alignment = 1

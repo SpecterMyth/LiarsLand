@@ -29,7 +29,8 @@ func _capture_full_app(viewport_size: Vector2i, output_path: String) -> void:
 	assert(rules_panel.visible)
 	assert(rules_panel.get_node_or_null("MainPanel/Content/GuidelineEdit") != null)
 	assert(rules_panel.get_node_or_null("MainPanel/Content/Footer/AutoActionCheck") != null)
-	assert(rules_panel.get_node_or_null("MainPanel/Content/Footer/AutoGrowthCheck") != null)
+	var growth_tab := rules_panel.get_node_or_null("MainPanel/Content/TabRow/GrowthTab") as Button
+	assert(growth_tab == null or not growth_tab.visible)
 	var texture := root.get_texture()
 	if texture == null:
 		push_error("Cannot capture guidelines screenshot because the root viewport has no texture. Run without --headless so Godot uses a drawable display driver.")
@@ -61,15 +62,16 @@ func _capture_page_scene(viewport_size: Vector2i, output_path: String) -> void:
 	if page.has_method("set_guidelines"):
 		page.call(
 			"set_guidelines",
-			"## 对外身份\n来自边境的灰狐抄写员，替商队整理族谱与债契。",
-			"## 对话行动\n谨慎试探，风险不明时撤离。",
-			"## 成长逻辑\n优先购买需求法器，升华优先生命与魅力。"
+			"## 对外身份\n来自边境的灰狐代笔员，被临时推上议会席位。",
+			"## 行动准则\n围绕罪名、票数和阵营利益谈判；先保命，再帮隐藏阵营赢下本章。",
+			""
 		)
 	await process_frame
 	await process_frame
 	assert(page.get_node_or_null("MainPanel/Content/GuidelineEdit") != null)
 	assert(page.get_node_or_null("MainPanel/Content/Footer/AutoActionCheck") != null)
-	assert(page.get_node_or_null("MainPanel/Content/Footer/AutoGrowthCheck") != null)
+	var growth_tab := page.get_node_or_null("MainPanel/Content/TabRow/GrowthTab") as Button
+	assert(growth_tab == null or not growth_tab.visible)
 	var texture := viewport.get_texture()
 	assert(texture != null)
 	var image := texture.get_image()

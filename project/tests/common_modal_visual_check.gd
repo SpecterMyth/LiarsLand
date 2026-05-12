@@ -83,7 +83,7 @@ func _capture_message(prefix: String, name: String, title: String, body: String,
 
 func _capture_countdown(prefix: String, name: String) -> void:
 	var box := {}
-	_run_countdown(box, "自己行动", "你方角色已经给出下一步行动。\n这段正文可能较长，但倒计时提示必须稳定显示在按钮上方。")
+	_run_countdown(box, "确认玩家行动", "行动：直接投票；投票：有罪\n罪名：收金条后替金主办事")
 	await _wait_for_modal()
 	_assert_modal_clean()
 	_assert_countdown_footer_clean()
@@ -183,6 +183,7 @@ func _assert_countdown_footer_clean() -> void:
 	_expect(content.global_position.y + content.size.y <= countdown.global_position.y + 4.0, "countdown should sit below body content")
 	_expect(countdown.global_position.y + countdown.size.y <= cancel.global_position.y + 4.0, "countdown label should sit above buttons")
 	_expect(progress.global_position.y + progress.size.y <= cancel.global_position.y + 4.0, "countdown progress should sit above buttons")
+	_expect(cancel.global_position.y - (progress.global_position.y + progress.size.y) <= 48.0, "buttons should stay directly below countdown progress")
 	_expect(cancel.global_position.x < confirm.global_position.x, "cancel must remain left of confirm")
 
 

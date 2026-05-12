@@ -101,12 +101,12 @@ func _run() -> void:
 	assert(rules_panel.get_node_or_null("MainPanel/Content/GuidelineEdit") != null)
 	var behavior_tab := rules_panel.get_node_or_null("MainPanel/Content/TabRow/BehaviorTab") as Button
 	assert(behavior_tab != null)
+	assert(behavior_tab.text == "行动准则")
 	behavior_tab.emit_signal("pressed")
 	await process_frame
 	var growth_tab := rules_panel.get_node_or_null("MainPanel/Content/TabRow/GrowthTab") as Button
 	assert(growth_tab != null)
-	growth_tab.emit_signal("pressed")
-	await process_frame
+	assert(not growth_tab.visible)
 	var guideline_edit := rules_panel.get_node_or_null("MainPanel/Content/GuidelineEdit") as TextEdit
 	assert(guideline_edit != null)
 	assert(guideline_edit.size.x > 400)

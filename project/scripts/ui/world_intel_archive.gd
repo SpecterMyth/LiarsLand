@@ -245,12 +245,12 @@ func _portrait_image_path(portrait_name: String) -> String:
 	if portrait_name.begins_with("res://"):
 		return portrait_name
 	if portrait_name.is_empty():
-		return "res://assets/generated/opponent_portrait.png"
+		return "res://assets/ui/characters/headicon/opponent_head_avatar.png"
 	var head_name := portrait_name.replace("_portrait.png", "_head_avatar.png")
-	var head_path := "res://assets/generated/%s" % head_name
+	var head_path := "res://assets/ui/characters/headicon/%s" % head_name
 	if ResourceLoader.exists(head_path) or FileAccess.file_exists(ProjectSettings.globalize_path(head_path)):
 		return head_path
-	return "res://assets/generated/%s" % portrait_name
+	return "res://assets/ui/characters/portrait/%s" % portrait_name
 
 
 func _configure_submit_button() -> void:

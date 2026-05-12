@@ -1,0 +1,165 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="7" stdDeviation="7" flood-color="#050306" flood-opacity="0.55"/>
+    </filter>
+    <style>
+      text { font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif; letter-spacing: 0; }
+      .heavy { font-weight: 900; }
+      .title { font-size: 34px; }
+      .round { font-size: 22px; }
+      .leftName { font-size: 17px; font-weight: 900; }
+      .leftSmall { font-size: 12px; }
+      .name { font-size: 17px; font-weight: 900; }
+      .body { font-size: 16px; }
+      .gold { fill: #ffd866; }
+      .cream { fill: #fff0c6; }
+      .muted { fill: #d5c6aa; }
+      .ink { fill: #1a1118; }
+    </style>
+  </defs>
+
+  <image href="../../project/assets/ui/history/history_page_bg.png" x="0" y="0" width="1280" height="720" preserveAspectRatio="xMidYMid slice"/>
+  <rect width="1280" height="720" fill="#08050a" opacity="0.66"/>
+  <rect width="1280" height="720" fill="#2b0f21" opacity="0.20"/>
+
+  <!-- Top bar -->
+  <path d="M0 24 L370 21 L392 43 L370 96 L0 99 Z" fill="#b41923" stroke="#080507" stroke-width="5"/>
+  <path d="M13 38 L336 35 L354 49 L335 82 L15 86 Z" fill="#d5252b" opacity="0.22"/>
+  <text x="40" y="68" class="heavy cream title">历史对话</text>
+  <g filter="url(#shadow)">
+    <path d="M1000 34 L1168 32 L1178 42 L1168 80 L998 82 L988 72 L990 43 Z" fill="#301720" stroke="#f0c84c" stroke-width="3"/>
+    <text x="1030" y="62" class="heavy gold round">第 2 回合</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="1197" y="31" width="50" height="50" rx="5" fill="#1b1216" stroke="#c72a31" stroke-width="3"/>
+    <path d="M1212 45 L1232 67 M1232 45 L1212 67" stroke="#fff2d6" stroke-width="7" stroke-linecap="round"/>
+  </g>
+
+  <!-- Main board -->
+  <g filter="url(#shadow)">
+    <path d="M80 121 L1191 121 L1209 139 L1189 650 L96 650 L78 628 L92 143 Z" fill="#4b1e56" stroke="#070507" stroke-width="5"/>
+    <path d="M101 145 L1167 143 L1183 157 L1164 627 L114 627 L102 611 L115 161 Z" fill="#341c3e" opacity="0.58"/>
+  </g>
+
+  <!-- Left character rail: player + 8 visible characters -->
+  <g>
+    <path d="M108 143 L396 143 L410 157 L393 627 L112 627 L98 612 L111 158 Z" fill="#d5d6cf" stroke="#09070a" stroke-width="5"/>
+    <path d="M120 156 L380 156 L391 167 L378 612 L125 612 L115 601 L124 168 Z" fill="#afb4ad" opacity="0.35"/>
+
+    <path d="M130 164 L373 164 L384 175 L377 221 L130 221 L120 211 L127 175 Z" fill="#8b2230" stroke="#0b0709" stroke-width="4"/>
+    <circle cx="158" cy="193" r="23" fill="#22111a" stroke="#f4cc58" stroke-width="3"/>
+    <image href="../../project/assets/generated/player_circle_avatar.png" x="135" y="170" width="46" height="46"/>
+    <text x="195" y="190" class="leftName cream">灰狐代笔员</text>
+    <text x="195" y="209" class="leftSmall muted">我</text>
+    <path d="M339 176 L368 176 L364 209 L335 209 Z" fill="#ffd866" opacity="0.18" stroke="#ffd866" stroke-width="2"/>
+
+    <rect x="128" y="230" width="249" height="374" rx="4" fill="#21131b" opacity="0.12"/>
+
+    <g>
+      <path d="M132 234 L370 234 L378 242 L373 275 L132 275 L124 267 L130 242 Z" fill="#284d54" stroke="#0b0709" stroke-width="4"/>
+      <circle cx="158" cy="255" r="18" fill="#130d10" stroke="#ffd866" stroke-width="3"/>
+      <image href="../../project/assets/generated/npc_fox_circle_avatar.png" x="140" y="237" width="36" height="36"/>
+      <text x="190" y="253" class="leftName cream">绯尾侯爵</text>
+      <text x="190" y="270" class="leftSmall muted">已选中</text>
+    </g>
+    <g opacity="0.94">
+      <path d="M132 281 L370 281 L378 289 L373 322 L132 322 L124 314 L130 289 Z" fill="#302332" stroke="#0b0709" stroke-width="3"/>
+      <circle cx="158" cy="302" r="17" fill="#130d10" stroke="#8e9ba2" stroke-width="3"/>
+      <image href="../../project/assets/generated/npc_crow_circle_avatar.png" x="141" y="285" width="34" height="34"/>
+      <text x="190" y="309" class="leftName cream">墨羽书记官</text>
+    </g>
+    <g opacity="0.94">
+      <path d="M132 328 L370 328 L378 336 L373 369 L132 369 L124 361 L130 336 Z" fill="#302332" stroke="#0b0709" stroke-width="3"/>
+      <circle cx="158" cy="349" r="17" fill="#130d10" stroke="#8e9ba2" stroke-width="3"/>
+      <image href="../../project/assets/generated/npc_deer_circle_avatar.png" x="141" y="332" width="34" height="34"/>
+      <text x="190" y="356" class="leftName cream">白枞使节</text>
+    </g>
+    <g opacity="0.94">
+      <path d="M132 375 L370 375 L378 383 L373 416 L132 416 L124 408 L130 383 Z" fill="#302332" stroke="#0b0709" stroke-width="3"/>
+      <circle cx="158" cy="396" r="17" fill="#130d10" stroke="#8e9ba2" stroke-width="3"/>
+      <image href="../../project/assets/generated/npc_wolf_circle_avatar.png" x="141" y="379" width="34" height="34"/>
+      <text x="190" y="403" class="leftName cream">狼誓刀客</text>
+    </g>
+    <g opacity="0.94">
+      <path d="M132 422 L370 422 L378 430 L373 463 L132 463 L124 455 L130 430 Z" fill="#302332" stroke="#0b0709" stroke-width="3"/>
+      <circle cx="158" cy="443" r="17" fill="#130d10" stroke="#8e9ba2" stroke-width="3"/>
+      <image href="../../project/assets/generated/npc_snake_circle_avatar.png" x="141" y="426" width="34" height="34"/>
+      <text x="190" y="450" class="leftName cream">蛇药商</text>
+    </g>
+    <g opacity="0.94">
+      <path d="M132 469 L370 469 L378 477 L373 510 L132 510 L124 502 L130 477 Z" fill="#302332" stroke="#0b0709" stroke-width="3"/>
+      <circle cx="158" cy="490" r="17" fill="#130d10" stroke="#8e9ba2" stroke-width="3"/>
+      <image href="../../project/assets/generated/npc_badger_oath_notary_circle_avatar.png" x="141" y="473" width="34" height="34"/>
+      <text x="190" y="497" class="leftName cream">獾须公证人</text>
+    </g>
+    <g opacity="0.94">
+      <path d="M132 516 L370 516 L378 524 L373 557 L132 557 L124 549 L130 524 Z" fill="#302332" stroke="#0b0709" stroke-width="3"/>
+      <circle cx="158" cy="537" r="17" fill="#130d10" stroke="#8e9ba2" stroke-width="3"/>
+      <image href="../../project/assets/generated/npc_owl_court_astrologer_circle_avatar.png" x="141" y="520" width="34" height="34"/>
+      <text x="190" y="544" class="leftName cream">猫头鹰星占师</text>
+    </g>
+    <g opacity="0.94">
+      <path d="M132 563 L370 563 L378 571 L373 604 L132 604 L124 596 L130 571 Z" fill="#302332" stroke="#0b0709" stroke-width="3"/>
+      <circle cx="158" cy="584" r="17" fill="#130d10" stroke="#8e9ba2" stroke-width="3"/>
+      <image href="../../project/assets/generated/npc_panther_silent_guard_circle_avatar.png" x="141" y="567" width="34" height="34"/>
+      <text x="190" y="591" class="leftName cream">黑豹静卫</text>
+    </g>
+    <rect x="381" y="234" width="7" height="370" rx="3" fill="#120b12" opacity="0.55"/>
+    <rect x="381" y="236" width="7" height="104" rx="3" fill="#f0c84c" opacity="0.75"/>
+  </g>
+
+  <!-- Right content: 20-line readable area -->
+  <g>
+    <path d="M422 143 L1160 143 L1174 157 L1158 627 L424 627 L410 613 L422 158 Z" fill="#d7d8d0" stroke="#09070a" stroke-width="5"/>
+    <path d="M438 158 L1144 158 L1155 170 L1142 611 L439 611 L429 600 L438 171 Z" fill="#b6bab2" opacity="0.30"/>
+
+    <g>
+      <circle cx="468" cy="181" r="17" fill="#241018" stroke="#f4cc58" stroke-width="3"/>
+      <image href="../../project/assets/generated/player_circle_avatar.png" x="451" y="164" width="34" height="34"/>
+      <text x="498" y="187" class="name ink">灰狐代笔员</text>
+      <text x="451" y="212" class="body ink">我们从哪一份债契开始？</text>
+      <text x="451" y="233" class="body ink">我只关心谁在撒谎。</text>
+      <text x="451" y="254" class="body ink">如果你愿意交换投票，我会先听你的条件。</text>
+      <path d="M450 269 L1138 269" stroke="#27191f" stroke-width="2" opacity="0.18"/>
+    </g>
+
+    <g>
+      <circle cx="468" cy="293" r="17" fill="#241018" stroke="#f4cc58" stroke-width="3"/>
+      <image href="../../project/assets/generated/npc_fox_circle_avatar.png" x="451" y="276" width="34" height="34"/>
+      <text x="498" y="299" class="name ink">绯尾侯爵</text>
+      <text x="451" y="324" class="body ink">你问债契，就像问谁的尾巴先碰到了火盆。</text>
+      <text x="451" y="345" class="body ink">我可以支持“金条关照案”有罪，但你得保证不提旧仓库。</text>
+      <text x="451" y="366" class="body ink">议会里没有干净的人，只有擦得更亮的靴子。</text>
+      <path d="M450 381 L1138 381" stroke="#27191f" stroke-width="2" opacity="0.18"/>
+    </g>
+
+    <g>
+      <circle cx="468" cy="405" r="17" fill="#130d10" stroke="#e87555" stroke-width="3"/>
+      <image href="../../project/assets/generated/npc_crow_circle_avatar.png" x="451" y="388" width="34" height="34"/>
+      <text x="498" y="411" class="name ink">议会事件：墨羽补录</text>
+      <text x="451" y="436" class="body ink">墨羽书记官公开记录：绯尾侯爵倾向支持“金条关照案”有罪。</text>
+      <text x="451" y="457" class="body ink">两名旁听员要求把这条倾向写入本回合记录。</text>
+      <path d="M450 472 L1138 472" stroke="#27191f" stroke-width="2" opacity="0.18"/>
+    </g>
+
+    <g>
+      <circle cx="468" cy="496" r="17" fill="#241018" stroke="#f4cc58" stroke-width="3"/>
+      <image href="../../project/assets/generated/player_circle_avatar.png" x="451" y="479" width="34" height="34"/>
+      <text x="498" y="502" class="name ink">灰狐代笔员</text>
+      <text x="451" y="527" class="body ink">那我们先把火盆搬到桌面上。</text>
+      <text x="451" y="548" class="body ink">你保护旧仓库，我要你在清算时站到明处。</text>
+      <path d="M450 563 L1138 563" stroke="#27191f" stroke-width="2" opacity="0.18"/>
+    </g>
+
+    <g>
+      <circle cx="468" cy="587" r="17" fill="#241018" stroke="#f4cc58" stroke-width="3"/>
+      <image href="../../project/assets/generated/npc_fox_circle_avatar.png" x="451" y="570" width="34" height="34"/>
+      <text x="498" y="593" class="name ink">绯尾侯爵</text>
+      <text x="451" y="612" class="body ink">成交，但别把承诺说得像誓言，誓言最容易被书记官听见。</text>
+    </g>
+
+    <rect x="1148" y="174" width="8" height="432" rx="4" fill="#120b12" opacity="0.55"/>
+    <rect x="1148" y="176" width="8" height="122" rx="4" fill="#f0c84c" opacity="0.78"/>
+  </g>
+</svg>

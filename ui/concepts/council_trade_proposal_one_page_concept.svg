@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#11070a"/>
+      <stop offset="0.55" stop-color="#071717"/>
+      <stop offset="1" stop-color="#1a0d10"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000000" flood-opacity="0.55"/>
+    </filter>
+    <style>
+      .title { font: 700 34px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #f7e7bf; }
+      .h2 { font: 700 22px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #f8e9c7; }
+      .body { font: 500 17px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #e8d6b3; }
+      .small { font: 500 14px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #bfae92; }
+      .dark { fill: #12090a; }
+      .muted { fill: #9d8c75; }
+      .gold { fill: #f0c46b; }
+      .teal { fill: #65c7bb; }
+      .red { fill: #ff8a77; }
+      .blackText { font: 700 20px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #160b06; }
+      .buttonText { font: 700 21px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #f7e7bf; }
+    </style>
+  </defs>
+
+  <rect width="1280" height="720" fill="url(#bg)"/>
+  <path d="M0 560 C210 520 280 690 505 612 C710 540 840 666 1280 592 L1280 720 L0 720 Z" fill="#050405" opacity="0.62"/>
+  <path d="M32 42 L1248 42 L1218 680 L62 680 Z" fill="#070504" opacity="0.58"/>
+
+  <g filter="url(#shadow)">
+    <path d="M104 70 L1176 70 L1202 102 L1184 652 L96 652 L78 104 Z" fill="#160a0d" stroke="#050403" stroke-width="10"/>
+    <path d="M118 86 L1164 86 L1182 108 L1168 636 L112 636 L96 110 Z" fill="#201012" stroke="#d28c27" stroke-width="2"/>
+    <path d="M136 114 L1144 114 L1132 622 L148 622 Z" fill="#12090a" stroke="#4c3021" stroke-width="2"/>
+  </g>
+
+  <g>
+    <path d="M116 64 L520 64 L548 100 L520 136 L116 136 L94 100 Z" fill="#7a2e35" stroke="#050403" stroke-width="7"/>
+    <text x="135" y="111" class="title">政治交易提案</text>
+    <path d="M964 86 L1138 86 L1152 104 L1138 132 L964 132 L950 104 Z" fill="#0e6a66" stroke="#050403" stroke-width="5"/>
+    <text x="978" y="116" class="body" fill="#f7e7bf">等待玩家确认</text>
+  </g>
+
+  <text x="154" y="174" class="h2">绯尾侯爵提出：三张票一起落，少一张都不算数。</text>
+  <text x="154" y="202" class="small">单页确认：身份、承诺、风险、倒计时、接受/拒绝全部在 720p 内可见，不需要滚动。</text>
+
+  <g>
+    <path d="M154 226 L545 226 L560 246 L545 300 L154 300 L140 246 Z" fill="#241318" stroke="#0e6a66" stroke-width="3"/>
+    <circle cx="188" cy="263" r="23" fill="#7a2e35" stroke="#e2b159" stroke-width="2"/>
+    <text x="180" y="271" class="body">侯</text>
+    <text x="226" y="256" class="body">绯尾侯爵</text>
+    <text x="226" y="282" class="small">提议方 · 承诺同向投票</text>
+    <path d="M438 244 L526 244 L536 263 L526 283 L438 283 L428 263 Z" fill="#d99018" stroke="#050403" stroke-width="3"/>
+    <text x="455" y="270" class="blackText" font-size="17">发起</text>
+
+    <path d="M735 226 L1126 226 L1140 246 L1126 300 L735 300 L720 246 Z" fill="#241318" stroke="#4a315f" stroke-width="3"/>
+    <circle cx="769" cy="263" r="23" fill="#0e6a66" stroke="#e2b159" stroke-width="2"/>
+    <text x="761" y="271" class="body">我</text>
+    <text x="807" y="256" class="body">灰狐代笔员</text>
+    <text x="807" y="282" class="small">确认方 · 接受后立刻锁票</text>
+    <path d="M1010 244 L1104 244 L1114 263 L1104 283 L1010 283 L1000 263 Z" fill="#4a315f" stroke="#050403" stroke-width="3"/>
+    <text x="1024" y="270" class="body">待确认</text>
+
+    <path d="M578 253 L700 253" stroke="#d99018" stroke-width="4" stroke-dasharray="10 8"/>
+    <path d="M700 253 L682 243 L682 263 Z" fill="#d99018"/>
+  </g>
+
+  <g>
+    <text x="154" y="344" class="h2">绑定议案</text>
+    <text x="996" y="344" class="small">最多 3 条 · 每条直接显示共同结论</text>
+
+    <g>
+      <path d="M154 362 L1126 362 L1140 378 L1126 438 L154 438 L140 378 Z" fill="#3a1718" stroke="#9d2f28" stroke-width="3"/>
+      <rect x="168" y="382" width="36" height="36" fill="#9d2f28" stroke="#050403" stroke-width="3"/>
+      <text x="180" y="407" class="body">1</text>
+      <text x="224" y="393" class="body">把封口费伪装成律师账单</text>
+      <text x="224" y="420" class="small">此项命中你的隐藏罪行，接受会推进处决阈值。</text>
+      <path d="M706 381 L814 381 L824 400 L814 419 L706 419 L696 400 Z" fill="#7a2e35" stroke="#050403" stroke-width="3"/>
+      <text x="719" y="407" class="body">损害我</text>
+      <path d="M855 379 L1004 379 L1018 400 L1004 421 L855 421 L842 400 Z" fill="#d99018" stroke="#050403" stroke-width="3"/>
+      <text x="876" y="407" class="blackText">双方投有罪</text>
+      <text x="1040" y="407" class="small">2 / 3 票</text>
+    </g>
+
+    <g>
+      <path d="M154 451 L1126 451 L1140 467 L1126 527 L154 527 L140 467 Z" fill="#172324" stroke="#0e6a66" stroke-width="3"/>
+      <rect x="168" y="471" width="36" height="36" fill="#0e6a66" stroke="#050403" stroke-width="3"/>
+      <text x="180" y="496" class="body">2</text>
+      <text x="224" y="482" class="body">私用国库买决斗场金栏杆</text>
+      <text x="224" y="509" class="small">与你无直接冲突，可换取对方在第一条上让步。</text>
+      <path d="M706 470 L814 470 L824 489 L814 508 L706 508 L696 489 Z" fill="#0e6a66" stroke="#050403" stroke-width="3"/>
+      <text x="724" y="496" class="body">有利</text>
+      <path d="M855 468 L1004 468 L1018 489 L1004 510 L855 510 L842 489 Z" fill="#d99018" stroke="#050403" stroke-width="3"/>
+      <text x="876" y="496" class="blackText">双方投无罪</text>
+      <text x="1040" y="496" class="small">1 / 3 票</text>
+    </g>
+
+    <g>
+      <path d="M154 540 L1126 540 L1140 556 L1126 600 L154 600 L140 556 Z" fill="#21182b" stroke="#4a315f" stroke-width="3"/>
+      <rect x="168" y="552" width="36" height="36" fill="#4a315f" stroke="#050403" stroke-width="3"/>
+      <text x="180" y="577" class="body">3</text>
+      <text x="224" y="563" class="body">把竞选捐款埋进护城河清洁费</text>
+      <text x="224" y="587" class="small">双方不承诺此项，公开记录为交易弃权。</text>
+      <path d="M855 549 L1004 549 L1018 570 L1004 591 L855 591 L842 570 Z" fill="#4a315f" stroke="#050403" stroke-width="3"/>
+      <text x="892" y="577" class="body">双方弃权</text>
+      <text x="1040" y="577" class="small">0 / 3 票</text>
+    </g>
+  </g>
+
+  <g>
+    <path d="M154 616 L572 616 L586 630 L572 650 L154 650 L140 630 Z" fill="#211814" stroke="#4c3021" stroke-width="2"/>
+    <rect x="169" y="630" width="276" height="8" fill="#d99018"/>
+    <text x="462" y="637" class="small">10 秒后自动拒绝</text>
+
+    <path d="M746 612 L922 612 L938 632 L922 658 L746 658 L730 632 Z" fill="#2a1818" stroke="#d7c3a1" stroke-width="3"/>
+    <text x="794" y="640" class="buttonText">拒绝</text>
+    <path d="M952 606 L1134 606 L1152 632 L1134 664 L952 664 L934 632 Z" fill="#d99018" stroke="#050403" stroke-width="5"/>
+    <text x="980" y="641" class="blackText">接受并执行</text>
+  </g>
+</svg>

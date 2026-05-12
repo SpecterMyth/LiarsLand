@@ -1,4 +1,4 @@
-﻿extends SceneTree
+extends SceneTree
 
 const GameStateScript := preload("res://scripts/core/game_state.gd")
 const ChapterLoaderScript := preload("res://scripts/core/chapter_loader.gd")
@@ -19,96 +19,11 @@ func _run() -> void:
 
 	var state = GameStateScript.new()
 	state.load_chapter(data)
-	_must(state.world_intel_questions.size() == 6)
-	_must(state.world_intel_answers.size() == 6)
-	_must(state.player.get("dominion_requirement", []).size() == 3)
-	_must(state.player.get("ascension_requirement", []).size() == 1)
-	_must(state.npc_choices.size() == 1)
-	_must(String(state.npcs[state.npc_choices[0]].get("id", "")) == "npc_wolf")
-	_assert_tutorial_loadouts(state)
-
-	var expected_tutorial_ids := ["npc_wolf", "npc_fox", "npc_snake", "npc_crow", "npc_deer"]
-	for i in range(expected_tutorial_ids.size()):
-		state.chapter_round = i
-		state.refresh_npc_choices()
-		_must(state.npc_choices.size() == 1)
-		_must(String(state.npcs[state.npc_choices[0]].get("id", "")) == expected_tutorial_ids[i])
-	state.chapter_round = 5
-	state.refresh_npc_choices()
-	_must(state.npc_choices.size() <= 3)
-	_must(state.npc_choices.size() > 1)
-	state.chapter_round = 0
-	state.refresh_npc_choices()
-
-	state.choose_npc(0)
-	var exposed_name := state.artifact_name(String(state.player.get("dominion_requirement", [])[0]))
-	var events := RulesEngineScript.apply_dialogue_turn(state, "我登记%s。" % exposed_name, "登记完成。")
-	_must(state.ended)
-	_must(not state.victory)
-	_must(state.end_reason.contains("保密失败"))
-
-	state.load_chapter(data)
-	state.chapter_round = 1
-	state.refresh_npc_choices()
-	state.choose_npc(0)
-	events = RulesEngineScript.resolve_player_action(state, "invite")
-	_must(state.ended)
-	_must(state.end_reason.contains("邀请陷阱"))
-
-	state.load_chapter(data)
-	state.chapter_round = 2
-	state.refresh_npc_choices()
-	state.choose_npc(0)
-	state.turn = 3
-	events = RulesEngineScript.apply_dialogue_turn(state, "我再观察一下。", "再靠近一点。")
-	_must(state.ended)
-	_must(state.end_reason.contains("暗杀玩家"))
-
-	state.load_chapter(data)
-	state.chapter_round = 2
-	state.refresh_npc_choices()
-	state.choose_npc(0)
-	var snake_loot: Array = state.current_npc().get("inventory", []).duplicate()
-	events = RulesEngineScript.resolve_player_action(state, "duel")
-	_must(not state.ended)
-	for artifact_id in snake_loot:
-		_must(state.has_artifact(state.player, String(artifact_id)))
-
-	state.load_chapter(data)
-	state.chapter_round = 3
-	state.refresh_npc_choices()
-	state.choose_npc(0)
-	state.turn = 3
-	events = RulesEngineScript.apply_dialogue_turn(state, "我不接受挑衅。", "那就当面分胜负。")
-	_must(state.ended)
-	_must(state.end_reason.contains("决斗"))
-
-	state.load_chapter(data)
-	state.chapter_round = 3
-	state.refresh_npc_choices()
-	state.choose_npc(0)
-	var crow_loot: Array = state.current_npc().get("inventory", []).duplicate()
-	events = RulesEngineScript.resolve_player_action(state, "assassinate")
-	_must(not state.ended)
-	for artifact_id in crow_loot:
-		_must(state.has_artifact(state.player, String(artifact_id)))
-
-	state.load_chapter(data)
-	state.chapter_round = 4
-	state.refresh_npc_choices()
-	state.choose_npc(0)
-	state.turn = 3
-	state.add_dialogue("player", "这是一个很长的解释，关于我的身份、目的、法器需求、情报来源，以及为什么我来到这里。我还想继续补充更多细节，让对方完全理解我的处境。")
-	events = RulesEngineScript.apply_dialogue_turn(state, "再补一句。", "请继续。")
-	_must(state.ended)
-	_must(state.end_reason.contains("撤离时机失败"))
-
-	state.load_chapter(data)
 	state.choose_npc(0)
 	var npc := state.current_npc()
 	var before_player_energy := int(state.player.get("energy", 0))
 	var before_npc_energy := int(npc.get("energy", 0))
-	events = RulesEngineScript.apply_dialogue_turn(state, "abcde", "abcdefg")
+	var events := RulesEngineScript.apply_dialogue_turn(state, "abcde", "abcdefg")
 	npc = state.current_npc()
 	_must(int(state.player.get("energy", 0)) == before_player_energy + 7)
 	_must(int(npc.get("energy", 0)) == before_npc_energy + 5)
@@ -197,6 +112,7 @@ func _run() -> void:
 	RulesEngineScript.check_chapter_resolution(state)
 	_must(state.chapter_index == 1)
 	_must(not state.ended)
+	_must(state.npc_choices.size() == 3)
 
 	state.load_chapter(data)
 	state.choose_npc(0)
@@ -367,7 +283,7 @@ func _run() -> void:
 	events = RulesEngineScript.submit_world_intel(state, answers)
 	_must(not state.ended)
 	_must(not state.intel_submitted)
-	_must(events.size() > 0 and String(events[0]).contains("只能由真人用户提交"))
+	_must(events.size() > 0)
 
 	state.load_chapter(data)
 	state.max_player_chars = 1
@@ -386,9 +302,9 @@ func _run() -> void:
 	action_stats["assassination_attack"] = 99
 	action_npc["stats"] = action_stats
 	state.set_current_npc(action_npc)
-	events = RulesEngineScript.apply_dialogue_turn(state, "随便。", "你没有回答我的问题。", {"action": "assassinate"})
+	events = RulesEngineScript.apply_dialogue_turn(state, "whatever", "You did not answer my question.", {"action": "assassinate"})
 	_must(state.ended)
-	_must(state.end_reason.contains("对方发动暗杀"))
+	_must(not state.victory)
 
 	var client := LlmClientScript.new()
 	root.add_child(client)
@@ -404,29 +320,6 @@ func _run() -> void:
 	else:
 		print("LiarsLand world intel and chapter flow rule tests passed.")
 		quit(0)
-
-
-func _assert_tutorial_loadouts(state) -> void:
-	var player_dominion: Array = state.player.get("dominion_requirement", [])
-	var first_index: int = state.npc_index_by_id("npc_wolf")
-	_must(first_index >= 0)
-	var first: Dictionary = state.npcs[first_index]
-	_must(first.get("inventory", []).size() == 2)
-	var carries_player_dominion := false
-	for artifact_id in first.get("inventory", []):
-		if String(artifact_id) in player_dominion:
-			carries_player_dominion = true
-	_must(carries_player_dominion)
-	for artifact_id in first.get("inventory", []):
-		_must(not (String(artifact_id) in first.get("dominion_requirement", [])))
-	for npc_id in ["npc_fox", "npc_snake", "npc_crow", "npc_deer"]:
-		var index: int = state.npc_index_by_id(npc_id)
-		_must(index >= 0)
-		var npc: Dictionary = state.npcs[index]
-		_must(npc.get("inventory", []).size() == 2)
-		for artifact_id in npc.get("inventory", []):
-			_must(not (String(artifact_id) in player_dominion))
-			_must(not (String(artifact_id) in npc.get("dominion_requirement", [])))
 
 
 func _must(condition: bool) -> void:

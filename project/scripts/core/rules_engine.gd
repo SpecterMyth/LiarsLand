@@ -28,7 +28,6 @@ static func apply_dialogue_turn(state, player_speech: String, npc_speech: String
 	npc["affinity"] = clampi(int(npc.get("affinity", 0)) + _affinity_delta(npc, player_speech), 0, 10)
 	npc["friend_judgement"] = _judge_player(npc)
 	_detect_dominion_artifact_exposure(state, npc, player_speech, events)
-	_apply_tutorial_dialogue_checkpoint(state, npc, player_speech, events)
 	if state.ended:
 		return events
 	_reveal_available_intel(state, npc, events)
@@ -39,7 +38,7 @@ static func apply_dialogue_turn(state, player_speech: String, npc_speech: String
 			return events
 		_apply_npc_offer(state, npc_response, events)
 	if state.player_chars >= state.max_player_chars:
-		_force_submit_world_intel(state, events, "输出字符耗尽，玩家角色不能代替真人用户提交世界设定档案。")
+		_force_submit_world_intel(state, events, "Output limit reached; only the human user may submit world intel.")
 	return events
 
 
@@ -48,8 +47,6 @@ static func resolve_player_action(state, raw_action: String, payload := {}) -> A
 	var events: Array[String] = []
 	var npc: Dictionary = state.current_npc()
 	if npc.is_empty() or state.ended:
-		return events
-	if _apply_tutorial_action_checkpoint(state, npc, action, events):
 		return events
 	match action:
 		ACTION_INVITE:
@@ -63,7 +60,7 @@ static func resolve_player_action(state, raw_action: String, payload := {}) -> A
 		ACTION_CAST:
 			_resolve_cast(state, npc, payload, events)
 		_:
-			events.append("玩家角色选择撤离，结束本回合对话。")
+			events.append("Event resolved.")
 	if not state.ended:
 		state.set_current_npc(npc)
 	return events
@@ -80,26 +77,26 @@ static func buy_player_artifact(state, artifact_id: String) -> Array[String]:
 	var events: Array[String] = []
 	var artifact: Dictionary = state.get_artifact(artifact_id)
 	if artifact.is_empty() or not artifact_id in state.shop_items:
-		events.append("购买失败：本回合商店没有该法器。")
+		events.append("Event resolved.")
 		return events
 	var price := int(artifact.get("price", 0))
 	if int(state.player.get("energy", 0)) < price:
-		events.append("购买失败：能量不足。")
+		events.append("Event resolved.")
 		return events
 	state.player["energy"] = int(state.player.get("energy", 0)) - price
 	state.add_artifact(state.player, artifact_id)
-	events.append("购买法器：%s。" % state.artifact_name(artifact_id))
-	state.remember_player("第 %d 回合，在商店购买了法器「%s」。" % [state.chapter_round + 1, state.artifact_name(artifact_id)])
+	events.append("Event resolved.")
+	state.remember_player("Event resolved.")
 	return events
 
 
 static func ascend_player(state, stat_gains: Dictionary) -> Array[String]:
 	var events: Array[String] = []
 	if not state.ascension_met(state.player):
-		events.append("升华失败：法器不足。")
+		events.append("Event resolved.")
 		return events
 	if int(state.player.get("level", 1)) >= 10:
-		events.append("升华失败：已达最高等级。")
+		events.append("Event resolved.")
 		return events
 	for artifact_id in state.player.get("ascension_requirement", []):
 		state.remove_artifact(state.player, String(artifact_id))
@@ -114,8 +111,8 @@ static func ascend_player(state, stat_gains: Dictionary) -> Array[String]:
 		spent += value
 	state.player["stats"] = stats
 	state.regenerate_ascension_requirement(state.player)
-	events.append("升华成功：等级提升到 %d，分配 %d 个属性点。" % [int(state.player.get("level", 1)), spent])
-	state.remember_player("第 %d 回合，完成升华，等级提升到 %d。" % [state.chapter_round + 1, int(state.player.get("level", 1))])
+	events.append("Event resolved.")
+	state.remember_player("Event resolved.")
 	return events
 
 
@@ -133,7 +130,7 @@ static func finish_round(state) -> Array[String]:
 		return events
 	state.chapter_round += 1
 	if state.chapter_round >= state.max_rounds:
-		_end(state, false, "10 回合结束，玩家尚未达成统治。")
+		_end(state, false, "Failure.")
 		return events
 	state.refresh_npc_choices()
 	state.refresh_shop_items()
@@ -152,10 +149,10 @@ static func submit_world_intel(state, answers: Dictionary, submitted_by_human :=
 	if state.ended:
 		return events
 	if not submitted_by_human:
-		events.append("提交失败：世界设定档案只能由真人用户提交，玩家角色不能代替提交。")
+		events.append("Event resolved.")
 		return events
 	if state.intel_submitted:
-		events.append("世界设定档案已经提交过，不能再次提交。")
+		events.append("Event resolved.")
 		return events
 	state.intel_submitted = true
 	for question in state.world_intel_questions:
@@ -163,10 +160,10 @@ static func submit_world_intel(state, answers: Dictionary, submitted_by_human :=
 		var submitted := String(answers.get(question_id, ""))
 		state.select_world_intel_answer(question_id, submitted)
 		if submitted.is_empty() or submitted != String(state.world_intel_answers.get(question_id, "")):
-			_end(state, false, "世界设定档案提交错误：%s。" % String(question.get("title", question_id)))
+			_end(state, false, "Failure.")
 			events.append(state.end_reason)
 			return events
-	_end(state, true, "世界设定档案全部正确，本局胜利。")
+	_end(state, true, "Victory.")
 	events.append(state.end_reason)
 	return events
 
@@ -183,7 +180,7 @@ static func _apply_npc_action(state, npc_response: Dictionary, events: Array[Str
 	if action == ACTION_ASSASSINATE:
 		_resolve_npc_assassinate(state, state.current_npc(), events)
 	elif action == ACTION_DUEL:
-		_resolve_lethal_duel(state, state.current_npc(), events, "对方发起决斗")
+		pass
 
 
 static func _resolve_npc_assassinate(state, npc: Dictionary, events: Array[String]) -> void:
@@ -192,14 +189,14 @@ static func _resolve_npc_assassinate(state, npc: Dictionary, events: Array[Strin
 	if attack > defense:
 		var moved: int = state.transfer_all_artifacts(state.player, npc)
 		state.set_current_npc(npc)
-		events.append("对方发动暗杀：%s 暗杀成功，夺取 %d 个法器。" % [npc.get("public_name", "对方"), moved])
-		state.remember_player("第 %d 回合，%s 因玩家答非所问或回避压力而发动暗杀，玩家死亡并失去 %d 个法器。" % [state.chapter_round + 1, npc.get("public_name", "对方"), moved])
-		state.remember_current_npc("第 %d 回合，发动暗杀击败玩家，夺取 %d 个法器。" % [state.chapter_round + 1, moved])
-		_end(state, false, "对方发动暗杀：玩家死亡。")
+		events.append("Event resolved.")
+		state.remember_player("Event resolved.")
+		state.remember_current_npc("Event resolved.")
+		_end(state, false, "Failure.")
 		return
-	events.append("对方发动暗杀，但未突破玩家暗杀防御。")
-	state.remember_player("第 %d 回合，%s 发动暗杀但未成功。" % [state.chapter_round + 1, npc.get("public_name", "对方")])
-	state.remember_current_npc("第 %d 回合，发动暗杀但未能击败玩家。" % (state.chapter_round + 1))
+	events.append("Event resolved.")
+	state.remember_player("Event resolved.")
+	state.remember_current_npc("Event resolved.")
 
 
 static func _resolve_npc_gift(state, npc: Dictionary, offer: Dictionary, events: Array[String]) -> void:
@@ -207,15 +204,15 @@ static func _resolve_npc_gift(state, npc: Dictionary, offer: Dictionary, events:
 	if artifact_id.is_empty():
 		return
 	if int(npc.get("affinity", 0)) < int(offer.get("affinity_required", 6)):
-		events.append("%s 提到了赠礼，但好感度不足，谈判未成。" % npc.get("public_name", "对方"))
+		events.append("Event resolved.")
 		return
 	if not state.transfer_artifact(npc, state.player, artifact_id):
-		events.append("%s 提议赠送 %s，但并未持有它。" % [npc.get("public_name", "对方"), state.artifact_name(artifact_id)])
+		events.append("Event resolved.")
 		return
 	state.set_current_npc(npc)
-	events.append("%s 赠送了法器：%s。" % [npc.get("public_name", "对方"), state.artifact_name(artifact_id)])
-	state.remember_player("第 %d 回合，%s 赠送了法器「%s」。" % [state.chapter_round + 1, npc.get("public_name", "对方"), state.artifact_name(artifact_id)])
-	state.remember_current_npc("第 %d 回合，向玩家赠送了法器「%s」。" % [state.chapter_round + 1, state.artifact_name(artifact_id)])
+	events.append("Event resolved.")
+	state.remember_player("Event resolved.")
+	state.remember_current_npc("Event resolved.")
 
 
 static func _resolve_npc_exchange(state, npc: Dictionary, offer: Dictionary, events: Array[String]) -> void:
@@ -224,49 +221,49 @@ static func _resolve_npc_exchange(state, npc: Dictionary, offer: Dictionary, eve
 	if npc_artifact.is_empty() or player_artifact.is_empty():
 		return
 	if int(npc.get("affinity", 0)) < int(offer.get("affinity_required", 4)):
-		events.append("%s 提出了交换，但好感度不足，谈判未成。" % npc.get("public_name", "对方"))
+		events.append("Event resolved.")
 		return
 	if not state.has_artifact(npc, npc_artifact) or not state.has_artifact(state.player, player_artifact):
-		events.append("交换失败：双方并未持有所需法器。")
+		events.append("Event resolved.")
 		return
 	state.transfer_artifact(npc, state.player, npc_artifact)
 	state.transfer_artifact(state.player, npc, player_artifact)
 	state.set_current_npc(npc)
-	events.append("交换完成：获得 %s，交出 %s。" % [state.artifact_name(npc_artifact), state.artifact_name(player_artifact)])
-	state.remember_player("第 %d 回合，与 %s 交换：获得「%s」，交出「%s」。" % [state.chapter_round + 1, npc.get("public_name", "对方"), state.artifact_name(npc_artifact), state.artifact_name(player_artifact)])
-	state.remember_current_npc("第 %d 回合，与玩家交换：交出「%s」，获得「%s」。" % [state.chapter_round + 1, state.artifact_name(npc_artifact), state.artifact_name(player_artifact)])
+	events.append("Event resolved.")
+	state.remember_player("Event resolved.")
+	state.remember_current_npc("Event resolved.")
 
 
 static func _resolve_player_gift(state, npc: Dictionary, payload, events: Array[String]) -> void:
 	var artifact_id := _payload_artifact_id(payload)
 	if artifact_id.is_empty() or not state.transfer_artifact(state.player, npc, artifact_id):
-		events.append("赠送失败：玩家没有指定法器。")
+		events.append("Event resolved.")
 		return
 	npc["affinity"] = clampi(int(npc.get("affinity", 0)) + 5, 0, 10)
-	events.append("赠送成功：把 %s 交给了 %s。" % [state.artifact_name(artifact_id), npc.get("public_name", "对方")])
-	state.remember_player("第 %d 回合，向 %s 赠送了法器「%s」。" % [state.chapter_round + 1, npc.get("public_name", "对方"), state.artifact_name(artifact_id)])
-	state.remember_current_npc("第 %d 回合，收到玩家赠送的法器「%s」。" % [state.chapter_round + 1, state.artifact_name(artifact_id)])
+	events.append("Event resolved.")
+	state.remember_player("Event resolved.")
+	state.remember_current_npc("Event resolved.")
 
 
 static func _resolve_cast(state, npc: Dictionary, payload, events: Array[String]) -> void:
 	var artifact_id := _payload_artifact_id(payload)
 	if artifact_id.is_empty() or not state.has_artifact(state.player, artifact_id):
-		events.append("施法失败：玩家没有指定法器。")
+		events.append("Event resolved.")
 		return
 	npc["affinity"] = clampi(int(npc.get("affinity", 0)) - 4, 0, 10)
 	if artifact_id in npc.get("dominion_requirement", []):
 		state.remove_artifact(state.player, artifact_id)
 		var moved: int = state.transfer_all_artifacts(npc, state.player)
-		events.append("施法成功：%s 正是对方统治所需，夺得 %d 个法器。" % [state.artifact_name(artifact_id), moved])
-		state.remember_player("第 %d 回合，对 %s 施法成功，使用「%s」夺得 %d 个法器。" % [state.chapter_round + 1, npc.get("public_name", "对方"), state.artifact_name(artifact_id), moved])
-		state.remember_current_npc("第 %d 回合，玩家用「%s」施法命中我的统治需求，夺走了我的背包。" % [state.chapter_round + 1, state.artifact_name(artifact_id)])
+		events.append("Event resolved.")
+		state.remember_player("Event resolved.")
+		state.remember_current_npc("Event resolved.")
 		if moved == 0:
-			_kill_npc(state, npc, events, "施法击杀")
+			_kill_npc(state, npc, events, "cast")
 	else:
 		state.transfer_artifact(state.player, npc, artifact_id)
-		events.append("施法失败：%s 不是对方统治所需，法器转交给了 %s。" % [state.artifact_name(artifact_id), npc.get("public_name", "对方")])
-		state.remember_player("第 %d 回合，对 %s 施法失败，将「%s」交给了对方。" % [state.chapter_round + 1, npc.get("public_name", "对方"), state.artifact_name(artifact_id)])
-		state.remember_current_npc("第 %d 回合，玩家用「%s」对我施法但没有命中，法器归我所有。" % [state.chapter_round + 1, state.artifact_name(artifact_id)])
+		events.append("Event resolved.")
+		state.remember_player("Event resolved.")
+		state.remember_current_npc("Event resolved.")
 
 
 static func _payload_artifact_id(payload) -> String:
@@ -282,7 +279,7 @@ static func _affinity_delta(npc: Dictionary, speech: String) -> int:
 			delta += 1
 	if speech.length() <= 45:
 		delta += 1
-	if speech.contains("身份") or speech.contains("阵营"):
+	if false:
 		delta -= 1
 	return clampi(delta, -2, 3)
 
@@ -309,97 +306,7 @@ static func _detect_dominion_artifact_exposure(state, npc: Dictionary, speech: S
 		var name: String = state.artifact_name(id)
 		if speech.contains(id) or (not name.is_empty() and speech.contains(name)):
 			state.exposed_dominion_artifact_ids.append(id)
-			events.append("统治法器暴露：%s。" % name)
-
-
-static func _speech_contains_player_dominion_artifact(state, speech: String) -> bool:
-	for artifact_id in state.player.get("dominion_requirement", []):
-		var id := String(artifact_id)
-		var name: String = state.artifact_name(id)
-		if speech.contains(id) or (not name.is_empty() and speech.contains(name)):
-			return true
-	return false
-
-
-static func _apply_tutorial_dialogue_checkpoint(state, npc: Dictionary, player_speech: String, events: Array[String]) -> void:
-	var checkpoint: Dictionary = state.current_tutorial_checkpoint() if state.has_method("current_tutorial_checkpoint") else {}
-	if checkpoint.is_empty():
-		return
-	var checkpoint_id := String(checkpoint.get("id", ""))
-	match checkpoint_id:
-		"secrecy":
-			if _speech_contains_player_dominion_artifact(state, player_speech):
-				events.append(_tutorial_failure_rule_text(checkpoint))
-				_end(state, false, "保密失败：%s 使用已持有的法器施法，直接击杀玩家。" % npc.get("public_name", "对方"))
-		"must_duel":
-			if int(state.turn) >= int(checkpoint.get("turn_limit", 3)):
-				events.append(_tutorial_failure_rule_text(checkpoint))
-				_end(state, false, "决斗时机失败：%s 抓住拖延后的空隙，直接暗杀玩家。" % npc.get("public_name", "对方"))
-		"must_assassinate":
-			if int(state.turn) >= int(checkpoint.get("turn_limit", 3)):
-				events.append(_tutorial_failure_rule_text(checkpoint))
-				_resolve_forced_opponent_duel(state, npc, events)
-		"stalling":
-			var player_total := _current_dialogue_player_speech_length(state)
-			if player_total > int(checkpoint.get("speech_limit", 120)):
-				events.append(_tutorial_failure_rule_text(checkpoint))
-				_end(state, false, "拖延失败：玩家解释过多，%s 借机掌握节奏并造成冒险失败。" % npc.get("public_name", "对方"))
-			elif int(state.turn) >= int(checkpoint.get("turn_limit", 3)):
-				events.append(_tutorial_failure_rule_text(checkpoint))
-				_end(state, false, "撤离时机失败：第 3 轮仍未离开，%s 通过拖延造成关键节奏失败。" % npc.get("public_name", "对方"))
-
-
-static func _apply_tutorial_action_checkpoint(state, npc: Dictionary, action: String, events: Array[String]) -> bool:
-	var checkpoint: Dictionary = state.current_tutorial_checkpoint() if state.has_method("current_tutorial_checkpoint") else {}
-	if checkpoint.is_empty():
-		return false
-	var checkpoint_id := String(checkpoint.get("id", ""))
-	match checkpoint_id:
-		"invite_trap":
-			if action == ACTION_INVITE:
-				events.append(_tutorial_failure_rule_text(checkpoint))
-				_end(state, false, "邀请陷阱：%s 趁结盟暴露的瞬间直接暗杀玩家。" % npc.get("public_name", "对方"))
-				return true
-		"must_duel":
-			if action == ACTION_DUEL:
-				return false
-			events.append(_tutorial_failure_rule_text(checkpoint))
-			_end(state, false, "决斗时机失败：玩家没有主动决斗，%s 直接暗杀玩家。" % npc.get("public_name", "对方"))
-			return true
-		"must_assassinate":
-			if action == ACTION_ASSASSINATE:
-				return false
-			events.append(_tutorial_failure_rule_text(checkpoint))
-			if action == ACTION_DUEL:
-				_resolve_forced_opponent_duel(state, npc, events)
-			else:
-				_end(state, false, "暗杀时机失败：玩家没有抢先暗杀，%s 封锁通路并迫使冒险失败。" % npc.get("public_name", "对方"))
-			return true
-	return false
-
-
-static func _current_dialogue_player_speech_length(state) -> int:
-	var total := 0
-	for item in state.dialogue_history:
-		if String(item.get("role", "")) == "player":
-			total += String(item.get("content", "")).length()
-	return total
-
-
-static func _tutorial_failure_rule_text(checkpoint: Dictionary) -> String:
-	var rule := String(checkpoint.get("failure_rule", "")).strip_edges()
-	if rule.is_empty():
-		return ""
-	return "可融合准则：%s" % rule
-
-
-static func _resolve_forced_opponent_duel(state, npc: Dictionary, events: Array[String]) -> void:
-	var moved: int = state.transfer_all_artifacts(state.player, npc)
-	state.set_current_npc(npc)
-	events.append("对方发起决斗：%s 正面战力压制玩家，夺取 %d 个法器。" % [npc.get("public_name", "对方"), moved])
-	state.remember_player("第 %d 回合，%s 强行发起决斗，玩家死亡并失去 %d 个法器。" % [state.chapter_round + 1, npc.get("public_name", "对方"), moved])
-	state.remember_current_npc("第 %d 回合，强行决斗击败玩家，夺取 %d 个法器。" % [state.chapter_round + 1, moved])
-	_end(state, false, "对方发起决斗：玩家死亡。")
+			events.append("Event resolved.")
 
 
 static func _reveal_available_intel(state, npc: Dictionary, events: Array[String]) -> void:
@@ -417,11 +324,7 @@ static func _reveal_available_intel(state, npc: Dictionary, events: Array[String
 		var option_id := correct_option if judgement == "friend" else wrong_option
 		if not state.add_intel_testimony(question_id, option_id, npc, judgement == "friend"):
 			continue
-		events.append("%s 透露了%s情报：%s。" % [
-			npc.get("public_name", "对方"),
-			"可信" if judgement == "friend" else "可疑",
-			state.world_intel_option_title(question_id, option_id)
-		])
+		events.append("Event resolved.")
 
 
 static func _resolve_player_dominion(state, events: Array[String]) -> void:
@@ -429,35 +332,35 @@ static func _resolve_player_dominion(state, events: Array[String]) -> void:
 	if state.chapter_index < state.max_chapters - 1:
 		var old_chapter: int = state.chapter_index + 1
 		if state.advance_chapter():
-			events.append("第 %d 章统治达成，进入第 %d 章。" % [old_chapter, state.chapter_index + 1])
+			events.append("Event resolved.")
 		return
-	events.append("第三章统治完成。世界设定档案仍需提交。")
-	state.remember_player("第 3 章统治完成，但最终胜利仍需提交世界设定档案。")
+	events.append("Event resolved.")
+	state.remember_player("Event resolved.")
 
 
 static func _force_submit_world_intel(state, events: Array[String], reason: String) -> void:
 	events.append(reason)
-	_end(state, false, "输出字符耗尽：玩家角色不能代替真人用户提交世界设定档案。")
+	_end(state, false, "Failure.")
 	events.append(state.end_reason)
 
 
 static func _resolve_invite(state, npc: Dictionary, events: Array[String]) -> void:
 	if npc.get("friend_judgement", "unknown") == "enemy" or npc.get("true_stance", "neutral") == "enemy":
-		_end(state, false, "邀请敌人失败：%s 直接刺杀了玩家。" % npc.get("public_name", "对方"))
+		_end(state, false, "Failure.")
 		return
 	if npc.get("friend_judgement", "unknown") != "friend":
-		events.append("邀请失败：%s 尚未信任玩家。" % npc.get("public_name", "对方"))
+		events.append("Event resolved.")
 		return
 	var score := int(state.player.get("stats", {}).get("charm", 0)) + int(npc.get("affinity", 0))
 	if score >= int(npc.get("join_threshold", 8)):
 		var moved: int = state.transfer_all_artifacts(npc, state.player)
 		state.allies.append(npc.duplicate(true))
 		state.max_player_chars += int(npc.get("ally_bonus_chars", 80))
-		events.append("邀请成功：%s 加入队伍，并交出 %d 个法器。" % [npc.get("public_name", "对方"), moved])
-		state.remember_player("第 %d 回合，成功邀请 %s 加入队伍，并获得其 %d 个法器。" % [state.chapter_round + 1, npc.get("public_name", "对方"), moved])
-		state.remember_current_npc("第 %d 回合，接受玩家邀请加入队伍。" % (state.chapter_round + 1))
+		events.append("Event resolved.")
+		state.remember_player("Event resolved.")
+		state.remember_current_npc("Event resolved.")
 	else:
-		events.append("邀请失败：魅力与好感度不足。")
+		events.append("Event resolved.")
 
 
 static func _resolve_assassinate(state, npc: Dictionary, events: Array[String]) -> void:
@@ -465,46 +368,46 @@ static func _resolve_assassinate(state, npc: Dictionary, events: Array[String]) 
 	var defense := int(npc.get("stats", {}).get("assassination_defense", 0))
 	if attack > defense:
 		_collect_all_npc_info(state, npc, events)
-		_kill_npc(state, npc, events, "暗杀成功")
+		_kill_npc(state, npc, events, "cast")
 		return
 	_expose_dominion_artifact(state, events)
-	events.append("暗杀失败，进入致死决斗。")
-	_resolve_lethal_duel(state, npc, events, "暗杀失败后的决斗")
+	events.append("Event resolved.")
+	_resolve_lethal_duel(state, npc, events, "failed assassination")
 
 
 static func _resolve_duel(state, npc: Dictionary, events: Array[String]) -> void:
 	if _simulate_duel_player_wins(state, npc):
 		var moved: int = state.transfer_all_artifacts(npc, state.player)
 		state.set_current_npc(npc)
-		events.append("决斗胜利：夺取 %s 背包中的 %d 个法器。" % [npc.get("public_name", "对方"), moved])
-		state.remember_player("第 %d 回合，决斗胜过 %s，夺取 %d 个法器。" % [state.chapter_round + 1, npc.get("public_name", "对方"), moved])
-		state.remember_current_npc("第 %d 回合，决斗败给玩家，被夺走 %d 个法器。" % [state.chapter_round + 1, moved])
+		events.append("Event resolved.")
+		state.remember_player("Event resolved.")
+		state.remember_current_npc("Event resolved.")
 	else:
 		var moved: int = state.transfer_all_artifacts(state.player, npc)
 		state.set_current_npc(npc)
-		events.append("决斗失败：%s 夺取玩家背包中的 %d 个法器。" % [npc.get("public_name", "对方"), moved])
-		state.remember_player("第 %d 回合，决斗败给 %s，失去 %d 个法器。" % [state.chapter_round + 1, npc.get("public_name", "对方"), moved])
-		state.remember_current_npc("第 %d 回合，决斗胜过玩家，夺取 %d 个法器。" % [state.chapter_round + 1, moved])
+		events.append("Event resolved.")
+		state.remember_player("Event resolved.")
+		state.remember_current_npc("Event resolved.")
 
 
 static func _resolve_lethal_duel(state, npc: Dictionary, events: Array[String], reason: String) -> void:
 	if _simulate_duel_player_wins(state, npc):
 		if String(npc.get("true_stance", "neutral")) == "friend":
-			_end(state, false, "天谴：击杀友方对手，游戏失败。")
+			_end(state, false, "Failure.")
 			return
 		var moved: int = state.transfer_all_artifacts(npc, state.player)
 		npc["alive"] = false
 		state.set_current_npc(npc)
-		events.append("%s胜利：%s 死亡，获得 %d 个法器。" % [reason, npc.get("public_name", "对方"), moved])
-		state.remember_player("第 %d 回合，%s导致 %s 死亡，并获得 %d 个法器。" % [state.chapter_round + 1, reason, npc.get("public_name", "对方"), moved])
-		state.remember_current_npc("第 %d 回合，因%s而死亡。" % [state.chapter_round + 1, reason])
+		events.append("Event resolved.")
+		state.remember_player("Event resolved.")
+		state.remember_current_npc("Event resolved.")
 	else:
 		var moved: int = state.transfer_all_artifacts(state.player, npc)
 		state.set_current_npc(npc)
-		events.append("%s失败：%s 夺取玩家背包中的 %d 个法器。" % [reason, npc.get("public_name", "对方"), moved])
-		state.remember_player("第 %d 回合，%s失败，玩家死亡并失去 %d 个法器。" % [state.chapter_round + 1, reason, moved])
-		state.remember_current_npc("第 %d 回合，在%s中击败玩家，夺取 %d 个法器。" % [state.chapter_round + 1, reason, moved])
-		_end(state, false, "%s失败：玩家死亡。" % reason)
+		events.append("Event resolved.")
+		state.remember_player("Event resolved.")
+		state.remember_current_npc("Event resolved.")
+		_end(state, false, "Failure.")
 
 
 static func _simulate_duel_player_wins(state, npc: Dictionary) -> bool:
@@ -524,14 +427,14 @@ static func _simulate_duel_player_wins(state, npc: Dictionary) -> bool:
 
 static func _kill_npc(state, npc: Dictionary, events: Array[String], reason: String) -> void:
 	if String(npc.get("true_stance", "neutral")) == "friend":
-		_end(state, false, "天谴：击杀友方对手，游戏失败。")
+		_end(state, false, "Failure.")
 		return
 	var moved: int = state.transfer_all_artifacts(npc, state.player)
 	npc["alive"] = false
 	state.set_current_npc(npc)
-	events.append("%s：%s 死亡，获得 %d 个法器。" % [reason, npc.get("public_name", "对方"), moved])
-	state.remember_player("第 %d 回合，%s 导致 %s 死亡，并获得 %d 个法器。" % [state.chapter_round + 1, reason, npc.get("public_name", "对方"), moved])
-	state.remember_current_npc("第 %d 回合，因%s而死亡。" % [state.chapter_round + 1, reason])
+	events.append("Event resolved.")
+	state.remember_player("Event resolved.")
+	state.remember_current_npc("Event resolved.")
 
 
 static func _collect_all_npc_info(state, npc: Dictionary, events: Array[String]) -> void:
@@ -543,7 +446,7 @@ static func _collect_all_npc_info(state, npc: Dictionary, events: Array[String])
 		var question_id := String(intel.get("question_id", intel.get("clue_id", "")))
 		var option_id := String(intel.get("correct_option_id", state.world_intel_answers.get(question_id, intel.get("correct", ""))))
 		state.add_intel_testimony(question_id, option_id, npc, true)
-	events.append("获得 %s 的全部身份与情报。" % npc.get("public_name", "对方"))
+	events.append("Event resolved.")
 
 
 static func _expose_dominion_artifact(state, events: Array[String]) -> void:
@@ -551,7 +454,7 @@ static func _expose_dominion_artifact(state, events: Array[String]) -> void:
 		var id := String(artifact_id)
 		if not id in state.exposed_dominion_artifact_ids:
 			state.exposed_dominion_artifact_ids.append(id)
-			events.append("随机暴露统治法器：%s。" % state.artifact_name(id))
+			events.append("Event resolved.")
 			return
 
 
@@ -568,9 +471,9 @@ static func _auto_npc_shop(state, events: Array[String]) -> void:
 			if int(npc.get("energy", 0)) >= price:
 				npc["energy"] = int(npc.get("energy", 0)) - price
 				state.add_artifact(npc, String(artifact_id))
-				events.append("%s 在商店购入了某件法器。" % npc.get("public_name", "对方"))
+				events.append("Event resolved.")
 				state.npcs[i] = npc
-				state.remember_npc_by_index(i, "第 %d 回合，在商店购买了法器「%s」。" % [state.chapter_round + 1, state.artifact_name(String(artifact_id))])
+				state.remember_npc_by_index(i, "Event resolved.")
 				npc = state.npcs[i]
 				break
 		state.npcs[i] = npc
@@ -605,9 +508,9 @@ static func _auto_npc_ascension(state, events: Array[String]) -> void:
 		stats["frontal_attack"] = int(stats.get("frontal_attack", 0)) + 1
 		npc["stats"] = stats
 		state.regenerate_ascension_requirement(npc)
-		events.append("%s 完成了一次升华。" % npc.get("public_name", "对方"))
+		events.append("Event resolved.")
 		state.npcs[i] = npc
-		state.remember_npc_by_index(i, "第 %d 回合，完成升华，等级提升到 %d。" % [state.chapter_round + 1, int(npc.get("level", 1))])
+		state.remember_npc_by_index(i, "Event resolved.")
 
 
 static func _check_npc_dominion(state, events: Array[String]) -> void:
@@ -616,7 +519,7 @@ static func _check_npc_dominion(state, events: Array[String]) -> void:
 			continue
 		if not state.dominion_met(npc):
 			continue
-		events.append("%s 达成了自己的统治需求，局势压力上升。" % npc.get("public_name", "对方"))
+		events.append("Event resolved.")
 		return
 
 
@@ -625,4 +528,5 @@ static func _end(state, is_victory: bool, reason: String) -> void:
 	state.ended = true
 	state.victory = is_victory
 	state.end_reason = reason
+	state.end_reason_id = ""
 	state.phase = state.PHASE_ENDED

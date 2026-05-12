@@ -16,6 +16,7 @@ const COMMON_UI_ROOT := "res://assets/ui/common/"
 const DIALOGUE_FONT_PATH := "res://assets/fonts/AlibabaPuHuiTi-3-105-Heavy.ttf"
 const BASE_SIZE := Vector2(1672, 941)
 const NINE_MARGIN := 34
+const PREVIOUS_DIALOGUE_TEXT_RECT := Rect2(0.07, 0.12, 0.88, 0.78)
 
 
 func build(owner: Control, default_rules: String) -> Dictionary:
@@ -113,7 +114,7 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 	var recent_view := _make_log(17, Color(0.08, 0.04, 0.03, 1.0), -4)
 	recent_view.name = "PreviousDialogue"
 	recent_view.scroll_following = false
-	_place_relative(recent_view, Rect2(0.08, 0.12, 0.80, 0.78))
+	_place_relative(recent_view, PREVIOUS_DIALOGUE_TEXT_RECT)
 	upper_box.add_child(recent_view)
 
 	var lower_box := _make_exact_texture("dialogue_lower_gold_full.png", Rect2(176, 728, 1339, 194))
@@ -142,6 +143,11 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 	dialogue_view.name = "CurrentDialogue"
 	_place_relative(dialogue_view, Rect2(0.08, 0.14, 0.82, 0.70))
 	lower_box.add_child(dialogue_view)
+
+	var dialogue_thinking_label := _make_dialogue_thinking_label()
+	dialogue_thinking_label.name = "DialogueThinkingLabel"
+	_place_relative(dialogue_thinking_label, Rect2(0.08, 0.14, 0.82, 0.70))
+	lower_box.add_child(dialogue_thinking_label)
 
 	var side_buttons := RightUtilityButtonsScene.instantiate() as Control
 	side_buttons.name = "RightUtilityButtons"
@@ -369,6 +375,7 @@ func build(owner: Control, default_rules: String) -> Dictionary:
 		"result_banner": result_banner,
 		"llm_retry_button": llm_retry_button,
 		"dialogue_view": dialogue_view,
+		"dialogue_thinking_label": dialogue_thinking_label,
 		"state_view": state_view,
 		"card_grid": card_grid,
 		"intel_panel": intel_panel,
@@ -650,6 +657,24 @@ func _make_log(size: int, color: Color, line_separation: int = 0) -> RichTextLab
 	view.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	view.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	return view
+
+
+func _make_dialogue_thinking_label() -> Label:
+	var label := Label.new()
+	label.text = "思考中"
+	label.visible = false
+	label.z_index = 100
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 46)
+	var font := _load_dialogue_font()
+	if font != null:
+		label.add_theme_font_override("font", font)
+	label.add_theme_color_override("font_color", Color(0.08, 0.04, 0.03, 1.0))
+	label.add_theme_constant_override("outline_size", 2)
+	label.add_theme_color_override("font_outline_color", Color(1.0, 0.78, 0.32, 0.72))
+	return label
 
 
 func _load_dialogue_font() -> Font:
